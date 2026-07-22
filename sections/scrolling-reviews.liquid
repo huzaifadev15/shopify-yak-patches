@@ -1,0 +1,93 @@
+﻿{% comment %} Scrolling Reviews Section {% endcomment %}
+
+{%- assign star_svg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="#FBBF24" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' -%}
+
+{%- assign row1 = "James Cundiff,Awesome! Patches were just what I wanted! Turnover time was prompt. Highly recommend them.|Robert Neumann,Custom patches made my unit emblem perfect. Everyone loves it. Great service!|Ralph Arguelles,Second order and they're still awesome. Easy to use and great quality.|Donna Austin,I'm an embroiderer and too tired to do my own batch. Custom patches did a better job!|Lee Ingram,Great quality and service!|Sarah Johnson,The patches exceeded my expectations. The colors are vibrant and the details are perfect!|Thomas Wright,Excellent quality patches. The detail is amazing and they look professional.|Emma Davis,Fast turnaround and great communication. Will definitely order again!|Carlos Rodriguez,The patches look even better in person than they did in the digital proof.|Jennifer Kim,Perfect for our team uniforms. Everyone loves them!|David Chen,High quality embroidery and the colors match exactly what we wanted.|Lisa Thompson,These patches are durable and well-made. Worth every penny.|Mark Wilson,The customer service team was incredibly helpful with my custom design.|Sophia Garcia,I've ordered patches from several companies and these are by far the best quality.|Ryan Murphy,The iron-on backing works perfectly. Easy application and strong adhesion.|Olivia Brown,Exactly what our scout troop needed. The kids love them!|Daniel Lee,The patches arrived ahead of schedule and exceeded our expectations.|Natalie Clark,Perfect size and the colors are exactly as shown in the proof.|Kevin Martinez,Our company logo looks fantastic as a patch. Great quality!|Amanda Taylor,The velcro backing is strong and durable. Exactly what we needed for our tactical gear." | split: "|" -%}
+
+{%- assign row2 = "Bobby Martin,Well first of all I received the patches in great time. They were Exactly what I ordered.|Darrell DeVor,The PVC Velcro back patches came in even better than expected. Quality is amazing and the colors pop like crazy.|Kris Johnson,Love my patches! Look great and not cheap. Fast shipping too.|Lownice Hobson,My design was pretty intricate and the patches look amazing!|Lena Lindor,Absolutely perfect! The embroidery is clean and detailed. Will order again!|Michael Torres,Fast shipping and excellent communication throughout the process. The patches look fantastic on our team uniforms.|Jessica White,The patches are exactly what I wanted for my motorcycle vest. Great quality!|Brandon Scott,I was worried about the small details in my design but they came out perfect!|Rachel Green,These patches are so much better than what I've ordered from other companies.|Tyler Adams,The metallic thread option looks amazing on our patches. Very impressed!|Megan Phillips,Our sports team loves the new patches. They look professional and high-quality.|Jason Miller,The patches arrived quickly and look exactly like the digital proof.|Stephanie Nelson,Great customer service and the patches are perfect for our event.|Eric Wilson,The 3D puff embroidery option gives our patches a premium look. Very satisfied!|Samantha Baker,I've ordered multiple times and the quality is consistently excellent.|Chris Evans,The patches are durable and the colors haven't faded even after multiple washes.|Laura Martinez,Perfect for our company uniforms. Everyone is impressed with the quality.|Alex Johnson,The design team helped improve my original concept. The final patches look amazing!|Michelle Thomas,The patches arrived well-packaged and in perfect condition. Great attention to detail!|Brian Williams,These patches are exactly what our fire department needed. Professional quality and great service." | split: "|" -%}
+
+<section class="scroll-reviews-section" aria-labelledby="reviews-scroll-heading">
+  <header class="scroll-reviews-header">
+    <h2 id="reviews-scroll-heading" class="scroll-reviews-title">Custom Patches Reviews â€” Verified Feedback from Real Customers</h2>
+    <p class="scroll-reviews-sub">Verified Feedback from Authentic Customers</p>
+  </header>
+
+  <!-- Row 1: scroll left -->
+  <div class="scroll-row-wrap" aria-label="Customer reviews scrolling left">
+    <div class="scroll-row scroll-left">
+      {%- for item in row1 -%}
+        {%- assign parts = item | split: "," -%}
+        <article class="scroll-card" role="button" tabindex="0" aria-label="Review by {{ parts[0] }}">
+          <header class="scroll-card-header">
+            <div class="scroll-stars">{{ star_svg }}{{ star_svg }}{{ star_svg }}{{ star_svg }}{{ star_svg }}</div>
+            <p class="scroll-name">{{ parts[0] }}</p>
+            <div class="scroll-verified">
+              <img src="{{ 'meta-verified.webp' | asset_url }}" alt="Meta Verified" width="20" height="20" loading="lazy">
+              <span>Verified buyer</span>
+            </div>
+          </header>
+          <p class="scroll-text">"{{ parts[1] }}"</p>
+        </article>
+      {%- endfor -%}
+      {%- comment -%}Duplicate for seamless loop{%- endcomment -%}
+      {%- for item in row1 -%}
+        {%- assign parts = item | split: "," -%}
+        <article class="scroll-card" aria-hidden="true" tabindex="-1">
+          <header class="scroll-card-header">
+            <div class="scroll-stars">{{ star_svg }}{{ star_svg }}{{ star_svg }}{{ star_svg }}{{ star_svg }}</div>
+            <p class="scroll-name">{{ parts[0] }}</p>
+            <div class="scroll-verified">
+              <img src="{{ 'meta-verified.webp' | asset_url }}" alt="" width="20" height="20" loading="lazy">
+              <span>Verified buyer</span>
+            </div>
+          </header>
+          <p class="scroll-text">"{{ parts[1] }}"</p>
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <!-- Row 2: scroll right -->
+  <div class="scroll-row-wrap" aria-label="Customer reviews scrolling right">
+    <div class="scroll-row scroll-right">
+      {%- for item in row2 -%}
+        {%- assign parts = item | split: "," -%}
+        <article class="scroll-card" role="button" tabindex="0" aria-label="Review by {{ parts[0] }}">
+          <header class="scroll-card-header">
+            <div class="scroll-stars">{{ star_svg }}{{ star_svg }}{{ star_svg }}{{ star_svg }}{{ star_svg }}</div>
+            <p class="scroll-name">{{ parts[0] }}</p>
+            <div class="scroll-verified">
+              <img src="{{ 'meta-verified.webp' | asset_url }}" alt="Meta Verified" width="20" height="20" loading="lazy">
+              <span>Verified buyer</span>
+            </div>
+          </header>
+          <p class="scroll-text">"{{ parts[1] }}"</p>
+        </article>
+      {%- endfor -%}
+      {%- for item in row2 -%}
+        {%- assign parts = item | split: "," -%}
+        <article class="scroll-card" aria-hidden="true" tabindex="-1">
+          <header class="scroll-card-header">
+            <div class="scroll-stars">{{ star_svg }}{{ star_svg }}{{ star_svg }}{{ star_svg }}{{ star_svg }}</div>
+            <p class="scroll-name">{{ parts[0] }}</p>
+            <div class="scroll-verified">
+              <img src="{{ 'meta-verified.webp' | asset_url }}" alt="" width="20" height="20" loading="lazy">
+              <span>Verified buyer</span>
+            </div>
+          </header>
+          <p class="scroll-text">"{{ parts[1] }}"</p>
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+
+</section>
+
+{% schema %}
+{
+  "name": "Scrolling Reviews",
+  "settings": [],
+  "presets": [{ "name": "Scrolling Reviews" }]
+}
+{% endschema %}
+

@@ -1,0 +1,884 @@
+﻿{% assign primary_color = settings.color_primary | default: '#7C4A1E' %}
+{% assign dark_color = settings.color_dark | default: '#3D1F0A' %}
+
+{%- assign gallery_images_string = "Customer-review (1).jpeg|Customer-review (2).jpeg|Customer-review (3).jpeg|Customer-review (4).jpeg|Customer-review (5).jpeg|Customer-review (6).jpeg|Customer-review (7).jpeg|Customer-review (8).jpeg|Customer-review (9).jpeg|Customer-review (10).jpeg|Customer-review (11).jpeg|Customer-review (12).jpeg|Customer-review (13).jpeg|Customer-review (14).jpeg|Customer-review (15).jpeg|Customer-review (16).jpeg|Customer-review (17).jpeg|Customer-review (18).jpeg|Customer-review (19).jpeg|Customer-review (20).jpeg|Customer-review (21).jpeg|Customer-review (22).jpeg|Customer-review (23).jpeg|Customer-review (24).jpeg|Customer-review (25).jpeg|Customer-review (26).jpeg|Customer-review (27).jpeg|Customer-review (28).jpeg|Customer-review (29).jpeg|Customer-review (30).jpeg|Customer-review (31).jpeg|Customer-review (32).jpeg|Customer-review (33).jpeg|Customer-review (34).jpeg|Customer-review (35).jpeg|Customer-review (36).jpeg|Customer-review (37).jpeg|Customer-review (38).jpeg|Customer-review (39).jpeg|Customer-review (40).jpeg|Customer-review (41).jpeg|Customer-review (42).jpeg|Customer-review (43).jpeg|Customer-review (45).jpeg|Customer-review (46).jpeg|Customer-review (47).jpeg|Customer-review (48).jpeg|Customer-review (49).jpeg|Customer-review (50).jpeg|Customer-review (51).jpeg|Customer-review (52).jpeg|Customer-review (53).jpeg|Customer-review (54).jpeg" | split: "|" -%}
+
+<style>
+  .gallery-page {
+    min-height: 100vh;
+    background: #fff;
+    color: {{ dark_color }};
+  }
+  .gallery-page .gallery-shell {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .gallery-page .gallery-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 42vh;
+    padding: 148px 16px 88px;
+    background: {{ dark_color }};
+    color: #fff;
+  }
+  .gallery-page .gallery-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.7), rgba(0,0,0,0.62)),
+      url({{ 'hero.webp' | asset_url }}) center/cover no-repeat;
+  }
+  .gallery-page .gallery-hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .gallery-page .gallery-hero h1 {
+    margin: 0 0 18px;
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    line-height: 1.04;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .gallery-page .gallery-hero p {
+    margin: 0 auto;
+    max-width: 680px;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: clamp(1.05rem, 2vw, 1.4rem);
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .gallery-page .gallery-card-shell {
+    position: relative;
+    z-index: 2;
+    margin-top: -36px;
+    margin-bottom: 72px;
+  }
+  .gallery-page .gallery-breadcrumb {
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 20px 45px rgba(20, 26, 50, 0.12);
+    padding: 16px 20px;
+  }
+  .gallery-page .gallery-breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .gallery-page .gallery-breadcrumb a {
+    color: #374151;
+    text-decoration: none;
+  }
+  .gallery-page .gallery-breadcrumb a:hover {
+    color: {{ primary_color }};
+  }
+  .gallery-page .gallery-breadcrumb-current {
+    color: #6b7280;
+  }
+  .gallery-page .gallery-content {
+    background: #fff;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 20px 45px rgba(20, 26, 50, 0.12);
+    padding: 28px 24px 36px;
+  }
+  .gallery-page .gallery-section + .gallery-section {
+    margin-top: 56px;
+  }
+  .gallery-page .gallery-heading {
+    margin: 0 0 14px;
+    text-align: center;
+    color: {{ dark_color }};
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    font-weight: 800;
+  }
+  .gallery-page .gallery-subheading {
+    margin: 0 auto 26px;
+    max-width: 760px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 15px;
+    line-height: 1.7;
+    font-weight: 500;
+  }
+  .gallery-page .gallery-featured-grid,
+  .gallery-page .gallery-grid {
+    display: grid;
+    gap: 18px;
+  }
+  .gallery-page .gallery-featured-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .gallery-page .gallery-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .gallery-page .gallery-item {
+    display: block;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(20, 26, 50, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+  .gallery-page .gallery-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(20, 26, 50, 0.14);
+  }
+  .gallery-page .gallery-item-media {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(180deg, #fff7f2 0%, #ffffff 100%);
+  }
+  .gallery-page .gallery-item-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .gallery-page .gallery-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    background: #fff1e8;
+    color: #c2410c;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .gallery-page .gallery-collections {
+    padding: 80px 0;
+    background: #f9fafb;
+  }
+  .gallery-page .gallery-collections-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .gallery-page .gallery-collection-card {
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+  .gallery-page .gallery-collection-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+  }
+  .gallery-page .gallery-collection-media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+  .gallery-page .gallery-collection-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .gallery-page .gallery-collection-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 22px;
+    background: linear-gradient(180deg, rgba(20, 26, 50, 0.08), rgba(20, 26, 50, 0.78));
+    color: #fff;
+  }
+  .gallery-page .gallery-collection-overlay h3 {
+    margin: 0 0 6px;
+    font-size: 1.45rem;
+    font-weight: 800;
+  }
+  .gallery-page .gallery-collection-overlay p {
+    margin: 0;
+    color: rgba(255,255,255,0.86);
+    font-size: 0.98rem;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .gallery-page .gallery-collection-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px 22px;
+  }
+  .gallery-page .gallery-collection-count {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #374151;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .gallery-page .gallery-collection-link {
+    color: {{ primary_color }};
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .gallery-page .gallery-cta {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #7C4A1E 0%, #6B3A18 100%);
+    color: #fff;
+    padding: 76px 0;
+  }
+  .gallery-page .gallery-cta::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at top left, rgba(255,255,255,0.16), transparent 26%),
+      radial-gradient(circle at bottom right, rgba(20,26,50,0.18), transparent 28%);
+  }
+  .gallery-page .gallery-cta-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    align-items: center;
+    gap: 44px;
+  }
+  .gallery-page .gallery-cta-copy h2 {
+    margin: 0 0 18px;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.08;
+    font-weight: 800;
+  }
+  .gallery-page .gallery-cta-copy p {
+    margin: 0 0 28px;
+    max-width: 640px;
+    color: rgba(255,255,255,0.92);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    font-weight: 500;
+  }
+  .gallery-page .gallery-cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .gallery-page .gallery-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    border-radius: 9999px;
+    padding: 0 28px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+  }
+  .gallery-page .gallery-btn:hover {
+    transform: translateY(-2px);
+  }
+  .gallery-page .gallery-btn-primary {
+    background: #fff;
+    color: #6B3A18;
+  }
+  .gallery-page .gallery-btn-secondary {
+    border: 2px solid rgba(20, 26, 50, 0.85);
+    background: rgba(20, 26, 50, 0.18);
+    color: #fff;
+  }
+  .gallery-page .gallery-cta-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 32px;
+    margin-top: 30px;
+  }
+  .gallery-page .gallery-cta-contact-label {
+    margin: 0 0 4px;
+    color: rgba(255,255,255,0.78);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .gallery-page .gallery-cta-contact-value {
+    margin: 0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .gallery-page .gallery-cta-art {
+    position: relative;
+    width: 100%;
+    max-width: 370px;
+    margin: 0 auto;
+  }
+  .gallery-page .gallery-cta-art-main {
+    border-radius: 24px;
+    background: #fff;
+    padding: 16px;
+    box-shadow: 0 30px 60px rgba(20, 26, 50, 0.26);
+    transform: rotate(3deg);
+  }
+  .gallery-page .gallery-cta-art-main img,
+  .gallery-page .gallery-cta-art-badge img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+  }
+  .gallery-page .gallery-cta-proof {
+    position: absolute;
+    top: -22px;
+    left: -22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 9999px;
+    background: #facc15;
+    color: #9a3412;
+    box-shadow: 0 18px 34px rgba(20, 26, 50, 0.2);
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.15;
+    text-align: center;
+    transform: rotate(12deg);
+  }
+  .gallery-page .gallery-cta-art-badge {
+    position: absolute;
+    right: -12px;
+    bottom: -12px;
+    width: 112px;
+    border-radius: 16px;
+    background: #fff;
+    padding: 8px;
+    box-shadow: 0 18px 34px rgba(20, 26, 50, 0.2);
+    transform: rotate(-6deg);
+  }
+  .gallery-page .gallery-lightbox[hidden] {
+    display: none !important;
+  }
+  .gallery-page .gallery-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .gallery-page .gallery-lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+  }
+  .gallery-page .gallery-lightbox-shell {
+    position: relative;
+    z-index: 1;
+    width: min(1100px, 100%);
+    max-height: calc(100vh - 48px);
+    overflow: hidden;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: #2A1008;
+    box-shadow: 0 28px 70px rgba(0,0,0,0.45);
+  }
+  .gallery-page .gallery-lightbox-close,
+  .gallery-page .gallery-lightbox-nav {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .gallery-page .gallery-lightbox-close:hover,
+  .gallery-page .gallery-lightbox-nav:hover {
+    background: rgba(255,255,255,0.22);
+    transform: translateY(-2px);
+  }
+  .gallery-page .gallery-lightbox-close {
+    top: 18px;
+    right: 18px;
+  }
+  .gallery-page .gallery-lightbox-nav--prev {
+    top: 50%;
+    left: 18px;
+    transform: translateY(-50%);
+  }
+  .gallery-page .gallery-lightbox-nav--next {
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%);
+  }
+  .gallery-page .gallery-lightbox-nav--prev:hover,
+  .gallery-page .gallery-lightbox-nav--next:hover {
+    transform: translateY(calc(-50% - 2px));
+  }
+  .gallery-page .gallery-lightbox-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+    min-height: min(80vh, 760px);
+  }
+  .gallery-page .gallery-lightbox-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 34px;
+    background: #2A1008;
+  }
+  .gallery-page .gallery-lightbox-media img {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    object-fit: contain;
+    border-radius: 18px;
+  }
+  .gallery-page .gallery-lightbox-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 22px;
+    padding: 38px 34px;
+    color: #cbd5e1;
+    background: #111827;
+  }
+  .gallery-page .gallery-lightbox-kicker {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    border-radius: 9999px;
+    background: rgba(124, 74, 30, 0.14);
+    color: #fdba74;
+    padding: 7px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .gallery-page .gallery-lightbox-title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    line-height: 1.12;
+    font-weight: 800;
+  }
+  .gallery-page .gallery-lightbox-description {
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 15px;
+    line-height: 1.8;
+    font-weight: 500;
+  }
+  .gallery-page .gallery-lightbox-count {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .gallery-page .gallery-lightbox-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .gallery-page .gallery-lightbox-thumb-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .gallery-page .gallery-lightbox-thumb {
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #2A1008;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .gallery-page .gallery-lightbox-thumb.is-active {
+    border-color: rgba(124, 74, 30, 0.9);
+  }
+  .gallery-page .gallery-lightbox-thumb:hover {
+    transform: translateY(-2px);
+  }
+  .gallery-page .gallery-lightbox-thumb img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+  }
+  body.gallery-lightbox-open {
+    overflow: hidden;
+  }
+  @media (max-width: 1180px) {
+    .gallery-page .gallery-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .gallery-page .gallery-featured-grid,
+    .gallery-page .gallery-collections-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 900px) {
+    .gallery-page .gallery-cta-inner,
+    .gallery-page .gallery-lightbox-layout {
+      grid-template-columns: 1fr;
+    }
+    .gallery-page .gallery-collections-grid,
+    .gallery-page .gallery-featured-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .gallery-page .gallery-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .gallery-page .gallery-lightbox-shell {
+      max-height: calc(100vh - 24px);
+    }
+    .gallery-page .gallery-lightbox-media {
+      min-height: 340px;
+      padding: 28px;
+    }
+  }
+  @media (max-width: 640px) {
+    .gallery-page .gallery-hero {
+      min-height: 36vh;
+      padding-top: 132px;
+      padding-bottom: 68px;
+    }
+    .gallery-page .gallery-card-shell {
+      margin-bottom: 52px;
+    }
+    .gallery-page .gallery-content {
+      padding: 22px 16px 30px;
+    }
+    .gallery-page .gallery-grid,
+    .gallery-page .gallery-featured-grid,
+    .gallery-page .gallery-collections-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .gallery-page .gallery-lightbox {
+      padding: 12px;
+    }
+    .gallery-page .gallery-lightbox-info {
+      padding: 26px 18px 22px;
+    }
+    .gallery-page .gallery-lightbox-media {
+      min-height: 260px;
+      padding: 18px;
+    }
+    .gallery-page .gallery-lightbox-thumb-row {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .gallery-page .gallery-lightbox-nav--prev,
+    .gallery-page .gallery-lightbox-nav--next {
+      top: auto;
+      bottom: 18px;
+      transform: none;
+    }
+    .gallery-page .gallery-lightbox-nav--prev:hover,
+    .gallery-page .gallery-lightbox-nav--next:hover {
+      transform: translateY(-2px);
+    }
+    .gallery-page .gallery-lightbox-nav--prev {
+      left: 18px;
+    }
+    .gallery-page .gallery-lightbox-nav--next {
+      right: 18px;
+    }
+  }
+</style>
+
+<div class="gallery-page">
+  <section class="gallery-hero">
+    <div class="gallery-shell gallery-hero-inner">
+      <h1>Premium Custom Patches</h1>
+      <p>Explore our gallery of high-quality custom patches for your business, team, event, or organization.</p>
+    </div>
+  </section>
+
+  <div class="gallery-shell gallery-card-shell">
+    <div class="gallery-breadcrumb">
+      <ol aria-label="Breadcrumb">
+        <li><a href="/">Home</a></li>
+        <li aria-hidden="true">/</li>
+        <li class="gallery-breadcrumb-current">Gallery</li>
+      </ol>
+    </div>
+
+    <div class="gallery-content">
+      {% comment %} <section class="gallery-section">
+        <h2 class="gallery-heading">Featured Patches</h2>
+        <p class="gallery-subheading">A curated look at some of our standout customer patch designs with premium stitching, bold color, and clean detail.</p>
+
+        <div class="gallery-featured-grid">
+          {%- for image_name in gallery_images_string limit: 12 -%}
+            {%- assign image_index = forloop.index -%}
+            {%- assign image_src = image_name | asset_url -%}
+            <a href="{{ image_src }}" class="gallery-item" data-gallery-open data-gallery-index="{{ forloop.index0 }}" data-gallery-src="{{ image_src }}" data-gallery-title="Customer Patch {{ image_index }}" data-gallery-alt="Customer patch gallery image {{ image_index }}">
+              <div class="gallery-item-media">
+                <img src="{{ image_src }}" alt="Customer patch gallery image {{ image_index }}" loading="lazy">
+              </div>
+            </a>
+          {%- endfor -%}
+        </div>
+      </section> {% endcomment %}
+
+      <section class="gallery-section">
+        <h2 class="gallery-heading">Our Patch Collection</h2>
+        <p class="gallery-subheading">Browse our customer gallery of custom patch work. Every patch is crafted with premium materials and attention to detail.</p>
+
+        <div class="gallery-grid">
+          {%- for image_name in gallery_images_string -%}
+            {%- assign image_index = forloop.index -%}
+            {%- assign image_src = image_name | asset_url -%}
+            <a href="{{ image_src }}" class="gallery-item" data-gallery-open data-gallery-index="{{ forloop.index0 }}" data-gallery-src="{{ image_src }}" data-gallery-title="Customer Patch {{ image_index }}" data-gallery-alt="Customer patch gallery image {{ image_index }}">
+              <div class="gallery-item-media">
+                <img src="{{ image_src }}" alt="Customer patch gallery image {{ image_index }}" loading="lazy">
+              </div>
+            </a>
+          {%- endfor -%}
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section class="gallery-collections">
+    <div class="gallery-shell">
+      <h2 class="gallery-heading">Featured Collections</h2>
+      <p class="gallery-subheading">Explore our premium patch styles by material, texture, and application.</p>
+
+      <div class="gallery-collections-grid">
+        <a href="/products/embroidered-patches" class="gallery-collection-card">
+          <div class="gallery-collection-media">
+            <img src="{{ 'embroidered-patches.webp' | asset_url }}" alt="Embroidered Collection" loading="lazy">
+            <div class="gallery-collection-overlay">
+              <h3>Embroidered Collection</h3>
+              <p>Premium embroidered patches with detailed stitching.</p>
+            </div>
+          </div>
+          <div class="gallery-collection-footer">
+            <span class="gallery-collection-count">8 patches</span>
+            <span class="gallery-collection-link">View Collection -></span>
+          </div>
+        </a>
+
+        <a href="/products/custom-chenille-patches" class="gallery-collection-card">
+          <div class="gallery-collection-media">
+            <img src="{{ 'chenille-patches.webp' | asset_url }}" alt="Chenille and Varsity" loading="lazy">
+            <div class="gallery-collection-overlay">
+              <h3>Chenille and Varsity</h3>
+              <p>Classic chenille patches perfect for jackets and letterman wear.</p>
+            </div>
+          </div>
+          <div class="gallery-collection-footer">
+            <span class="gallery-collection-count">6 patches</span>
+            <span class="gallery-collection-link">View Collection -></span>
+          </div>
+        </a>
+
+        <a href="/products/pvc-patches" class="gallery-collection-card">
+          <div class="gallery-collection-media">
+            <img src="{{ 'pvc-patches.webp' | asset_url }}" alt="PVC and Durable" loading="lazy">
+            <div class="gallery-collection-overlay">
+              <h3>PVC and Durable</h3>
+              <p>Weather-resistant PVC patches for outdoor, tactical, and rugged use.</p>
+            </div>
+          </div>
+          <div class="gallery-collection-footer">
+            <span class="gallery-collection-count">10 patches</span>
+            <span class="gallery-collection-link">View Collection -></span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery-cta">
+    <div class="gallery-shell gallery-cta-inner">
+      <div class="gallery-cta-copy">
+        <h2>Ready to Create Your Custom Patches?</h2>
+        <p>Our team is ready to bring your patch vision to life with premium materials, strong craftsmanship, and expert support from design to delivery.</p>
+
+        <div class="gallery-cta-actions">
+          <a href="/collections" class="gallery-btn gallery-btn-primary">Get Started</a>
+          <a href="/collections" class="gallery-btn gallery-btn-secondary">Shop Now</a>
+        </div>
+
+        <div class="gallery-cta-contact">
+          <div>
+            <p class="gallery-cta-contact-label">Call us</p>
+            <p class="gallery-cta-contact-value">+1-888-499-7708</p>
+          </div>
+          <div>
+            <p class="gallery-cta-contact-label">Email us</p>
+            <p class="gallery-cta-contact-value">info@yakpatches.com</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-cta-art">
+        <div class="gallery-cta-proof">FREE<br>DESIGN<br>PROOF</div>
+        <div class="gallery-cta-art-main">
+          <img src="{{ 'upload-your-design.webp' | asset_url }}" alt="Custom patch design process" loading="lazy">
+        </div>
+        <div class="gallery-cta-art-badge">
+          <img src="{{ 'embroidered-patches.webp' | asset_url }}" alt="Embroidered patch sample" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gallery-lightbox" data-gallery-lightbox hidden aria-hidden="true">
+    <div class="gallery-lightbox-backdrop" data-gallery-close></div>
+    <div class="gallery-lightbox-shell" role="dialog" aria-modal="true" aria-label="Customer patch gallery viewer">
+      <button class="gallery-lightbox-close" type="button" aria-label="Close gallery viewer" data-gallery-close>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+      </button>
+      <button class="gallery-lightbox-nav gallery-lightbox-nav--prev" type="button" aria-label="Previous image" data-gallery-prev>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+      </button>
+      <button class="gallery-lightbox-nav gallery-lightbox-nav--next" type="button" aria-label="Next image" data-gallery-next>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      </button>
+
+      <div class="gallery-lightbox-layout">
+        <div class="gallery-lightbox-media">
+          <img src="" alt="" data-gallery-lightbox-image>
+        </div>
+        <div class="gallery-lightbox-info">
+          <span class="gallery-lightbox-kicker">Customer Gallery</span>
+          <h3 class="gallery-lightbox-title" data-gallery-lightbox-title></h3>
+          <p class="gallery-lightbox-description">Premium custom patch work from our customer gallery, showcasing vibrant thread, clean edges, and detailed craftsmanship.</p>
+          <div class="gallery-lightbox-count" data-gallery-lightbox-count></div>
+          <div class="gallery-lightbox-actions">
+            <a href="" class="gallery-btn gallery-btn-primary" target="_blank" rel="noopener noreferrer" data-gallery-lightbox-open-original>Open Full Size</a>
+          </div>
+          <div class="gallery-lightbox-thumb-row" data-gallery-thumb-row></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const lightbox = document.querySelector('[data-gallery-lightbox]');
+    if (!lightbox) return;
+
+    const items = Array.from(document.querySelectorAll('[data-gallery-open]')).map((item) => ({
+      src: item.getAttribute('data-gallery-src'),
+      alt: item.getAttribute('data-gallery-alt'),
+      title: item.getAttribute('data-gallery-title')
+    }));
+
+    const imageEl = lightbox.querySelector('[data-gallery-lightbox-image]');
+    const titleEl = lightbox.querySelector('[data-gallery-lightbox-title]');
+    const countEl = lightbox.querySelector('[data-gallery-lightbox-count]');
+    const originalEl = lightbox.querySelector('[data-gallery-lightbox-open-original]');
+    const thumbRow = lightbox.querySelector('[data-gallery-thumb-row]');
+    const closeButtons = lightbox.querySelectorAll('[data-gallery-close]');
+    const prevButton = lightbox.querySelector('[data-gallery-prev]');
+    const nextButton = lightbox.querySelector('[data-gallery-next]');
+
+    let currentIndex = 0;
+
+    function renderThumbs() {
+      if (!thumbRow) return;
+      thumbRow.innerHTML = items.slice(0, 4).map((item, index) => {
+        const actualIndex = (currentIndex + index) % items.length;
+        const thumb = items[actualIndex];
+        return '<button class="gallery-lightbox-thumb' + (actualIndex === currentIndex ? ' is-active' : '') + '" type="button" data-gallery-thumb-index="' + actualIndex + '" aria-label="View ' + thumb.title + '"><img src="' + thumb.src + '" alt="' + thumb.alt + '"></button>';
+      }).join('');
+
+      thumbRow.querySelectorAll('[data-gallery-thumb-index]').forEach((button) => {
+        button.addEventListener('click', () => render(Number(button.getAttribute('data-gallery-thumb-index'))));
+      });
+    }
+
+    function render(index) {
+      const item = items[index];
+      if (!item) return;
+
+      currentIndex = index;
+      imageEl.src = item.src;
+      imageEl.alt = item.alt;
+      titleEl.textContent = item.title;
+      countEl.textContent = 'Image ' + (index + 1) + ' of ' + items.length;
+      originalEl.href = item.src;
+      renderThumbs();
+    }
+
+    function open(index) {
+      render(index);
+      lightbox.hidden = false;
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('gallery-lightbox-open');
+    }
+
+    function close() {
+      lightbox.hidden = true;
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('gallery-lightbox-open');
+    }
+
+    function navigate(step) {
+      const next = (currentIndex + step + items.length) % items.length;
+      render(next);
+    }
+
+    document.querySelectorAll('[data-gallery-open]').forEach((trigger, index) => {
+      trigger.addEventListener('click', (event) => {
+        event.preventDefault();
+        open(index);
+      });
+    });
+
+    closeButtons.forEach((button) => {
+      button.addEventListener('click', close);
+    });
+
+    if (prevButton) {
+      prevButton.addEventListener('click', () => navigate(-1));
+    }
+
+    if (nextButton) {
+      nextButton.addEventListener('click', () => navigate(1));
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (lightbox.hidden) return;
+      if (event.key === 'Escape') close();
+      if (event.key === 'ArrowLeft') navigate(-1);
+      if (event.key === 'ArrowRight') navigate(1);
+    });
+  })();
+</script>
+

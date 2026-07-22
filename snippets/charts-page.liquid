@@ -1,0 +1,1036 @@
+﻿{% assign primary_color = settings.color_primary | default: '#C4956A' %}
+{% assign dark_color = settings.color_dark | default: '#3D1F0A' %}
+
+{%- assign size_chart_rows_raw = "1.0 in|^|1.0 in|^|1.0 in|^|Small~~1.5 in|^|1.5 in|^|1.5 in|^|Small~~2.0 in|^|2.0 in|^|2.0 in|^|Small~~2.5 in|^|2.5 in|^|2.5 in|^|Small~~3.0 in|^|3.0 in|^|3.0 in|^|Medium~~3.5 in|^|3.5 in|^|3.5 in|^|Medium~~4.0 in|^|4.0 in|^|4.0 in|^|Medium~~4.5 in|^|4.5 in|^|4.5 in|^|Large~~5.0 in|^|5.0 in|^|5.0 in|^|Large~~6.0 in|^|6.0 in|^|6.0 in|^|Large~~7.0 in|^|7.0 in|^|7.0 in|^|Extra Large~~8.0 in|^|8.0 in|^|8.0 in|^|Extra Large~~9.0 in|^|9.0 in|^|9.0 in|^|Extra Large~~10.0 in|^|10.0 in|^|10.0 in|^|Extra Large~~2.0 in x 3.0 in|^|2.0 in|^|3.0 in|^|Rectangle~~2.5 in x 4.0 in|^|2.5 in|^|4.0 in|^|Rectangle~~3.0 in x 4.0 in|^|3.0 in|^|4.0 in|^|Rectangle~~3.0 in x 5.0 in|^|3.0 in|^|5.0 in|^|Rectangle~~4.0 in x 5.0 in|^|4.0 in|^|5.0 in|^|Rectangle~~4.0 in x 6.0 in|^|4.0 in|^|6.0 in|^|Rectangle" | split: "~~" -%}
+
+{%- assign pantone_rows_raw = "PMS 185 C|^|Red|^|#E4002B~~PMS 186 C|^|Dark Red|^|#C8102E~~PMS 485 C|^|Bright Red|^|#DA291C~~PMS 1788 C|^|Warm Red|^|#F2552C~~PMS 193 C|^|Cardinal Red|^|#AB0534~~PMS 1795 C|^|Tomato Red|^|#D62828~~PMS 1797 C|^|Cherry Red|^|#CC2D30~~PMS 1807 C|^|Brick Red|^|#A4343A~~PMS 1815 C|^|Maroon|^|#782F40~~PMS 1585 C|^|Orange|^|#FF5000~~PMS 1505 C|^|Bright Orange|^|#FF6633~~PMS 021 C|^|Deep Orange|^|#FF4814~~PMS 1495 C|^|Light Orange|^|#FF9E1B~~PMS 1525 C|^|Burnt Orange|^|#B64926~~PMS 1575 C|^|Tangerine|^|#FF8200~~PMS 1605 C|^|Rust|^|#B35C44~~PMS 1625 C|^|Coral|^|#FF7F5F~~PMS 116 C|^|Yellow|^|#FFCD00~~PMS 012 C|^|Bright Yellow|^|#FFD700~~PMS 109 C|^|Golden Yellow|^|#FFD100~~PMS 107 C|^|Lemon Yellow|^|#F9E547~~PMS 113 C|^|Canary Yellow|^|#F8DA1C~~PMS 120 C|^|Pale Yellow|^|#FDE456~~PMS 7548 C|^|Sunshine Yellow|^|#FFC72C~~PMS 7549 C|^|Amber|^|#FFBF3F~~PMS 355 C|^|Green|^|#00AB4E~~PMS 356 C|^|Dark Green|^|#007A33~~PMS 375 C|^|Lime Green|^|#97D700~~PMS 3425 C|^|Forest Green|^|#006241~~PMS 347 C|^|Kelly Green|^|#009A44~~PMS 360 C|^|Mint Green|^|#6CC24A~~PMS 368 C|^|Bright Green|^|#78BE20~~PMS 370 C|^|Grass Green|^|#5C8018~~PMS 377 C|^|Olive Green|^|#7A9A01~~PMS 3308 C|^|Pine Green|^|#115740~~PMS 3278 C|^|Emerald Green|^|#00B388~~PMS 300 C|^|Blue|^|#0047AB~~PMS 2935 C|^|Bright Blue|^|#0072CE~~PMS 287 C|^|Deep Blue|^|#3D1F0A~~PMS 299 C|^|Sky Blue|^|#00A3E0~~PMS 2728 C|^|Royal Blue|^|#0033A0~~PMS 2995 C|^|Light Blue|^|#00A9E0~~PMS 2955 C|^|Navy Blue|^|#003057~~PMS 2975 C|^|Baby Blue|^|#B8DDE1~~PMS 306 C|^|Aqua Blue|^|#00B5E2~~PMS 313 C|^|Teal Blue|^|#0085AD~~PMS 320 C|^|Turquoise|^|#009CA6~~PMS 326 C|^|Sea Green|^|#00B2A9~~PMS 2685 C|^|Purple|^|#5F259F~~PMS 2607 C|^|Deep Purple|^|#5C068C~~PMS 2583 C|^|Bright Purple|^|#9B26B6~~PMS 2665 C|^|Lavender|^|#9A7CB0~~PMS 2587 C|^|Violet|^|#8246AF~~PMS 2597 C|^|Grape|^|#6D2077~~PMS 2617 C|^|Plum|^|#5B2C6F~~PMS 2627 C|^|Eggplant|^|#4B2D73~~PMS 219 C|^|Pink|^|#E31C79~~PMS 213 C|^|Hot Pink|^|#EF3F85~~PMS 7425 C|^|Magenta|^|#B52555~~PMS 189 C|^|Bright Pink|^|#F04E98~~PMS 196 C|^|Light Pink|^|#F7B2CC~~PMS 203 C|^|Rose Pink|^|#E56A87~~PMS 210 C|^|Fuchsia|^|#EF6079~~PMS 225 C|^|Raspberry|^|#D62598~~PMS 476 C|^|Brown|^|#4E3629~~PMS 7504 C|^|Light Brown|^|#A67C52~~PMS 7533 C|^|Dark Brown|^|#3E2B2E~~PMS 7512 C|^|Tan|^|#C69C6D~~PMS 7516 C|^|Chocolate|^|#76392F~~PMS 7525 C|^|Beige|^|#C69C6D~~PMS 7530 C|^|Taupe|^|#A59C94~~PMS 7564 C|^|Caramel|^|#C87533~~PMS Black C|^|Black|^|#000000~~PMS White|^|White|^|#FFFFFF~~PMS Cool Gray 1 C|^|Light Gray|^|#D9D9D6~~PMS Cool Gray 6 C|^|Medium Gray|^|#A7A8AA~~PMS Cool Gray 11 C|^|Dark Gray|^|#53565A~~PMS 877 C|^|Silver|^|#8A8D8F~~PMS 871 C|^|Gold|^|#85714D~~PMS 876 C|^|Bronze|^|#8C6239~~PMS 8003 C|^|Copper|^|#9F7D5A" | split: "~~" -%}
+
+{%- assign cloth_rows_raw = "Navy Denim|^|#1a237e|^|CD-101~~Royal Blue|^|#1565c0|^|CD-102~~Sky Blue|^|#4fc3f7|^|CD-103~~Teal|^|#00796b|^|CD-104~~Turquoise|^|#00acc1|^|CD-105~~Indigo|^|#283593|^|CD-106~~Cobalt|^|#0d47a1|^|CD-107~~Baby Blue|^|#90caf9|^|CD-108~~Deep Red|^|#b71c1c|^|CD-109~~Burgundy|^|#880e4f|^|CD-110~~Crimson|^|#d32f2f|^|CD-111~~Maroon|^|#6d1b20|^|CD-112~~Ruby|^|#e53935|^|CD-113~~Cherry|^|#c62828|^|CD-114~~Wine|^|#5d1a1a|^|CD-115~~Scarlet|^|#f44336|^|CD-116~~Forest Green|^|#1b5e20|^|CD-117~~Olive Green|^|#33691e|^|CD-118~~Mint|^|#66bb6a|^|CD-119~~Lime|^|#7cb342|^|CD-120~~Emerald|^|#2e7d32|^|CD-121~~Sage|^|#558b2f|^|CD-122~~Hunter Green|^|#1b5e20|^|CD-123~~Jade|^|#00897b|^|CD-124~~Charcoal Black|^|#212121|^|CD-125~~Stone Grey|^|#616161|^|CD-126~~Silver|^|#9e9e9e|^|CD-127~~Khaki|^|#827717|^|CD-128~~Tan|^|#a1887f|^|CD-129~~Beige|^|#d7ccc8|^|CD-130~~Ivory|^|#f5f5f5|^|CD-131~~Coffee|^|#5d4037|^|CD-132~~Mustard|^|#f9a825|^|CD-133~~Gold|^|#ffc107|^|CD-134~~Lemon|^|#ffeb3b|^|CD-135~~Canary|^|#ffee58|^|CD-136~~Rust Orange|^|#bf360c|^|CD-137~~Tangerine|^|#ff9800|^|CD-138~~Coral|^|#ff7043|^|CD-139~~Amber|^|#ffb300|^|CD-140~~Violet|^|#6a1b9a|^|CD-141~~Lavender|^|#9575cd|^|CD-142~~Plum|^|#4a148c|^|CD-143~~Magenta|^|#c2185b|^|CD-144~~Fuchsia|^|#e91e63|^|CD-145~~Pink|^|#f48fb1|^|CD-146~~Hot Pink|^|#ec407a|^|CD-147~~Mauve|^|#ce93d8|^|CD-148~~Midnight Blue|^|#191970|^|CD-149~~Powder Blue|^|#B0E0E6|^|CD-150~~Steel Blue|^|#4682B4|^|CD-151~~Cerulean|^|#007BA7|^|CD-152~~Azure|^|#007FFF|^|CD-153~~Sapphire|^|#0F52BA|^|CD-154~~Vermilion|^|#E34234|^|CD-155~~Carmine|^|#960018|^|CD-156~~Raspberry|^|#E30B5C|^|CD-157~~Brick|^|#8B0000|^|CD-158~~Tomato|^|#FF6347|^|CD-159~~Seafoam|^|#71EEB8|^|CD-160~~Moss|^|#8A9A5B|^|CD-161~~Pine|^|#01796F|^|CD-162~~Avocado|^|#568203|^|CD-163~~Fern|^|#4F7942|^|CD-164~~Slate|^|#708090|^|CD-165~~Ash|^|#B2BEB5|^|CD-166~~Pewter|^|#8A9A9A|^|CD-167~~Taupe|^|#483C32|^|CD-168~~Cream|^|#FFFDD0|^|CD-169~~Saffron|^|#F4C430|^|CD-170~~Honey|^|#E6C700|^|CD-171~~Butterscotch|^|#E09540|^|CD-172~~Apricot|^|#FBCEB1|^|CD-173~~Peach|^|#FFE5B4|^|CD-174~~Amethyst|^|#9966CC|^|CD-175~~Orchid|^|#DA70D6|^|CD-176~~Lilac|^|#C8A2C8|^|CD-177~~Rose|^|#FF007F|^|CD-178~~Blush|^|#DE5D83|^|CD-179~~Denim|^|#1560BD|^|CD-180~~Canvas|^|#E4D5B7|^|CD-181~~Twill|^|#C19A6B|^|CD-182~~Linen|^|#FAF0E6|^|CD-183~~Velvet Black|^|#343434|^|CD-184~~Velvet Red|^|#A91101|^|CD-185~~Velvet Blue|^|#0C1793|^|CD-186" | split: "~~" -%}
+
+{%- assign thread_rows_raw = "1001|^|#e60000|^|Standard Thread~~1002|^|#cc0000|^|Standard Thread~~1003|^|#990000|^|Standard Thread~~1004|^|#800000|^|Standard Thread~~1005|^|#660000|^|Standard Thread~~1006|^|#ff3333|^|Standard Thread~~1007|^|#ff6666|^|Standard Thread~~1008|^|#ff9999|^|Standard Thread~~1009|^|#ffcccc|^|Standard Thread~~1010|^|#ff6600|^|Standard Thread~~1011|^|#ff8000|^|Standard Thread~~1012|^|#ff9933|^|Standard Thread~~1013|^|#ffb366|^|Standard Thread~~1014|^|#ffcc99|^|Standard Thread~~1015|^|#cc5200|^|Standard Thread~~1016|^|#994000|^|Standard Thread~~1017|^|#663000|^|Standard Thread~~1020|^|#ffff00|^|Standard Thread~~1021|^|#ffff66|^|Standard Thread~~1022|^|#ffff99|^|Standard Thread~~1023|^|#ffffcc|^|Standard Thread~~1024|^|#cccc00|^|Standard Thread~~1025|^|#999900|^|Standard Thread~~1026|^|#666600|^|Standard Thread~~1027|^|#333300|^|Standard Thread~~1030|^|#00cc00|^|Standard Thread~~1031|^|#00ff00|^|Standard Thread~~1032|^|#66ff66|^|Standard Thread~~1033|^|#99ff99|^|Standard Thread~~1034|^|#ccffcc|^|Standard Thread~~1035|^|#009900|^|Standard Thread~~1036|^|#006600|^|Standard Thread~~1037|^|#003300|^|Standard Thread~~1040|^|#0000ff|^|Standard Thread~~1041|^|#3333ff|^|Standard Thread~~1042|^|#6666ff|^|Standard Thread~~1043|^|#9999ff|^|Standard Thread~~1044|^|#ccccff|^|Standard Thread~~1045|^|#0000cc|^|Standard Thread~~1046|^|#000099|^|Standard Thread~~1047|^|#000066|^|Standard Thread~~1048|^|#000033|^|Standard Thread~~1050|^|#9900cc|^|Standard Thread~~1051|^|#cc00ff|^|Standard Thread~~1052|^|#cc66ff|^|Standard Thread~~1053|^|#cc99ff|^|Standard Thread~~1054|^|#ccccff|^|Standard Thread~~1055|^|#6600cc|^|Standard Thread~~1056|^|#330066|^|Standard Thread~~1060|^|#ff00ff|^|Standard Thread~~1061|^|#ff66ff|^|Standard Thread~~1062|^|#ff99ff|^|Standard Thread~~1063|^|#ffccff|^|Standard Thread~~1064|^|#cc00cc|^|Standard Thread~~1065|^|#990099|^|Standard Thread~~1066|^|#660066|^|Standard Thread~~1070|^|#996633|^|Standard Thread~~1071|^|#cc9966|^|Standard Thread~~1072|^|#d9b38c|^|Standard Thread~~1073|^|#e6ccb3|^|Standard Thread~~1074|^|#664400|^|Standard Thread~~1075|^|#4d3300|^|Standard Thread~~1076|^|#332200|^|Standard Thread~~1080|^|#000000|^|Standard Thread~~1081|^|#333333|^|Standard Thread~~1082|^|#666666|^|Standard Thread~~1083|^|#999999|^|Standard Thread~~1084|^|#cccccc|^|Standard Thread~~1085|^|#ffffff|^|Standard Thread~~1090|^|#008080|^|Standard Thread~~1091|^|#20B2AA|^|Standard Thread~~1092|^|#48D1CC|^|Standard Thread~~1093|^|#AFEEEE|^|Standard Thread~~1095|^|#FF7F50|^|Standard Thread~~1096|^|#FF6347|^|Standard Thread~~1097|^|#FA8072|^|Standard Thread~~1098|^|#FFA07A|^|Standard Thread~~1100|^|#E0B0FF|^|Standard Thread~~1101|^|#D8BFD8|^|Standard Thread~~1102|^|#DDA0DD|^|Standard Thread~~1101|^|#e60000|^|Madeira Rayon~~1102|^|#cc0000|^|Madeira Rayon~~1103|^|#990000|^|Madeira Rayon~~1104|^|#800000|^|Madeira Rayon~~1105|^|#660000|^|Madeira Rayon~~1106|^|#ff3333|^|Madeira Rayon~~1107|^|#ff6666|^|Madeira Rayon~~1108|^|#ff9999|^|Madeira Rayon~~1110|^|#ff6600|^|Madeira Rayon~~1111|^|#ff8000|^|Madeira Rayon~~1112|^|#ff9933|^|Madeira Rayon~~1113|^|#ffb366|^|Madeira Rayon~~1114|^|#cc5200|^|Madeira Rayon~~1115|^|#994000|^|Madeira Rayon~~1120|^|#ffff00|^|Madeira Rayon~~1121|^|#ffff66|^|Madeira Rayon~~1122|^|#ffff99|^|Madeira Rayon~~1123|^|#cccc00|^|Madeira Rayon~~1124|^|#999900|^|Madeira Rayon~~1130|^|#00cc00|^|Madeira Rayon~~1131|^|#00ff00|^|Madeira Rayon~~1132|^|#66ff66|^|Madeira Rayon~~1133|^|#009900|^|Madeira Rayon~~1134|^|#006600|^|Madeira Rayon~~1135|^|#003300|^|Madeira Rayon~~1140|^|#0000ff|^|Madeira Rayon~~1141|^|#3333ff|^|Madeira Rayon~~1142|^|#6666ff|^|Madeira Rayon~~1143|^|#0000cc|^|Madeira Rayon~~1144|^|#000099|^|Madeira Rayon~~1145|^|#000066|^|Madeira Rayon~~1150|^|#9900cc|^|Madeira Rayon~~1151|^|#cc00ff|^|Madeira Rayon~~1152|^|#cc66ff|^|Madeira Rayon~~1153|^|#6600cc|^|Madeira Rayon~~1154|^|#330066|^|Madeira Rayon~~1160|^|#ff00ff|^|Madeira Rayon~~1161|^|#ff66ff|^|Madeira Rayon~~1162|^|#ff99ff|^|Madeira Rayon~~1163|^|#cc00cc|^|Madeira Rayon~~1164|^|#990099|^|Madeira Rayon~~1170|^|#996633|^|Madeira Rayon~~1171|^|#cc9966|^|Madeira Rayon~~1172|^|#d9b38c|^|Madeira Rayon~~1173|^|#664400|^|Madeira Rayon~~1174|^|#4d3300|^|Madeira Rayon~~1180|^|#000000|^|Madeira Rayon~~1181|^|#333333|^|Madeira Rayon~~1182|^|#666666|^|Madeira Rayon~~1183|^|#999999|^|Madeira Rayon~~1184|^|#cccccc|^|Madeira Rayon~~1185|^|#ffffff|^|Madeira Rayon~~1190|^|#008080|^|Madeira Rayon~~1191|^|#20B2AA|^|Madeira Rayon~~1192|^|#48D1CC|^|Madeira Rayon~~1195|^|#FF7F50|^|Madeira Rayon~~1196|^|#FF6347|^|Madeira Rayon~~1197|^|#FA8072|^|Madeira Rayon~~1200|^|#E0B0FF|^|Madeira Rayon~~1201|^|#D8BFD8|^|Madeira Rayon~~1202|^|#DDA0DD|^|Madeira Rayon~~2001|^|#C0C0C0|^|Silver Metallic~~2002|^|#FFD700|^|Gold Metallic~~2003|^|#B87333|^|Copper Metallic~~2004|^|#CD7F32|^|Bronze Metallic~~2005|^|#E5E4E2|^|Platinum Metallic~~3001|^|#FF00FF|^|Neon Pink~~3002|^|#00FF00|^|Neon Green~~3003|^|#FF9900|^|Neon Orange~~3004|^|#FFFF00|^|Neon Yellow~~3005|^|#00FFFF|^|Neon Blue" | split: "~~" -%}
+
+{%- assign woven_rows_raw = "Gold Metallic|^|#ffd700|^|TH-201~~Silver Metallic|^|#c0c0c0|^|TH-202~~Bronze Metallic|^|#cd7f32|^|TH-203~~Copper Metallic|^|#b87333|^|TH-204~~Rose Gold|^|#b76e79|^|TH-205~~Platinum|^|#e5e4e2|^|TH-206~~Royal Blue|^|#1565c0|^|TH-207~~Navy Blue|^|#0d47a1|^|TH-208~~Sky Blue|^|#4fc3f7|^|TH-209~~Turquoise|^|#00acc1|^|TH-210~~Teal|^|#00796b|^|TH-211~~Aqua|^|#00bcd4|^|TH-212~~Crimson|^|#d32f2f|^|TH-213~~Burgundy|^|#880e4f|^|TH-214~~Cherry Red|^|#c62828|^|TH-215~~Scarlet|^|#f44336|^|TH-216~~Wine|^|#5d1a1a|^|TH-217~~Ruby|^|#e53935|^|TH-218~~Emerald|^|#2e7d32|^|TH-219~~Forest Green|^|#1b5e20|^|TH-220~~Mint|^|#66bb6a|^|TH-221~~Olive|^|#33691e|^|TH-222~~Lime|^|#7cb342|^|TH-223~~Sage|^|#558b2f|^|TH-224~~Amber|^|#ffb300|^|TH-225~~Gold|^|#ffc107|^|TH-226~~Lemon|^|#ffeb3b|^|TH-227~~Coral|^|#ff7043|^|TH-228~~Tangerine|^|#ff9800|^|TH-229~~Mustard|^|#f9a825|^|TH-230~~Violet|^|#6a1b9a|^|TH-231~~Lavender|^|#9575cd|^|TH-232~~Magenta|^|#c2185b|^|TH-233~~Fuchsia|^|#e91e63|^|TH-234~~Pink|^|#f48fb1|^|TH-235~~Hot Pink|^|#ec407a|^|TH-236~~Black|^|#212121|^|TH-237~~Charcoal|^|#424242|^|TH-238~~Grey|^|#757575|^|TH-239~~Silver|^|#9e9e9e|^|TH-240~~White|^|#ffffff|^|TH-241~~Ivory|^|#f5f5f5|^|TH-242~~Beige|^|#d7ccc8|^|TH-243~~Tan|^|#a1887f|^|TH-244~~Brown|^|#5d4037|^|TH-245~~Chocolate|^|#3e2723|^|TH-246~~Coffee|^|#4e342e|^|TH-247~~Khaki|^|#827717|^|TH-248" | split: "~~" -%}
+
+<style>
+  .charts-page {
+    min-height: 100vh;
+    background: #f8fafc;
+    color: #2A1008;
+  }
+
+  .charts-page .charts-shell {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 140px 16px 80px;
+  }
+
+  .charts-page .charts-breadcrumb {
+    margin-bottom: 24px;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .charts-page .charts-breadcrumb a {
+    color: inherit;
+  }
+
+  .charts-page .charts-breadcrumb a:hover {
+    color: {{ primary_color }};
+  }
+
+  .charts-page .charts-mobile-toggle-wrap {
+    display: none;
+  }
+
+  .charts-page .charts-layout {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  .charts-page .charts-sidebar-column {
+    position: relative;
+    min-width: 0;
+  }
+
+  .charts-page .charts-sidebar {
+    align-self: start;
+    height: fit-content;
+    position: sticky;
+    top: 132px;
+    max-height: calc(100vh - 156px);
+    border: 1px solid rgba(10, 36, 99, 0.1);
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .charts-page .charts-sidebar.is-sticky-fixed {
+    position: fixed;
+    top: 132px;
+    left: var(--charts-sidebar-left, 16px);
+    width: var(--charts-sidebar-width, 280px);
+    z-index: 30;
+  }
+
+  .charts-page .charts-sidebar.is-sticky-bottom {
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .charts-page .charts-sidebar-head {
+    padding: 20px 22px 14px;
+    background: linear-gradient(135deg, {{ dark_color }}, #142a78);
+    color: #fff;
+  }
+
+  .charts-page .charts-sidebar-head h2 {
+    margin: 0 0 6px;
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+
+  .charts-page .charts-sidebar-head p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .charts-page .charts-sidebar-nav {
+    padding: 12px;
+  }
+
+  .charts-page .charts-sidebar-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    color: #334155;
+    font-size: 0.96rem;
+    font-weight: 700;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+
+  .charts-page .charts-sidebar-link:hover,
+  .charts-page .charts-sidebar-link.is-active {
+    background: rgba(124, 74, 30, 0.08);
+    color: {{ primary_color }};
+    transform: translateX(2px);
+  }
+
+  .charts-page .charts-sidebar-link-index {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  .charts-page .charts-content {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    min-width: 0;
+  }
+
+  .charts-page .charts-card {
+    border: 1px solid rgba(10, 36, 99, 0.1);
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+    scroll-margin-top: 138px;
+  }
+
+  .charts-page .charts-card-inner {
+    padding: 28px;
+    min-width: 0;
+  }
+
+  .charts-page .charts-hero-title {
+    margin: 0 0 12px;
+    color: {{ dark_color }};
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.1;
+    font-weight: 800;
+  }
+
+  .charts-page .charts-hero-text,
+  .charts-page .charts-section-intro {
+    margin: 0;
+    color: #64748b;
+    font-size: 1rem;
+    line-height: 1.8;
+    font-weight: 500;
+  }
+
+  .charts-page .charts-list {
+    margin: 20px 0 0;
+    padding-left: 22px;
+    color: #334155;
+    list-style: disc;
+  }
+
+  .charts-page .charts-list li + li {
+    margin-top: 10px;
+  }
+
+  .charts-page .charts-list h3 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+
+  .charts-page .charts-section-head {
+    margin-bottom: 22px;
+  }
+
+  .charts-page .charts-section-head h2 {
+    margin: 0 0 10px;
+    color: {{ dark_color }};
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .charts-page .charts-search {
+    width: 100%;
+    min-height: 52px;
+    margin-bottom: 22px;
+    border: 1px solid #d1d5db;
+    border-radius: 9999px;
+    background: #fff;
+    padding: 0 18px;
+    color: #111827;
+    font-size: 0.96rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .charts-page .charts-search:focus {
+    border-color: {{ primary_color }};
+    box-shadow: 0 0 0 3px rgba(124, 74, 30, 0.15);
+  }
+
+  .charts-page .charts-table-wrap {
+    overflow-x: auto;
+    min-width: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .charts-page .charts-table {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+  }
+
+  .charts-page .charts-table thead tr {
+    background: linear-gradient(135deg, {{ primary_color }}, #7C4A1E);
+    color: #fff;
+  }
+
+  .charts-page .charts-table th,
+  .charts-page .charts-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 0.92rem;
+  }
+
+  .charts-page .charts-table th {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .charts-page .charts-table td {
+    color: #334155;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+
+  .charts-page .charts-table-label {
+    display: none;
+  }
+
+  .charts-page .charts-table tbody tr:hover {
+    background: #f8fafc;
+  }
+
+  .charts-page .charts-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .charts-page .charts-chip--small { background: #dbeafe; color: #1d4ed8; }
+  .charts-page .charts-chip--medium { background: #dcfce7; color: #15803d; }
+  .charts-page .charts-chip--large { background: #f3e8ff; color: #7e22ce; }
+  .charts-page .charts-chip--xlarge { background: #fee2e2; color: #b91c1c; }
+  .charts-page .charts-chip--rectangle { background: #fef3c7; color: #b45309; }
+
+  .charts-page .charts-grid {
+    display: grid;
+    gap: 16px;
+  }
+
+  .charts-page .charts-grid--pantone {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .charts-page .charts-grid--swatches {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .charts-page .charts-swatch-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-width: 0;
+  }
+
+  .charts-page .charts-swatch-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .charts-page .charts-swatch-color {
+    height: 110px;
+    width: 100%;
+  }
+
+  .charts-page .charts-swatch-body {
+    padding: 12px;
+  }
+
+  .charts-page .charts-swatch-title {
+    margin: 0 0 4px;
+    color: {{ dark_color }};
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  .charts-page .charts-swatch-meta {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .charts-page .charts-note {
+    margin-top: 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    background: #f8fafc;
+    padding: 18px 18px 18px 20px;
+  }
+
+  .charts-page .charts-note h3 {
+    margin: 0 0 10px;
+    color: {{ dark_color }};
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  .charts-page .charts-note p,
+  .charts-page .charts-note li {
+    color: #475569;
+    font-size: 0.93rem;
+    line-height: 1.75;
+    font-weight: 500;
+  }
+
+  .charts-page .charts-note ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style: disc;
+  }
+
+  .charts-page .charts-note a {
+    color: {{ primary_color }};
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .charts-page .charts-empty {
+    display: none;
+    padding: 18px;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .charts-page .charts-empty.is-visible {
+    display: block;
+  }
+
+  .charts-page .charts-sidebar-backdrop {
+    display: none;
+  }
+
+  @media (max-width: 1100px) {
+    .charts-page .charts-grid--pantone {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .charts-page .charts-grid--swatches {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 900px) {
+    .charts-page .charts-shell {
+      padding-top: 164px;
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+
+    .charts-page .charts-mobile-toggle-wrap {
+      display: block;
+      position: fixed;
+      top: 118px;
+      left: 14px;
+      z-index: 60;
+    }
+
+    .charts-page .charts-mobile-toggle {
+      min-width: 58px;
+      height: 42px;
+      padding: 0 14px;
+      border: none;
+      border-radius: 9999px;
+      background: {{ dark_color }};
+      color: #fff;
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.16);
+      cursor: pointer;
+      font-size: 0.96rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .charts-page .charts-layout {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .charts-page .charts-sidebar-column {
+      min-height: 0 !important;
+    }
+
+    .charts-page .charts-sidebar {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: min(92vw, 360px);
+      max-height: 78vh;
+      overflow-y: auto;
+      transform: translate(-50%, -50%) scale(0.96);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 70;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .charts-page .charts-sidebar.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .charts-page .charts-sidebar-backdrop.is-open {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.32);
+      z-index: 65;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .charts-page .charts-shell {
+      padding-top: 158px;
+      padding-bottom: 48px;
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
+    .charts-page .charts-mobile-toggle-wrap {
+      top: 114px;
+      left: 12px;
+    }
+
+    .charts-page .charts-mobile-toggle {
+      min-width: 54px;
+      height: 40px;
+      padding: 0 12px;
+      font-size: 0.92rem;
+    }
+
+    .charts-page .charts-content {
+      gap: 18px;
+    }
+
+    .charts-page .charts-card {
+      border-radius: 20px;
+    }
+
+    .charts-page .charts-card-inner {
+      padding: 18px;
+    }
+
+    .charts-page .charts-hero-title,
+    .charts-page .charts-section-head h2 {
+      font-size: 2rem;
+      line-height: 1.15;
+    }
+
+    .charts-page .charts-hero-text,
+    .charts-page .charts-section-intro,
+    .charts-page .charts-list h3,
+    .charts-page .charts-note p,
+    .charts-page .charts-note li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .charts-page .charts-section-head {
+      margin-bottom: 18px;
+    }
+
+    .charts-page .charts-search {
+      min-height: 48px;
+      margin-bottom: 18px;
+      padding: 0 16px;
+    }
+
+    .charts-page .charts-table-wrap {
+      margin-left: -18px;
+      margin-right: -18px;
+      padding-left: 18px;
+      padding-right: 18px;
+    }
+
+    .charts-page .charts-table--mobile-cards {
+      min-width: 0;
+    }
+
+    .charts-page .charts-table--mobile-cards thead {
+      display: none;
+    }
+
+    .charts-page .charts-table--mobile-cards tbody,
+    .charts-page .charts-table--mobile-cards tr,
+    .charts-page .charts-table--mobile-cards td {
+      display: block;
+      width: 100%;
+    }
+
+    .charts-page .charts-table--mobile-cards tbody {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .charts-page .charts-table--mobile-cards tr {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+      overflow: hidden;
+    }
+
+    .charts-page .charts-table--mobile-cards td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #eef2f7;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    .charts-page .charts-table--mobile-cards td:last-child {
+      border-bottom: 0;
+    }
+
+    .charts-page .charts-table--mobile-cards td::before {
+      content: attr(data-label);
+      display: block;
+      margin-bottom: 4px;
+      color: #64748b;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .charts-page .charts-table--mobile-cards .charts-table-label {
+      display: block;
+    }
+
+    .charts-page .charts-table--mobile-cards .charts-chip {
+      max-width: max-content;
+    }
+
+    .charts-page .charts-table:not(.charts-table--mobile-cards) {
+      min-width: 520px;
+    }
+
+    .charts-page .charts-table:not(.charts-table--mobile-cards) th,
+    .charts-page .charts-table:not(.charts-table--mobile-cards) td {
+      padding: 12px 12px;
+      font-size: 0.84rem;
+    }
+
+    .charts-page .charts-grid--pantone,
+    .charts-page .charts-grid--swatches {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .charts-page .charts-swatch-color {
+      height: 88px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .charts-page .charts-shell {
+      padding-top: 154px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .charts-page .charts-mobile-toggle-wrap {
+      left: 10px;
+    }
+
+    .charts-page .charts-card-inner {
+      padding: 16px;
+    }
+
+    .charts-page .charts-hero-title,
+    .charts-page .charts-section-head h2 {
+      font-size: 1.8rem;
+    }
+
+    .charts-page .charts-table-wrap {
+      margin-left: -16px;
+      margin-right: -16px;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .charts-page .charts-table:not(.charts-table--mobile-cards) {
+      min-width: 460px;
+    }
+
+    .charts-page .charts-grid--pantone,
+    .charts-page .charts-grid--swatches {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
+
+<div class="charts-page" data-charts-page>
+  <div class="charts-shell">
+    <div class="charts-breadcrumb">
+      <a href="/">Home</a> / <span>Reference Charts</span>
+    </div>
+
+    <div class="charts-mobile-toggle-wrap">
+      <button class="charts-mobile-toggle" type="button" aria-label="Open charts menu" data-charts-toggle>Menu</button>
+    </div>
+
+    <div class="charts-layout">
+      <div class="charts-sidebar-column" data-charts-sidebar-column>
+        <aside class="charts-sidebar" data-charts-sidebar>
+          <div class="charts-sidebar-head">
+            <h2>Reference Charts</h2>
+            <p>Jump between size, color, fabric, and thread guides for custom patches.</p>
+          </div>
+          <nav class="charts-sidebar-nav" aria-label="Charts navigation">
+            <a class="charts-sidebar-link is-active" href="#charts-overview" data-charts-nav><span>Overview</span><span class="charts-sidebar-link-index">01</span></a>
+            <a class="charts-sidebar-link" href="#charts-size" data-charts-nav><span>Size Chart</span><span class="charts-sidebar-link-index">02</span></a>
+            <a class="charts-sidebar-link" href="#charts-pantone" data-charts-nav><span>Color Chart</span><span class="charts-sidebar-link-index">03</span></a>
+            <a class="charts-sidebar-link" href="#charts-cloth" data-charts-nav><span>Cloth Swatches</span><span class="charts-sidebar-link-index">04</span></a>
+            <a class="charts-sidebar-link" href="#charts-thread" data-charts-nav><span>Thread Chart</span><span class="charts-sidebar-link-index">05</span></a>
+            <a class="charts-sidebar-link" href="#charts-woven" data-charts-nav><span>Woven Swatches</span><span class="charts-sidebar-link-index">06</span></a>
+          </nav>
+        </aside>
+      </div>
+
+      <main class="charts-content">
+        <section class="charts-card" id="charts-overview" data-charts-section>
+          <div class="charts-card-inner">
+            <h1 class="charts-hero-title">Reference Charts</h1>
+            <p class="charts-hero-text">
+              Welcome to our reference charts section. Please select a chart from the sidebar to view detailed information
+              about our patch sizes, colors, materials, and more.
+            </p>
+            <ul class="charts-list">
+              <li><h3>Size Chart - Dimensions and measurements for all patch types</h3></li>
+              <li><h3>Color Chart - Pantone color matching options</h3></li>
+              <li><h3>Cloth Color Swatches - Fabric options and colors</h3></li>
+              <li><h3>Thread Color Chart - Embroidery thread options</h3></li>
+              <li><h3>Woven Thread Swatches - Woven patch thread options</h3></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="charts-card" id="charts-size" data-charts-section>
+          <div class="charts-card-inner">
+            <div class="charts-section-head">
+              <h2>Size Chart</h2>
+              <p class="charts-section-intro">Find the right patch size for jackets, caps, uniforms, bags, and branding applications. All measurements are shown in inches.</p>
+            </div>
+            <input class="charts-search" type="search" placeholder="Search by size..." data-chart-search="size">
+            <div class="charts-table-wrap" data-chart-target="size">
+              <table class="charts-table charts-table--mobile-cards">
+                <thead>
+                  <tr>
+                    <th>Size</th>
+                    <th>Width</th>
+                    <th>Height</th>
+                    <th>Category</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {%- for row in size_chart_rows_raw -%}
+                    {%- assign parts = row | split: '|^|' -%}
+                    <tr data-chart-item data-search-text="{{ parts[0] }} {{ parts[1] }} {{ parts[2] }} {{ parts[3] }}">
+                      <td data-label="Size">{{ parts[0] }}</td>
+                      <td data-label="Width">{{ parts[1] }}</td>
+                      <td data-label="Height">{{ parts[2] }}</td>
+                      <td data-label="Category">
+                        <span class="charts-chip {% if parts[3] == 'Small' %}charts-chip--small{% elsif parts[3] == 'Medium' %}charts-chip--medium{% elsif parts[3] == 'Large' %}charts-chip--large{% elsif parts[3] == 'Extra Large' %}charts-chip--xlarge{% else %}charts-chip--rectangle{% endif %}">
+                          {{ parts[3] }}
+                        </span>
+                      </td>
+                    </tr>
+                  {%- endfor -%}
+                </tbody>
+              </table>
+            </div>
+            <div class="charts-empty" data-chart-empty="size">No sizes found matching your search criteria.</div>
+            <div class="charts-note">
+              <h3>Size Chart Notes</h3>
+              <ul>
+                <li>All measurements are in inches.</li>
+                <li>Custom sizes are available upon request.</li>
+                <li>Rectangular patches are measured width x height.</li>
+                <li>For irregular shapes, we measure the widest points.</li>
+                <li>Pricing varies based on size and complexity.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="charts-card" id="charts-pantone" data-charts-section>
+          <div class="charts-card-inner">
+            <div class="charts-section-head">
+              <h2>Color Chart</h2>
+              <p class="charts-section-intro">Browse our Pantone-style references to find the closest match for your artwork and brand colors.</p>
+            </div>
+            <input class="charts-search" type="search" placeholder="Search Pantone colors by number or name..." data-chart-search="pantone">
+            <div class="charts-grid charts-grid--pantone" data-chart-target="pantone">
+              {%- for row in pantone_rows_raw -%}
+                {%- assign parts = row | split: '|^|' -%}
+                <div class="charts-swatch-card" data-chart-item data-search-text="{{ parts[0] }} {{ parts[1] }} {{ parts[2] }}">
+                  <div class="charts-swatch-color" style="background-color: {{ parts[2] }};{% if parts[2] == '#FFFFFF' %}border:1px solid #e5e7eb;{% endif %}"></div>
+                  <div class="charts-swatch-body">
+                    <p class="charts-swatch-title">{{ parts[0] }}</p>
+                    <p class="charts-swatch-meta">{{ parts[1] }}</p>
+                    <p class="charts-swatch-meta">{{ parts[2] }}</p>
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+            <div class="charts-empty" data-chart-empty="pantone">No Pantone colors found matching your search criteria.</div>
+            <div class="charts-note">
+              <h3>Pantone Color Information</h3>
+              <p>Our products use PMS colors for precise matching. If you want to choose your own colors, include the Pantone number with your order request.</p>
+              <p>Computer screens can display colors slightly differently from real thread or fabric. If there is a color issue, our sales team will contact you with alternate options.</p>
+              <p>You can also visit <a href="https://www.pantone.com/pantone-connect" target="_blank" rel="noopener">Pantone Connect</a> to verify official color references before production.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="charts-card" id="charts-cloth" data-charts-section>
+          <div class="charts-card-inner">
+            <div class="charts-section-head">
+              <h2>Cloth Color Swatches</h2>
+              <p class="charts-section-intro">Review our fabric base colors for embroidered and specialty patches, including bright, neutral, denim, and velvet tones.</p>
+            </div>
+            <input class="charts-search" type="search" placeholder="Search cloth colors or code numbers..." data-chart-search="cloth">
+            <div class="charts-grid charts-grid--swatches" data-chart-target="cloth">
+              {%- for row in cloth_rows_raw -%}
+                {%- assign parts = row | split: '|^|' -%}
+                <div class="charts-swatch-card" data-chart-item data-search-text="{{ parts[0] }} {{ parts[2] }}">
+                  <div class="charts-swatch-color" style="background-color: {{ parts[1] }};{% if parts[1] == '#FFFFFF' or parts[1] == '#ffffff' %}border:1px solid #e5e7eb;{% endif %}"></div>
+                  <div class="charts-swatch-body">
+                    <p class="charts-swatch-title">{{ parts[0] }}</p>
+                    <p class="charts-swatch-meta">{{ parts[2] }}</p>
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+            <div class="charts-empty" data-chart-empty="cloth">No cloth colors found matching your search criteria.</div>
+            <div class="charts-note">
+              <h3>Cloth Material Information</h3>
+              <ul>
+                <li>Colors may appear slightly different on screen versus actual fabric.</li>
+                <li>All cloth materials are colorfast and resistant to fading.</li>
+                <li>Custom cloth colors are available upon request.</li>
+                <li>Our fabrics are durable and designed for long-lasting patches.</li>
+                <li>For exact color matching, please provide the specific cloth code.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="charts-card" id="charts-thread" data-charts-section>
+          <div class="charts-card-inner">
+            <div class="charts-section-head">
+              <h2>Thread Color Chart</h2>
+              <p class="charts-section-intro">Compare standard embroidery threads, Madeira rayon options, metallic finishes, and neon shades for standout patch work.</p>
+            </div>
+            <input class="charts-search" type="search" placeholder="Search thread colors by ID number..." data-chart-search="thread">
+            <div class="charts-table-wrap" data-chart-target="thread">
+              <table class="charts-table charts-table--mobile-cards">
+                <thead>
+                  <tr>
+                    <th>Thread Code</th>
+                    <th>Swatch</th>
+                    <th>Thread Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {%- for row in thread_rows_raw -%}
+                    {%- assign parts = row | split: '|^|' -%}
+                    <tr data-chart-item data-search-text="{{ parts[0] }} {{ parts[2] }}">
+                      <td data-label="Thread Code">{{ parts[0] }}</td>
+                      <td data-label="Swatch">
+                        <div style="width:100%;min-width:110px;height:28px;border-radius:8px;border:1px solid #e5e7eb;background-color: {{ parts[1] }};"></div>
+                      </td>
+                      <td data-label="Thread Type">{{ parts[2] }}</td>
+                    </tr>
+                  {%- endfor -%}
+                </tbody>
+              </table>
+            </div>
+            <div class="charts-empty" data-chart-empty="thread">No thread colors found matching your search criteria.</div>
+            <div class="charts-note">
+              <h3>Thread Information</h3>
+              <ul>
+                <li>Colors may appear slightly different on screen versus actual thread.</li>
+                <li>We use high-quality polyester threads for all embroidered patches.</li>
+                <li>Madeira rayon threads offer enhanced sheen and vibrance.</li>
+                <li>Custom thread colors are available with Pantone color matching.</li>
+                <li>Metallic threads add a premium, eye-catching finish to your patches.</li>
+                <li>Neon threads create vibrant, attention-grabbing designs that stand out.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="charts-card" id="charts-woven" data-charts-section>
+          <div class="charts-card-inner">
+            <div class="charts-section-head">
+              <h2>Woven Thread Swatches</h2>
+              <p class="charts-section-intro">Explore woven thread options for high-density woven patches where edge clarity and fine detail matter most.</p>
+            </div>
+            <input class="charts-search" type="search" placeholder="Search woven thread colors or code numbers..." data-chart-search="woven">
+            <div class="charts-grid charts-grid--swatches" data-chart-target="woven">
+              {%- for row in woven_rows_raw -%}
+                {%- assign parts = row | split: '|^|' -%}
+                <div class="charts-swatch-card" data-chart-item data-search-text="{{ parts[0] }} {{ parts[2] }}">
+                  <div class="charts-swatch-color" style="background-color: {{ parts[1] }};{% if parts[1] == '#FFFFFF' or parts[1] == '#ffffff' %}border:1px solid #e5e7eb;{% endif %}"></div>
+                  <div class="charts-swatch-body">
+                    <p class="charts-swatch-title">{{ parts[0] }}</p>
+                    <p class="charts-swatch-meta">{{ parts[2] }}</p>
+                  </div>
+                </div>
+              {%- endfor -%}
+            </div>
+            <div class="charts-empty" data-chart-empty="woven">No woven thread colors found matching your search criteria.</div>
+            <div class="charts-note">
+              <h3>Woven Thread Information</h3>
+              <ul>
+                <li>Colors may appear slightly different on screen versus actual thread.</li>
+                <li>We use high-quality polyester threads for all woven patches.</li>
+                <li>Custom thread colors are available with Pantone color matching.</li>
+                <li>All threads are colorfast and resistant to fading.</li>
+                <li>For exact color matching, please provide the specific thread code.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="charts-sidebar-backdrop" data-charts-backdrop></div>
+</div>
+
+<script>
+  (() => {
+    const root = document.currentScript && document.currentScript.previousElementSibling;
+    if (!root || !root.matches('[data-charts-page]')) return;
+
+    const desktopBreakpoint = 900;
+    const stickyTop = 132;
+    const stickyBottomGap = 24;
+    const layout = root.querySelector('.charts-layout');
+    const sidebar = root.querySelector('[data-charts-sidebar]');
+    const sidebarColumn = root.querySelector('[data-charts-sidebar-column]');
+    const content = root.querySelector('.charts-content');
+    const toggle = root.querySelector('[data-charts-toggle]');
+    const backdrop = root.querySelector('[data-charts-backdrop]');
+    const navLinks = Array.from(root.querySelectorAll('[data-charts-nav]'));
+    const sections = Array.from(root.querySelectorAll('[data-charts-section]'));
+
+    const resetDesktopSticky = () => {
+      if (!sidebar || !sidebarColumn) return;
+      sidebar.classList.remove('is-sticky-fixed', 'is-sticky-bottom');
+      sidebar.style.removeProperty('--charts-sidebar-left');
+      sidebar.style.removeProperty('--charts-sidebar-width');
+      sidebarColumn.style.removeProperty('min-height');
+    };
+
+    const updateDesktopSticky = () => {
+      if (!sidebar || !sidebarColumn || !content || !layout) return;
+      if (window.innerWidth <= desktopBreakpoint) {
+        resetDesktopSticky();
+        return;
+      }
+
+      const columnRect = sidebarColumn.getBoundingClientRect();
+      const layoutRect = layout.getBoundingClientRect();
+      const contentHeight = content.offsetHeight;
+      const sidebarHeight = sidebar.offsetHeight;
+      const maxHeight = Math.max(contentHeight, sidebarHeight);
+
+      sidebarColumn.style.minHeight = maxHeight + 'px';
+      sidebar.style.setProperty('--charts-sidebar-left', Math.round(columnRect.left) + 'px');
+      sidebar.style.setProperty('--charts-sidebar-width', Math.round(columnRect.width) + 'px');
+
+      const sidebarStart = window.scrollY + layoutRect.top;
+      const sidebarEnd = sidebarStart + maxHeight;
+      const fixedStop = sidebarEnd - stickyTop - stickyBottomGap - sidebarHeight;
+      const scrollY = window.scrollY;
+
+      sidebar.classList.remove('is-sticky-fixed', 'is-sticky-bottom');
+
+      if (scrollY <= sidebarStart - stickyTop) {
+        return;
+      }
+
+      if (scrollY >= fixedStop) {
+        sidebar.classList.add('is-sticky-bottom');
+        return;
+      }
+
+      sidebar.classList.add('is-sticky-fixed');
+    };
+
+    const closeSidebar = () => {
+      if (!sidebar || window.innerWidth > desktopBreakpoint) return;
+      sidebar.classList.remove('is-open');
+      backdrop && backdrop.classList.remove('is-open');
+    };
+
+    const openSidebar = () => {
+      if (!sidebar || window.innerWidth > desktopBreakpoint) return;
+      sidebar.classList.add('is-open');
+      backdrop && backdrop.classList.add('is-open');
+    };
+
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        if (sidebar && sidebar.classList.contains('is-open')) {
+          closeSidebar();
+        } else {
+          openSidebar();
+        }
+      });
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener('click', closeSidebar);
+    }
+
+    navLinks.forEach((link) => {
+      link.addEventListener('click', closeSidebar);
+    });
+
+    const setActiveLink = () => {
+      if (!sections.length) return;
+      let activeId = sections[0].id;
+      const offset = 180;
+
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top - offset <= 0) {
+          activeId = section.id;
+        }
+      });
+
+      navLinks.forEach((link) => {
+        const isActive = link.getAttribute('href') === '#' + activeId;
+        link.classList.toggle('is-active', isActive);
+      });
+    };
+
+    setActiveLink();
+    window.addEventListener('scroll', setActiveLink, { passive: true });
+    updateDesktopSticky();
+    window.addEventListener('scroll', updateDesktopSticky, { passive: true });
+    window.addEventListener('resize', updateDesktopSticky);
+    window.addEventListener('load', updateDesktopSticky);
+
+    const searchInputs = root.querySelectorAll('[data-chart-search]');
+    searchInputs.forEach((input) => {
+      input.addEventListener('input', () => {
+        const key = input.getAttribute('data-chart-search');
+        const target = root.querySelector('[data-chart-target="' + key + '"]');
+        const empty = root.querySelector('[data-chart-empty="' + key + '"]');
+        if (!target) return;
+
+        const query = input.value.trim().toLowerCase();
+        const items = target.querySelectorAll('[data-chart-item]');
+        let visibleCount = 0;
+
+        items.forEach((item) => {
+          const haystack = (item.getAttribute('data-search-text') || '').toLowerCase();
+          const matches = !query || haystack.indexOf(query) !== -1;
+          item.style.display = matches ? '' : 'none';
+          if (matches) visibleCount += 1;
+        });
+
+        if (empty) {
+          empty.classList.toggle('is-visible', visibleCount === 0);
+        }
+      });
+    });
+  })();
+</script>
+

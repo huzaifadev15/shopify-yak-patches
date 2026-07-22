@@ -1,0 +1,449 @@
+﻿{%- assign configured_handles = section.settings.collection_handles | strip -%}
+{%- assign normalized_handles = configured_handles | newline_to_br | replace: '<br />', ',' | replace: ', ', ',' | split: ',' -%}
+
+<section class="patch-collections-page">
+  <style>
+    .patch-collections-page {
+      background: linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
+      min-height: 100vh;
+      padding: 140px 0 72px;
+    }
+    .patch-collections-shell {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    .patch-collections-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .patch-collections-title {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      line-height: 1.05;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: #000000;
+      text-transform: uppercase;
+    }
+    .patch-collections-subtitle {
+      max-width: 760px;
+      margin: 0 auto;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      line-height: 1.7;
+      font-weight: 600;
+      color: #6b7280;
+    }
+    .patch-collections-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 24px;
+    }
+    .patch-collection-card {
+      position: relative;
+      height: 100%;
+    }
+    .patch-collection-surface {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 24px;
+      background: #ffffff;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+    .patch-collection-card:hover .patch-collection-surface {
+      transform: translateY(-3px);
+      box-shadow: none;
+    }
+    .patch-collection-media {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 290px;
+      padding: 26px;
+      background: #f5f5f5;
+      overflow: hidden;
+    }
+    .patch-collection-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #22c55e;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .patch-collection-carousel {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 238px;
+      touch-action: pan-y;
+      overflow: hidden;
+    }
+    .patch-collection-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+    .patch-collection-slide {
+      width: 100%;
+      min-width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .patch-collection-slide img {
+      width: 100%;
+      max-width: 250px;
+      height: auto;
+      max-height: 250px;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    .patch-collection-card:hover .patch-collection-slide img {
+      transform: scale(1.05);
+    }
+    .patch-collection-media-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+      color: inherit;
+      text-decoration: none;
+      overflow: hidden;
+    }
+    .patch-collection-arrow {
+      position: absolute;
+      top: 50%;
+      z-index: 2;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(17, 24, 39, 0.6);
+      color: #ffffff;
+      cursor: pointer;
+      transform: translateY(-50%);
+      transition: background 0.2s ease, opacity 0.2s ease;
+    }
+    .patch-collection-arrow:hover {
+      background: rgba(17, 24, 39, 0.82);
+    }
+    .patch-collection-arrow.prev {
+      left: 10px;
+    }
+    .patch-collection-arrow.next {
+      right: 10px;
+    }
+    .patch-collection-arrow svg {
+      width: 18px;
+      height: 18px;
+    }
+    .patch-collection-surface:hover .patch-collection-arrow {
+      opacity: 1;
+    }
+    .patch-collection-body {
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+      padding: 16px 18px 22px;
+    }
+    .patch-collection-body-link {
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+      color: inherit;
+      text-decoration: none;
+    }
+    .patch-collection-name {
+      margin: 0;
+      color: #111827;
+      font-size: 1rem;
+      line-height: 1.35;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .patch-collection-price {
+      margin: 6px 0 0;
+      color: #22c55e;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+    .patch-collection-desc {
+      margin: 10px 0 0;
+      color: #6b7280;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1 1 auto;
+    }
+    .patch-collection-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      background: #111827;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background 0.2s ease;
+    }
+    .patch-collection-card:hover .patch-collection-cta {
+      background: #2A1008;
+    }
+    .patch-collection-empty {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      background: #ffffff;
+      text-align: center;
+      color: #6b7280;
+    }
+    .patch-collection-swipe {
+      position: absolute;
+      left: 50%;
+      bottom: 12px;
+      z-index: 2;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(17, 24, 39, 0.65);
+      color: #ffffff;
+      font-size: 11px;
+      transform: translateX(-50%);
+    }
+    .patch-collection-swipe-line {
+      width: 12px;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.75);
+    }
+    @media (min-width: 992px) {
+      .patch-collection-arrow.has-multiple {
+        display: inline-flex;
+        opacity: 0;
+      }
+    }
+    @media (max-width: 1199px) {
+      .patch-collections-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 991px) {
+      .patch-collections-page {
+        margin-top: 28px;
+        padding-top: 116px;
+      }
+      .patch-collection-media {
+        min-height: 250px;
+      }
+      .patch-collection-swipe.has-multiple {
+        display: inline-flex;
+      }
+    }
+    @media (max-width: 767px) {
+      .patch-collections-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .patch-collections-header {
+        margin-bottom: 36px;
+      }
+      .patch-collection-media {
+        min-height: 220px;
+        padding: 18px;
+      }
+      .patch-collection-body {
+        padding: 14px 14px 18px;
+      }
+      .patch-collection-name {
+        font-size: 0.92rem;
+      }
+      .patch-collection-price,
+      .patch-collection-desc,
+      .patch-collection-cta {
+        font-size: 0.82rem;
+      }
+    }
+  </style>
+
+  <div class="patch-collections-shell">
+    <header class="patch-collections-header">
+      <h1 class="patch-collections-title">{{ section.settings.heading }}</h1>
+      <p class="patch-collections-subtitle">{{ section.settings.subheading }}</p>
+    </header>
+
+    <div class="patch-collections-grid">
+      {%- assign rendered_cards = 0 -%}
+      {%- if configured_handles != blank -%}
+        {%- for raw_handle in normalized_handles -%}
+          {%- assign handle = raw_handle | strip -%}
+          {%- if handle != blank -%}
+            {%- assign patch_collection = all_collections[handle] -%}
+            {%- assign eager_load = false -%}
+            {%- if rendered_cards < 4 -%}{%- assign eager_load = true -%}{%- endif -%}
+            {%- render 'list-collections-card', patch_collection: patch_collection, section: section, eager_load: eager_load -%}
+            {%- if patch_collection != blank -%}
+              {%- assign rendered_cards = rendered_cards | plus: 1 -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for patch_collection in collections -%}
+          {%- unless patch_collection.handle == 'frontpage' -%}
+            {%- assign eager_load = false -%}
+            {%- if rendered_cards < 4 -%}{%- assign eager_load = true -%}{%- endif -%}
+            {%- render 'list-collections-card', patch_collection: patch_collection, section: section, eager_load: eager_load -%}
+            {%- assign rendered_cards = rendered_cards | plus: 1 -%}
+          {%- endunless -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    {%- if rendered_cards == 0 -%}
+      <div class="patch-collection-empty">
+        Add valid collection handles in this section, or leave the field empty to automatically show all Shopify collections on `/collections`.
+      </div>
+    {%- endif -%}
+  </div>
+
+  <script>
+    (function() {
+      var carousels = document.querySelectorAll('[data-carousel]');
+      if (!carousels.length) return;
+
+      carousels.forEach(function(carousel) {
+        var track = carousel.querySelector('[data-carousel-track]');
+        var prev = carousel.querySelector('[data-carousel-prev]');
+        var next = carousel.querySelector('[data-carousel-next]');
+        var total = parseInt(carousel.getAttribute('data-slides') || '1', 10);
+        var index = 0;
+        var touchStartX = 0;
+        var dragOffset = 0;
+        var isDragging = false;
+
+        if (!track || total <= 1) return;
+
+        function render() {
+          track.style.transition = isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+          track.style.transform = 'translateX(calc(' + (-100 * index) + '% + ' + dragOffset + 'px))';
+        }
+
+        function goTo(nextIndex) {
+          index = (nextIndex + total) % total;
+          dragOffset = 0;
+          isDragging = false;
+          render();
+        }
+
+        prev.addEventListener('click', function(event) {
+          event.preventDefault();
+          event.stopPropagation();
+          goTo(index - 1);
+        });
+
+        next.addEventListener('click', function(event) {
+          event.preventDefault();
+          event.stopPropagation();
+          goTo(index + 1);
+        });
+
+        carousel.addEventListener('touchstart', function(event) {
+          touchStartX = event.touches[0].clientX;
+          isDragging = true;
+        }, { passive: true });
+
+        carousel.addEventListener('touchmove', function(event) {
+          if (!isDragging) return;
+          dragOffset = Math.max(-100, Math.min(100, event.touches[0].clientX - touchStartX));
+          render();
+        }, { passive: true });
+
+        carousel.addEventListener('touchend', function() {
+          if (!isDragging) return;
+          if (Math.abs(dragOffset) > 50) {
+            goTo(dragOffset < 0 ? index + 1 : index - 1);
+            return;
+          }
+          dragOffset = 0;
+          isDragging = false;
+          render();
+        });
+
+        render();
+      });
+    })();
+  </script>
+</section>
+
+{% render 'card-pricing-script' %}
+
+{% schema %}
+{
+  "name": "List Collections",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Custom Patches"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "At Yak Patches, ordering <a href=\"/\">custom patches</a> is simple. Upload your design, pick your style embroidered, full color printed, silicone, and more. Approve your proof, and we'll ship it fast, for you. Browse our patch types below and get started."
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "10pc min"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA label",
+      "default": "Get a Quote"
+    },
+    {
+      "type": "textarea",
+      "id": "collection_handles",
+      "label": "Collection handles in order",
+      "info": "Optional. Comma-separated collection handles for a custom order. Leave empty to show all Shopify collections."
+    }
+  ],
+  "presets": [
+    {
+      "name": "List Collections"
+    }
+  ]
+}
+{% endschema %}
+

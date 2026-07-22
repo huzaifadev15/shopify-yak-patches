@@ -1,0 +1,420 @@
+﻿<style>
+*, *::before, *::after { box-sizing: border-box; }
+.inv-page { font-family: "Averta", "Segoe UI", Arial, sans-serif; background: #f4f5f7; min-height: 100vh; padding: 40px 16px 80px; }
+.inv-container { max-width: 860px; margin: 0 auto; }
+
+/* Top bar */
+.inv-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; flex-wrap: wrap; }
+.inv-back-btn { display: inline-flex; align-items: center; gap: 8px; color: #374151; font-size: 14px; font-weight: 600; text-decoration: none; background: #fff; border: 1px solid #e5e7eb; border-radius: 9999px; padding: 8px 18px; transition: border-color 0.15s; }
+.inv-back-btn:hover { border-color: #7C4A1E; color: #7C4A1E; }
+.inv-print-btn { display: inline-flex; align-items: center; gap: 8px; background: #7C4A1E; color: #fff; border: none; border-radius: 9999px; padding: 9px 22px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+.inv-print-btn:hover { background: #E64A19; }
+.inv-download-btn { display: inline-flex; align-items: center; gap: 8px; background: #3D1F0A; color: #fff; border: none; border-radius: 9999px; padding: 9px 22px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+.inv-download-btn:hover { background: #1f294f; }
+.inv-action-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Card */
+.inv-card { background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.08); overflow: hidden; }
+
+/* Header */
+.inv-header { background: linear-gradient(135deg, #3D1F0A 0%, #1f294f 100%); padding: 32px 40px; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.inv-brand { display: flex; flex-direction: column; gap: 6px; }
+.inv-logo-text { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+.inv-logo-accent { color: #7C4A1E; }
+.inv-tagline { font-size: 12px; color: rgba(255,255,255,0.55); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+.inv-header-meta { text-align: right; display: flex; flex-direction: column; gap: 4px; }
+.inv-doc-type { font-size: 28px; font-weight: 800; color: #7C4A1E; letter-spacing: -0.5px; line-height: 1; }
+.inv-meta-row { font-size: 13px; color: rgba(255,255,255,0.7); }
+.inv-meta-row strong { color: #fff; font-weight: 600; }
+
+/* Info strip */
+.inv-info-strip { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border-bottom: 1px solid #f0f0f0; }
+.inv-info-cell { padding: 20px 28px; border-right: 1px solid #f0f0f0; }
+.inv-info-cell:last-child { border-right: none; }
+.inv-info-label { font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+.inv-info-value { font-size: 14px; font-weight: 600; color: #3D1F0A; line-height: 1.4; }
+.inv-info-value a { color: #7C4A1E; text-decoration: none; }
+.inv-status-badge { display: inline-flex; align-items: center; gap: 5px; background: #FDF5ED; color: #7C4A1E; border: 1px solid #E8C9A0; border-radius: 9999px; padding: 3px 10px; font-size: 12px; font-weight: 700; }
+.inv-status-dot { width: 6px; height: 6px; border-radius: 50%; background: #7C4A1E; }
+
+/* Body */
+.inv-body { padding: 32px 40px; }
+
+/* Product row */
+.inv-product-row { display: grid; grid-template-columns: 120px 1fr; gap: 24px; align-items: start; margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid #f0f0f0; }
+.inv-product-img-box { width: 120px; height: 120px; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; background: #f9fafb; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.inv-product-img-box img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+.inv-product-info { display: flex; flex-direction: column; gap: 6px; }
+.inv-product-title { font-size: 20px; font-weight: 800; color: #3D1F0A; line-height: 1.2; }
+.inv-product-type { font-size: 13px; font-weight: 600; color: #6b7280; }
+.inv-product-url { font-size: 12px; color: #7C4A1E; word-break: break-all; text-decoration: none; }
+.inv-product-url:hover { text-decoration: underline; }
+.inv-product-desc { font-size: 13px; color: #374151; line-height: 1.6; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Section title */
+.inv-section-title { font-size: 13px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+
+/* Pricing table */
+.inv-table-wrap { border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; margin-bottom: 32px; }
+.inv-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.inv-table thead th { background: #f9fafb; padding: 12px 16px; text-align: left; font-weight: 700; color: #374151; border-bottom: 1px solid #e5e7eb; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+.inv-table tbody td { padding: 12px 16px; color: #374151; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+.inv-table tbody tr:last-child td { border-bottom: none; }
+.inv-table tbody tr:hover td { background: #fafafa; }
+.inv-table tbody tr.inv-row-highlight td { background: #FDF5ED; }
+.inv-table tbody tr.inv-row-highlight td:first-child { border-left: 3px solid #7C4A1E; }
+.inv-price-cell { font-weight: 700; color: #3D1F0A; }
+.inv-discount-cell { color: #7C4A1E; font-weight: 700; }
+.inv-savings-cell { color: #22c55e; font-weight: 600; font-size: 13px; }
+
+/* Customization options */
+.inv-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px; }
+.inv-option-row { display: flex; flex-direction: column; gap: 3px; padding: 14px 16px; background: #f9fafb; border-radius: 10px; border: 1px solid #f0f0f0; }
+.inv-option-label { font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.07em; }
+.inv-option-value { font-size: 14px; font-weight: 600; color: #3D1F0A; }
+
+/* Trust badges */
+.inv-trust-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; padding: 20px; background: #f9fafb; border-radius: 12px; border: 1px solid #f0f0f0; }
+.inv-trust-item { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: #374151; }
+.inv-trust-icon { width: 22px; height: 22px; border-radius: 50%; background: #FDF5ED; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.inv-trust-icon svg { color: #7C4A1E; }
+
+/* Variants table */
+.inv-variants-wrap { margin-bottom: 32px; }
+
+/* Footer */
+.inv-footer { background: #f9fafb; border-top: 1px solid #f0f0f0; padding: 24px 40px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.inv-footer-brand { font-size: 13px; color: #6b7280; }
+.inv-footer-brand strong { color: #3D1F0A; }
+.inv-footer-contact { display: flex; flex-direction: column; gap: 3px; text-align: right; }
+.inv-footer-contact a { font-size: 13px; color: #7C4A1E; text-decoration: none; font-weight: 600; }
+.inv-footer-note { font-size: 11px; color: #9ca3af; font-style: italic; text-align: center; width: 100%; border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 8px; }
+
+/* Divider */
+.inv-divider { border: none; border-top: 1px solid #f0f0f0; margin: 28px 0; }
+
+@media (max-width: 640px) {
+  .inv-header { padding: 24px 20px; }
+  .inv-header-meta { text-align: left; }
+  .inv-info-strip { grid-template-columns: 1fr; }
+  .inv-info-cell { border-right: none; border-bottom: 1px solid #f0f0f0; padding: 16px 20px; }
+  .inv-info-cell:last-child { border-bottom: none; }
+  .inv-body { padding: 24px 20px; }
+  .inv-product-row { grid-template-columns: 80px 1fr; gap: 14px; }
+  .inv-product-img-box { width: 80px; height: 80px; }
+  .inv-options-grid { grid-template-columns: 1fr; }
+  .inv-footer { padding: 20px; }
+  .inv-footer-contact { text-align: left; }
+}
+
+@media print {
+  body, .inv-page { background: #fff !important; padding: 0 !important; }
+  .inv-topbar { display: none !important; }
+  .inv-card { box-shadow: none !important; border-radius: 0 !important; }
+  .inv-container { max-width: 100% !important; }
+  .inv-table tbody tr:hover td { background: transparent !important; }
+  @page { margin: 10mm 12mm; }
+}
+</style>
+
+<div class="inv-page">
+  <div class="inv-container">
+
+    <!-- Top action bar -->
+    <div class="inv-topbar">
+      <a href="{{ product.url }}" class="inv-back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        Back to Product
+      </a>
+      <div class="inv-action-group">
+        <button class="inv-download-btn" onclick="window.print()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Save PDF
+        </button>
+        <button class="inv-print-btn" onclick="window.print()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+          Print
+        </button>
+      </div>
+    </div>
+
+    <!-- Invoice card -->
+    <div class="inv-card">
+
+      <!-- Header -->
+      <div class="inv-header">
+        <div class="inv-brand">
+          <div class="inv-logo-text">
+            <span class="inv-logo-accent">{{ shop.name | split: ' ' | first }}</span>{% assign shop_rest = shop.name | split: ' ' %}{% for word in shop_rest offset: 1 %} {{ word }}{% endfor %}
+          </div>
+          <div class="inv-tagline">Custom Patches Â· Premium Quality Â· Fast Turnaround</div>
+        </div>
+        <div class="inv-header-meta">
+          <div class="inv-doc-type">QUOTE</div>
+          <div class="inv-meta-row"><strong>Ref #</strong> {{ product.id | modulo: 9000000 | plus: 1000000 }}</div>
+          <div class="inv-meta-row"><strong>Date</strong> <span id="invDate">â€”</span></div>
+          <div class="inv-meta-row"><strong>Valid for</strong> 30 days</div>
+        </div>
+      </div>
+
+      <!-- Info strip -->
+      <div class="inv-info-strip">
+        <div class="inv-info-cell">
+          <div class="inv-info-label">Prepared For</div>
+          <div class="inv-info-value" id="invCustomerName">Valued Customer</div>
+          <div class="inv-info-value" id="invCustomerEmail" style="color:#6b7280;font-size:13px;"></div>
+        </div>
+        <div class="inv-info-cell">
+          <div class="inv-info-label">Prepared By</div>
+          <div class="inv-info-value">{{ shop.name }}</div>
+          <div class="inv-info-value" style="color:#6b7280;font-size:13px;">{{ shop.email }}</div>
+        </div>
+        <div class="inv-info-cell">
+          <div class="inv-info-label">Status</div>
+          <div class="inv-status-badge">
+            <span class="inv-status-dot"></span>
+            Draft Quote
+          </div>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="inv-body">
+
+        <!-- Product -->
+        <div class="inv-section-title">Product</div>
+        <div class="inv-product-row">
+          <div class="inv-product-img-box">
+            {%- if product.featured_image -%}
+              <img src="{{ product.featured_image | img_url: '240x240', crop: 'center' }}" alt="{{ product.title }}">
+            {%- else -%}
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            {%- endif -%}
+          </div>
+          <div class="inv-product-info">
+            <div class="inv-product-title">{{ product.title }}</div>
+            {%- if product.type != blank -%}
+              <div class="inv-product-type">{{ product.type }}</div>
+            {%- endif -%}
+            <a href="{{ shop.url }}{{ product.url }}" class="inv-product-url">{{ shop.url }}{{ product.url }}</a>
+            {%- if product.description != blank -%}
+              <div class="inv-product-desc">{{ product.description | strip_html }}</div>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <!-- Pricing Table -->
+        <div class="inv-section-title">Bulk Pricing</div>
+        <div class="inv-table-wrap" style="margin-bottom: 32px;">
+          <table class="inv-table" id="invPricingTable">
+            <thead>
+              <tr>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Qty Discount</th>
+                <th>You Save</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="invPricingBody">
+              {%- assign base_price = product.price | divided_by: 100.0 -%}
+              {%- assign tiers = "10,25,50,100,250,500,1000" | split: "," -%}
+              {%- assign discounts = "0,5,10,15,20,25,30" | split: "," -%}
+              {%- for tier in tiers -%}
+                {%- assign tier_num = tier | times: 1 -%}
+                {%- assign disc = discounts[forloop.index0] | times: 1 -%}
+                {%- assign multiplier = 100 | minus: disc | times: 0.01 -%}
+                {%- assign unit_price = base_price | times: multiplier -%}
+                {%- assign subtotal = unit_price | times: tier_num -%}
+                {%- assign savings = base_price | times: tier_num | minus: subtotal -%}
+                <tr{% if tier_num == 100 %} class="inv-row-highlight"{% endif %}>
+                  <td><strong>{{ tier_num }} pcs</strong></td>
+                  <td class="inv-price-cell">${{ unit_price | round: 2 }}</td>
+                  <td class="inv-discount-cell">{% if disc > 0 %}{{ disc }}% OFF{% else %}â€”{% endif %}</td>
+                  <td class="inv-savings-cell">{% if savings > 0 %}Save ${{ savings | round: 2 }}{% else %}â€”{% endif %}</td>
+                  <td class="inv-price-cell">${{ subtotal | round: 2 }}</td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:#9ca3af;margin:-20px 0 32px;font-style:italic;">* Prices based on standard 2.25&quot; patch at the listed quantities. Final pricing may vary by size. Contact us for a custom quote.</p>
+
+        {%- if product.variants.size > 1 -%}
+        <!-- Variants -->
+        <div class="inv-variants-wrap">
+          <div class="inv-section-title">Available Variants</div>
+          <div class="inv-table-wrap">
+            <table class="inv-table">
+              <thead>
+                <tr>
+                  <th>Variant</th>
+                  {%- for option in product.options -%}<th>{{ option }}</th>{%- endfor -%}
+                  <th>Base Price</th>
+                  <th>SKU</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for variant in product.variants -%}
+                <tr>
+                  <td><strong>{{ variant.title }}</strong></td>
+                  {%- for option in variant.options -%}<td>{{ option }}</td>{%- endfor -%}
+                  <td class="inv-price-cell">{{ variant.price | money }}</td>
+                  <td style="font-size:12px;color:#9ca3af;">{{ variant.sku | default: 'â€”' }}</td>
+                </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {%- endif -%}
+
+        {%- assign meta_quantity = product.metafields.custom.product_quantity.value -%}
+        {%- assign meta_shipping = product.metafields.custom.shipping.value -%}
+        {%- assign meta_border = product.metafields.custom.border.value -%}
+        {%- assign meta_bg_color = product.metafields.custom.background_color.value -%}
+        {%- assign meta_shape = product.metafields.custom.shape.value -%}
+        {%- assign meta_backing = product.metafields.custom.backing.value -%}
+
+        <!-- Customization summary -->
+        <div class="inv-section-title">Customization Options</div>
+        <div class="inv-options-grid">
+          <div class="inv-option-row">
+            <span class="inv-option-label">Shape</span>
+            <span class="inv-option-value">{{ meta_shape | default: 'Custom / Circle / Square / Rectangle' }}</span>
+          </div>
+          <div class="inv-option-row">
+            <span class="inv-option-label">Backing</span>
+            <span class="inv-option-value">{{ meta_backing | default: 'No Backing / Heat Applied / Peel &amp; Stick / Velcro' }}</span>
+          </div>
+          <div class="inv-option-row">
+            <span class="inv-option-label">Border</span>
+            <span class="inv-option-value">{{ meta_border | default: 'Merrow / Heat Cut / Laser Cut / Fold-over' }}</span>
+          </div>
+          {%- if meta_bg_color -%}
+          <div class="inv-option-row">
+            <span class="inv-option-label">Background Color</span>
+            <span class="inv-option-value">{{ meta_bg_color }}</span>
+          </div>
+          {%- endif -%}
+          <div class="inv-option-row">
+            <span class="inv-option-label">Size Range</span>
+            <span class="inv-option-value">1&quot; â€“ 12&quot; (Width &amp; Height)</span>
+          </div>
+          <div class="inv-option-row">
+            <span class="inv-option-label">Product Quantity</span>
+            <span class="inv-option-value">{% if meta_quantity %}{{ meta_quantity }} pieces{% else %}10 pieces{% endif %}</span>
+          </div>
+          <div class="inv-option-row">
+            <span class="inv-option-label">Shipping Price</span>
+            <span class="inv-option-value">{% if meta_shipping %}${{ meta_shipping }}{% else %}Calculated at checkout{% endif %}</span>
+          </div>
+          <div class="inv-option-row">
+            <span class="inv-option-label">Free Physical Proof</span>
+            <span class="inv-option-value">Included on every order</span>
+          </div>
+          <div class="inv-option-row">
+            <span class="inv-option-label">Free Shipping</span>
+            <span class="inv-option-value">Orders of 100+ pieces</span>
+          </div>
+        </div>
+
+        <!-- Trust / guarantees -->
+        <div class="inv-trust-grid">
+          <div class="inv-trust-item">
+            <div class="inv-trust-icon">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            Free Physical Proof
+          </div>
+          <div class="inv-trust-item">
+            <div class="inv-trust-icon">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            No Art or Setup Fees
+          </div>
+          <div class="inv-trust-item">
+            <div class="inv-trust-icon">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            Free Shipping (100+ pcs)
+          </div>
+          <div class="inv-trust-item">
+            <div class="inv-trust-icon">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            Secure Checkout
+          </div>
+          <div class="inv-trust-item">
+            <div class="inv-trust-icon">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            100% Satisfaction Guarantee
+          </div>
+          <div class="inv-trust-item">
+            <div class="inv-trust-icon">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            Expert Design Support
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;">
+          <a href="{{ product.url }}" style="display:inline-flex;align-items:center;gap:8px;background:#7C4A1E;color:#fff;text-decoration:none;border-radius:9999px;padding:12px 28px;font-size:15px;font-weight:700;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Order Now
+          </a>
+          <a href="{{ shop.url }}/pages/contact" style="display:inline-flex;align-items:center;gap:8px;background:#3D1F0A;color:#fff;text-decoration:none;border-radius:9999px;padding:12px 28px;font-size:15px;font-weight:700;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Request Custom Quote
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="inv-footer">
+        <div class="inv-footer-brand">
+          <strong>{{ shop.name }}</strong><br>
+          {{ shop.address | default: 'USA' }}
+        </div>
+        <div class="inv-footer-contact">
+          <a href="mailto:{{ shop.email }}">{{ shop.email }}</a>
+          {%- if shop.phone != blank -%}
+            <a href="tel:{{ shop.phone }}">{{ shop.phone }}</a>
+          {%- endif -%}
+          <a href="{{ shop.url }}">{{ shop.url | remove: 'https://' | remove: 'http://' }}</a>
+        </div>
+        <div class="inv-footer-note">
+          This document is a product quote generated on {{ 'now' | date: '%B %d, %Y' }} and is valid for 30 days. Prices are subject to change based on final artwork, size, and customization options. Contact us for a binding order confirmation.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var dateEl = document.getElementById('invDate');
+    if (dateEl) {
+      var d = new Date();
+      dateEl.textContent = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    {%- if customer -%}
+    var nameEl = document.getElementById('invCustomerName');
+    var emailEl = document.getElementById('invCustomerEmail');
+    if (nameEl) nameEl.textContent = {{ customer.name | json }};
+    if (emailEl) emailEl.textContent = {{ customer.email | json }};
+    {%- endif -%}
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product Invoice",
+  "settings": []
+}
+{% endschema %}
+

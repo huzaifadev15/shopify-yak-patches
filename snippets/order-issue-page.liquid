@@ -1,0 +1,460 @@
+﻿{%- liquid
+  assign order_issue_accent = '#7C4A1E'
+  assign order_issue_submit_endpoint = 'https://outjackets.com/api/b79df6da-543e-48eb-a4d1-04ed0abbb97d/forms/order-issue/public'
+-%}
+
+<style>
+  .order-issue-page {
+    background: #ffffff;
+    color: #111827;
+  }
+
+  .order-issue-page__hero {
+    padding: 8.5rem 0 2.25rem;
+    background: linear-gradient(180deg, #f7f7f7 0%, #ffffff 100%);
+  }
+
+  .order-issue-page__inner {
+    width: 100%;
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  .order-issue-page__eyebrow {
+    margin: 0 0 0.85rem;
+    color: {{ order_issue_accent }};
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .order-issue-page__title {
+    margin: 0;
+    color: #000;
+    font-size: clamp(2.3rem, 4.8vw, 4.4rem);
+    line-height: 1.06;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+
+  .order-issue-page__subtitle {
+    max-width: 52rem;
+    margin: 1rem 0 0;
+    color: #4b5563;
+    font-size: clamp(1rem, 1.8vw, 1.08rem);
+    line-height: 1.8;
+  }
+
+  .order-issue-page__body {
+    padding: 0 0 5.5rem;
+  }
+
+  .order-issue-page__card {
+    margin-top: 1.5rem;
+    padding: 2rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 1.5rem;
+    background: #ffffff;
+    box-shadow: 0 18px 44px rgba(17, 24, 39, 0.08);
+  }
+
+  .order-issue-page__form {
+    max-width: 60rem;
+    margin: 0 auto;
+  }
+
+  .order-issue-page__hint,
+  .order-issue-page__status,
+  .order-issue-page__helper {
+    margin: 0 0 1rem;
+    color: #6b7280;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .order-issue-page__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.15rem;
+  }
+
+  .order-issue-page__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .order-issue-page__field--full {
+    grid-column: 1 / -1;
+  }
+
+  .order-issue-page__label {
+    color: #111827;
+    font-size: 0.96rem;
+    font-weight: 700;
+  }
+
+  .order-issue-page__required {
+    color: #dc2626;
+    margin-left: 0.2rem;
+  }
+
+  .order-issue-page__input,
+  .order-issue-page__select,
+  .order-issue-page__textarea {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 0.95rem;
+    background: #ffffff;
+    color: #111827;
+    padding: 0.95rem 1rem;
+    font: inherit;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .order-issue-page__input:focus,
+  .order-issue-page__select:focus,
+  .order-issue-page__textarea:focus {
+    border-color: {{ order_issue_accent }};
+    box-shadow: 0 0 0 3px rgba(124, 74, 30, 0.14);
+  }
+
+  .order-issue-page__textarea {
+    min-height: 11rem;
+    resize: vertical;
+  }
+
+  .order-issue-page__upload {
+    padding: 1rem;
+    border: 1px dashed #cbd5e1;
+    border-radius: 1rem;
+    background: #fafafa;
+  }
+
+  .order-issue-page__file-list {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: #4b5563;
+  }
+
+  .order-issue-page__checkbox {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    margin-top: 0.25rem;
+    color: #374151;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .order-issue-page__checkbox input {
+    margin-top: 0.2rem;
+    accent-color: {{ order_issue_accent }};
+  }
+
+  .order-issue-page__actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.75rem;
+  }
+
+  .order-issue-page__button {
+    border: none;
+    border-radius: 9999px;
+    background: {{ order_issue_accent }};
+    color: #ffffff;
+    padding: 0.95rem 1.5rem;
+    font-size: 0.98rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    box-shadow: 0 12px 28px rgba(124, 74, 30, 0.22);
+  }
+
+  .order-issue-page__button:hover {
+    transform: translateY(-1px);
+    opacity: 0.96;
+  }
+
+  .order-issue-page__button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .order-issue-page__status {
+    min-height: 1.4rem;
+    font-weight: 600;
+  }
+
+  .order-issue-page__status--success {
+    color: #047857;
+  }
+
+  .order-issue-page__status--error {
+    color: #b91c1c;
+  }
+
+  @media (max-width: 767px) {
+    .order-issue-page__hero {
+      padding-top: 6.5rem;
+      padding-bottom: 2rem;
+    }
+
+    .order-issue-page__body {
+      padding-bottom: 3.5rem;
+    }
+
+    .order-issue-page__card {
+      padding: 1.25rem;
+      border-radius: 1.15rem;
+    }
+
+    .order-issue-page__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<section class="order-issue-page">
+  <div class="order-issue-page__hero">
+    <div class="order-issue-page__inner">
+      <p class="order-issue-page__eyebrow">Submit an Order Issue</p>
+      <h1 class="order-issue-page__title">{{ page.title }}</h1>
+      <p class="order-issue-page__subtitle">
+        Tell us what went wrong and we will review your request as quickly as possible. If the issue involves printing, sizing, or damage, please include at least one clear photo.
+      </p>
+    </div>
+  </div>
+
+  <div class="order-issue-page__body">
+    <div class="order-issue-page__inner">
+      <div class="order-issue-page__card">
+        <form class="order-issue-page__form" id="OrderIssueForm" novalidate>
+          <p class="order-issue-page__status" id="OrderIssueStatus" aria-live="polite"></p>
+
+          <div class="order-issue-page__grid">
+            <div class="order-issue-page__field">
+              <label class="order-issue-page__label" for="OrderIssueOrderNumber">Order #<span class="order-issue-page__required">*</span></label>
+              <input
+                class="order-issue-page__input"
+                type="text"
+                id="OrderIssueOrderNumber"
+                name="orderNumber"
+                placeholder="Enter your order number"
+                required
+              >
+            </div>
+
+            <div class="order-issue-page__field">
+              <label class="order-issue-page__label" for="OrderIssueType">What is wrong with your order?<span class="order-issue-page__required">*</span></label>
+              <select class="order-issue-page__select" id="OrderIssueType" name="issueType" required>
+                <option value="" selected disabled>Please select...</option>
+                <option value="Print issue">Print issue</option>
+                <option value="Sizing issue">Sizing issue</option>
+                <option value="Damage issue">Damage issue</option>
+                <option value="Wrong item received">Wrong item received</option>
+                <option value="Missing item(s)">Missing item(s)</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="order-issue-page__field order-issue-page__field--full">
+              <label class="order-issue-page__label" for="OrderIssueDetails">Please explain in detail what went wrong<span class="order-issue-page__required">*</span></label>
+              <textarea
+                class="order-issue-page__textarea"
+                id="OrderIssueDetails"
+                name="message"
+                placeholder="Please share the issue, the item name, what you expected, and anything else that helps us resolve it."
+                required
+              ></textarea>
+            </div>
+
+            <div class="order-issue-page__field">
+              <label class="order-issue-page__label" for="OrderIssueFirstName">First Name<span class="order-issue-page__required">*</span></label>
+              <input class="order-issue-page__input" type="text" id="OrderIssueFirstName" name="firstName" required>
+            </div>
+
+            <div class="order-issue-page__field">
+              <label class="order-issue-page__label" for="OrderIssueLastName">Last Name<span class="order-issue-page__required">*</span></label>
+              <input class="order-issue-page__input" type="text" id="OrderIssueLastName" name="lastName" required>
+            </div>
+
+            <div class="order-issue-page__field">
+              <label class="order-issue-page__label" for="OrderIssueEmail">Email associated with your order<span class="order-issue-page__required">*</span></label>
+              <input class="order-issue-page__input" type="email" id="OrderIssueEmail" name="email" autocomplete="email" required>
+            </div>
+
+            <div class="order-issue-page__field">
+              <label class="order-issue-page__label" for="OrderIssuePhone">Phone Number</label>
+              <input class="order-issue-page__input" type="tel" id="OrderIssuePhone" name="phone" autocomplete="tel">
+            </div>
+
+            <div class="order-issue-page__field order-issue-page__field--full">
+              <label class="order-issue-page__label" for="OrderIssuePhotos">Photo(s) Upload<span class="order-issue-page__required">*</span></label>
+              <div class="order-issue-page__upload">
+                <input
+                  class="order-issue-page__input"
+                  type="file"
+                  id="OrderIssuePhotos"
+                  name="photos"
+                  accept="image/*"
+                  multiple
+                >
+                <p class="order-issue-page__helper">
+                  1 photo is required for any print, sizing, or damage issue.
+                </p>
+                <div class="order-issue-page__file-list" id="OrderIssueFileList"></div>
+              </div>
+            </div>
+
+            <div class="order-issue-page__field order-issue-page__field--full">
+              <label class="order-issue-page__checkbox" for="OrderIssueConsent">
+                <input type="checkbox" id="OrderIssueConsent" required>
+                <span>I confirm the information above is accurate and understand a team member may contact me for additional details.<span class="order-issue-page__required">*</span></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="order-issue-page__actions">
+            <button class="order-issue-page__button" id="OrderIssueSubmit" type="submit">Submit Order Issue</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    const form = document.getElementById('OrderIssueForm');
+    const statusEl = document.getElementById('OrderIssueStatus');
+    const submitButton = document.getElementById('OrderIssueSubmit');
+    const fileInput = document.getElementById('OrderIssuePhotos');
+    const fileList = document.getElementById('OrderIssueFileList');
+
+    if (!form || !statusEl || !submitButton || !fileInput || !fileList) return;
+
+    const uploadEndpoint = 'https://shopify-backend-app-omega.vercel.app/api/dashboardimage-upload';
+    const submitEndpoint = {{ order_issue_submit_endpoint | json }};
+    const photoRequiredTypes = new Set(['Print issue', 'Sizing issue', 'Damage issue']);
+
+    function setStatus(message, kind) {
+      statusEl.textContent = message || '';
+      statusEl.className = 'order-issue-page__status' + (kind ? ' order-issue-page__status--' + kind : '');
+    }
+
+    function renderFileList() {
+      const files = Array.from(fileInput.files || []);
+      if (!files.length) {
+        fileList.innerHTML = '';
+        return;
+      }
+
+      fileList.innerHTML = files.map(function (file) {
+        return '<div>' + file.name + '</div>';
+      }).join('');
+    }
+
+    fileInput.addEventListener('change', renderFileList);
+
+    async function uploadFile(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(uploadEndpoint, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(function () { return ''; });
+        throw new Error(errorText || 'Photo upload failed');
+      }
+
+      const data = await response.json();
+      const fileUrl = data.fileUrl || data.url;
+
+      if (!fileUrl) {
+        throw new Error('Upload response did not include a file URL');
+      }
+
+      return {
+        fileUrl: fileUrl,
+        originalName: file.name,
+        type: file.type,
+        size: file.size
+      };
+    }
+
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      setStatus('', '');
+
+      const selectedIssueType = document.getElementById('OrderIssueType').value;
+      const selectedFiles = Array.from(fileInput.files || []);
+      const needsPhoto = photoRequiredTypes.has(selectedIssueType);
+
+      if (needsPhoto && selectedFiles.length === 0) {
+        setStatus('Please upload at least one photo for print, sizing, or damage issues.', 'error');
+        return;
+      }
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Submitting...';
+
+      try {
+        const uploadedFiles = [];
+        for (const file of selectedFiles) {
+          uploadedFiles.push(await uploadFile(file));
+        }
+
+        const payload = {
+          orderNumber: document.getElementById('OrderIssueOrderNumber').value.trim(),
+          issueType: selectedIssueType,
+          message: document.getElementById('OrderIssueDetails').value.trim(),
+          firstName: document.getElementById('OrderIssueFirstName').value.trim(),
+          lastName: document.getElementById('OrderIssueLastName').value.trim(),
+          email: document.getElementById('OrderIssueEmail').value.trim(),
+          phone: document.getElementById('OrderIssuePhone').value.trim(),
+          uploadedFiles: uploadedFiles,
+          referrer: document.referrer || window.location.href
+        };
+
+        const response = await fetch(submitEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text().catch(function () { return ''; });
+          throw new Error(errorText || 'Order issue submission failed');
+        }
+
+        form.reset();
+        fileList.innerHTML = '';
+        setStatus('Your order issue has been submitted successfully. Our team will review it shortly.', 'success');
+      } catch (error) {
+        setStatus(error && error.message ? error.message : 'Something went wrong. Please try again.', 'error');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit Order Issue';
+      }
+    });
+  })();
+</script>
+

@@ -1,0 +1,103 @@
+﻿{% comment %} How to Order - 4 Steps Section {% endcomment %}
+<section class="steps-section">
+  <div class="steps-container">
+
+    <!-- Header -->
+    <div class="steps-header">
+      <h2 class="steps-title">How to Order Custom Patches Online â€” 4 Simple Steps</h2>
+      <p class="steps-subtitle">The Process with Satisfaction Guaranteed</p>
+      <a href="/collections" class="steps-cta-mobile">Get Started</a>
+    </div>
+
+    <!-- 4 Cards -->
+    <div class="steps-grid">
+
+      <div class="step-card">
+        <div class="step-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m17 8-5-5-5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+          Step 1
+        </div>
+        <div class="step-img-wrap">
+          {%- if section.settings.step1_image != blank -%}
+            <img src="{{ section.settings.step1_image | img_url: '400x300', crop: 'center' }}" alt="Upload your design" loading="eager">
+          {%- else -%}
+            <img src="{{ 'upload-your-design.webp' | asset_url }}" alt="Upload patch design" loading="eager">
+          {%- endif -%}
+        </div>
+        <div class="step-body">
+          <p class="step-name">UPLOAD YOUR DESIGNS &amp; PLACE ORDER ONLINE</p>
+          <p class="step-desc">Use designs with unlimited colors, simple or high detail artwork. Upload any design you want and we'll turn it into high quality custom patches.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>
+          Step 2
+        </div>
+        <div class="step-img-wrap">
+          {%- if section.settings.step2_image != blank -%}
+            <img src="{{ section.settings.step2_image | img_url: '400x300', crop: 'center' }}" alt="Approve your design" loading="eager">
+          {%- else -%}
+            <img src="{{ 'approve-design.webp' | asset_url }}" alt="Approve patch artwork" loading="eager">
+          {%- endif -%}
+        </div>
+        <div class="step-body">
+          <p class="step-name">APPROVE YOUR PATCH ARTWORK PROOFS</p>
+          <p class="step-desc">If selected during checkout, we will send you a virtual proof for approval before we can begin production.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+          Step 3
+        </div>
+        <div class="step-img-wrap">
+          {%- if section.settings.step3_image != blank -%}
+            <img src="{{ section.settings.step3_image | img_url: '400x300', crop: 'center' }}" alt="We create and ship" loading="lazy">
+          {%- else -%}
+            <img src="{{ 'patch-order.webp' | asset_url }}" alt="Custom patches manufactured" loading="lazy">
+          {%- endif -%}
+        </div>
+        <div class="step-body">
+          <p class="step-name">WE CREATE &amp; SHIP YOUR CUSTOM PATCH ORDER</p>
+          <p class="step-desc">We make ordering custom patches easy. We can create the most detailed, highest quality, full color custom patches you can find.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg>
+          Step 4
+        </div>
+        <div class="step-img-wrap">
+          {%- if section.settings.step4_image != blank -%}
+            <img src="{{ section.settings.step4_image | img_url: '400x300', crop: 'center' }}" alt="Heatpress your patch" loading="lazy">
+          {%- else -%}
+            <img src="{{ 'heatpress.webp' | asset_url }}" alt="Heat press applying patch" loading="lazy">
+          {%- endif -%}
+        </div>
+        <div class="step-body">
+          <p class="step-name">HEATPRESS WHEN READY, KEEP EXTRAS IN STORAGE FOREVER</p>
+          <p class="step-desc">Press your custom made patches with a heat press, while using our required pressing instructions for ultimate durability.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "How to Order",
+  "settings": [
+    { "type": "image_picker", "id": "step1_image", "label": "Step 1 Image" },
+    { "type": "image_picker", "id": "step2_image", "label": "Step 2 Image" },
+    { "type": "image_picker", "id": "step3_image", "label": "Step 3 Image" },
+    { "type": "image_picker", "id": "step4_image", "label": "Step 4 Image" }
+  ],
+  "presets": [{ "name": "How to Order" }]
+}
+{% endschema %}
+

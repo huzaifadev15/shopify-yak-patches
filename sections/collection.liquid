@@ -1,0 +1,555 @@
+﻿{%- assign collection_top_description_metafield = collection.metafields.custom.collection_top_description -%}
+{%- capture mega_menu_patch_links_raw -%}{% render 'mega-menu-patch-links' %}{%- endcapture -%}
+{%- assign mega_menu_patch_links = mega_menu_patch_links_raw | strip | split: "|" -%}
+{%- assign banner = collection.metafields.custom.collection_banner.value -%}
+{%- assign faqs = collection.metafields.custom.faq.value -%}
+
+<style>
+  .collection-page {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 144px 16px 72px;
+  }
+  .collection-header {
+    width: 100%;
+    max-width: none;
+    margin: 0 0 40px;
+  }
+  .collection-title {
+    margin: 0 0 18px;
+    font-size: clamp(2.2rem, 4vw, 3.25rem);
+    line-height: 1.08;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: #111111;
+  }
+  .collection-top-description {
+    max-width: none;
+    margin: 0;
+    font-size: 1.04rem;
+    font-weight:500;
+    line-height: 1.55;
+    color: #111111;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .collection-top-description p {
+    margin: 0;
+  }
+  .collection-top-description a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
+  }
+  .collection-page .patch-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px;
+  }
+  .collection-page .patch-card-fig {
+    min-height: 340px;
+    border-radius: 20px;
+    padding: 24px;
+  }
+  .collection-page .patch-card-fig img {
+    max-height: 280px;
+  }
+  .collection-page .patch-card:hover {
+    box-shadow: none;
+  }
+  .collection-page .patch-card-body {
+    padding: 18px 10px 14px;
+  }
+  .collection-page .patch-card-name {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+  }
+  .collection-page .patch-card-price {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+  .collection-page .patch-card-desc {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    -webkit-line-clamp: 3;
+  }
+  .collection-page .patch-card-btn {
+    min-width: 114px;
+    padding: 10px 20px;
+    border-radius: 8px;
+  }
+  @media (max-width: 1024px) {
+    .collection-page .patch-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 768px) {
+    .collection-page {
+      margin-top: 20px;
+      padding-top: 116px;
+    }
+    .collection-header {
+      margin-bottom: 28px;
+    }
+    .collection-page .patch-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .collection-page .patch-card-fig {
+      min-height: 220px;
+      padding: 18px;
+    }
+    .collection-page .patch-card-fig img {
+      max-height: 180px;
+    }
+    .collection-page .patch-card-body {
+      padding: 14px 4px 12px;
+    }
+  }
+  @media (max-width: 480px) {
+    .collection-page .patch-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .collection-page .patch-card-name {
+      font-size: 0.92rem;
+    }
+    .collection-page .patch-card-price,
+    .collection-page .patch-card-desc {
+      font-size: 0.82rem;
+    }
+    .collection-page .patch-card-btn {
+      min-width: 100px;
+      padding: 9px 16px;
+    }
+  }
+  .collection-banner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.9fr);
+    gap: 42px;
+    align-items: center;
+    margin-top: 56px;
+    padding: 44px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.14);
+  }
+  .collection-banner-copy {
+    min-width: 0;
+  }
+  .collection-banner-title {
+    margin: 0 0 22px;
+    color: #111111;
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    line-height: 1.12;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  .collection-banner-description {
+    margin: 0 0 26px;
+    color: #111111;
+    font-size: 1.02rem;
+    line-height: 1.55;
+  }
+  .collection-banner-description p {
+    margin: 0;
+  }
+  .collection-banner-description a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
+  }
+  .collection-banner-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 210px;
+    justify-content: center;
+    padding: 14px 24px;
+    border-radius: 10px;
+    background: #000000;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .collection-banner-cta svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .collection-banner-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    padding: 18px;
+    background: #ffffff;
+    border-radius: 14px;
+  }
+  .collection-banner-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 380px;
+    object-fit: contain;
+  }
+  @media (max-width: 900px) {
+    .collection-banner {
+      grid-template-columns: 1fr;
+      gap: 28px;
+      padding: 28px 22px;
+      margin-top: 42px;
+    }
+    .collection-banner-media {
+      min-height: auto;
+      order: -1;
+      padding: 10px;
+    }
+  }
+  @media (max-width: 480px) {
+    .collection-banner-title {
+      font-size: 1.7rem;
+    }
+    .collection-banner-description {
+      font-size: 0.95rem;
+    }
+    .collection-banner-cta {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+  .collection-faq {
+    max-width: 1280px;
+    margin: 64px auto 0;
+    padding: 0;
+  }
+  .collection-faq-header {
+    text-align: left;
+    margin-bottom: 28px;
+  }
+  .collection-faq-title {
+    margin: 0 0 18px;
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: #000000;
+    line-height: 1.15;
+  }
+  .collection-faq-sub {
+    margin: 0;
+    max-width: 1180px;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #6b7280;
+  }
+  .collection-faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: none;
+    margin: 0;
+  }
+  .collection-faq-item {
+    display: block;
+    border: 1px solid #f1f1f1;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #efefef;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  }
+  .collection-faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 20px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 700;
+    color: #000000;
+    transition: background 0.15s ease, color 0.15s ease;
+    list-style: none;
+  }
+  .collection-faq-question::-webkit-details-marker {
+    display: none;
+  }
+  .collection-faq-question:hover {
+    background: #f2f2f2;
+  }
+  .collection-faq-item[open] .collection-faq-question {
+    color: #000000;
+    background: #efefef;
+  }
+  .collection-faq-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease;
+  }
+  .collection-faq-item[open] .collection-faq-icon {
+    background: transparent;
+    transform: rotate(180deg);
+  }
+  .collection-faq-icon svg {
+    color: #111111;
+    transition: color 0.15s ease;
+  }
+  .collection-faq-item[open] .collection-faq-icon svg {
+    color: #111111;
+  }
+  .collection-faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+  .collection-faq-item[open] .collection-faq-answer {
+    max-height: 600px;
+  }
+  .collection-faq-answer-inner {
+    padding: 0 20px 22px;
+    font-size: 15px;
+    color: #111111;
+    line-height: 1.65;
+    white-space: pre-line;
+  }
+  @media (max-width: 640px) {
+    .collection-faq {
+      margin-top: 48px;
+      padding: 0;
+    }
+    .collection-faq-question {
+      padding: 16px 16px;
+      font-size: 14px;
+    }
+    .collection-faq-answer-inner {
+      padding: 0 16px 16px;
+    }
+  }
+</style>
+
+<div class="collection-page">
+  <div class="collection-header">
+    <h1 class="collection-title">
+      {{ collection.title }}
+    </h1>
+    {%- if collection_top_description_metafield != blank -%}
+      <div class="collection-top-description">
+        {{ collection_top_description_metafield | metafield_tag }}
+      </div>
+    {%- elsif collection.description != blank -%}
+      <p class="collection-top-description">
+        {{ collection.description | strip_html }}
+      </p>
+    {%- endif -%}
+  </div>
+
+  {%- if collection.handle == 'all' -%}
+    {%- paginate collection.products by 250 -%}
+      <div class="patch-grid">
+        {%- for item in mega_menu_patch_links -%}
+          {%- assign parts = item | split: "," -%}
+          {%- assign menu_title = parts[0] | strip -%}
+          {%- assign menu_url = parts[1] | strip -%}
+          {%- assign menu_handle = menu_url | split: '/products/' | last -%}
+          {%- assign excluded_collection_all_handles = 'custom-military-patches,custom-velcro-patches-for-backpacks,custom-reflective-patches' | split: ',' -%}
+          {%- if excluded_collection_all_handles contains menu_handle -%}
+            {%- continue -%}
+          {%- endif -%}
+          {%- assign matched_product = blank -%}
+          {%- for product in collection.products -%}
+            {%- if product.handle == menu_handle -%}
+              {%- assign matched_product = product -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if matched_product == blank -%}
+            {%- assign matched_product = all_products[menu_handle] -%}
+          {%- endif -%}
+
+          {%- if matched_product != blank -%}
+            {%- assign product_description = matched_product.description | strip_html | strip -%}
+            {%- if product_description == blank -%}
+              {%- assign product_description = "Premium custom patch options made for uniforms, brands, events, and standout merchandise." -%}
+            {%- endif -%}
+            {%- assign product_card_image = matched_product.images.first | default: matched_product.featured_image | default: matched_product.featured_media.preview_image -%}
+            {%- assign card_title = matched_product.title -%}
+            {%- assign card_url = matched_product.url -%}
+          {%- else -%}
+            {%- assign product_description = "Premium custom patch options made for uniforms, brands, events, and standout merchandise." -%}
+            {%- assign product_card_image = blank -%}
+            {%- assign card_title = menu_title -%}
+            {%- assign card_url = menu_url -%}
+          {%- endif -%}
+
+          <article class="patch-card">
+            <a href="{{ card_url }}" class="patch-card-link" aria-label="View {{ card_title }}">
+              <figure class="patch-card-fig">
+                <span class="patch-badge">10pc min</span>
+                {%- if product_card_image != blank -%}
+                  <img
+                    src="{{ product_card_image | image_url: width: 520 }}"
+                    alt="{{ product_card_image.alt | default: card_title | escape }}"
+                    width="250"
+                    height="250"
+                    loading="lazy"
+                  >
+                {%- else -%}
+                  <img
+                    src="https://cdn.shopify.com/s/files/1/0670/4703/0883/files/Custom_Snowbowl_Patches-removebg-preview.webp?v=1778849991"
+                    alt="{{ card_title | escape }}"
+                    width="250"
+                    height="250"
+                    loading="lazy"
+                  >
+                {%- endif -%}
+              </figure>
+
+              <div class="patch-card-body">
+                <p class="patch-card-name">{{ card_title }}</p>
+                <p
+                  class="patch-card-price"
+                  data-card-price-titles="{{ card_title | escape }}"
+                  data-card-price-fallback="Custom quote available"
+                >
+                  Loading price...
+                </p>
+                <p class="patch-card-desc">{{ product_description }}</p>
+                <div class="patch-card-cta">
+                  <span class="patch-card-btn">Customize</span>
+                </div>
+              </div>
+            </a>
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- endpaginate -%}
+  {%- else -%}
+    {%- paginate collection.products by 24 -%}
+      {%- if collection.products_count > 0 -%}
+        <div class="patch-grid">
+          {%- for product in collection.products -%}
+            {%- assign product_description = product.description | strip_html | strip -%}
+            {%- if product_description == blank -%}
+              {%- assign product_description = "Premium custom patch options made for uniforms, brands, events, and standout merchandise." -%}
+            {%- endif -%}
+            {%- assign product_card_image = product.images.first | default: product.featured_image | default: product.featured_media.preview_image -%}
+
+            <article class="patch-card">
+              <a href="{{ product.url }}" class="patch-card-link" aria-label="View {{ product.title }}">
+                <figure class="patch-card-fig">
+                  <span class="patch-badge">10pc min</span>
+                  {%- if product_card_image != blank -%}
+                    <img
+                      src="{{ product_card_image | image_url: width: 520 }}"
+                      alt="{{ product_card_image.alt | default: product.title | escape }}"
+                      width="250"
+                      height="250"
+                      loading="lazy"
+                    >
+                  {%- else -%}
+                    <img
+                      src="https://cdn.shopify.com/s/files/1/0670/4703/0883/files/Custom_Snowbowl_Patches-removebg-preview.webp?v=1778849991"
+                      alt="{{ product.title | escape }}"
+                      width="250"
+                      height="250"
+                      loading="lazy"
+                    >
+                  {%- endif -%}
+                </figure>
+
+                <div class="patch-card-body">
+                  <p class="patch-card-name">{{ product.title }}</p>
+                  <p
+                    class="patch-card-price"
+                    data-card-price-titles="{{ product.title | escape }}"
+                    data-card-price-fallback="Custom quote available"
+                  >
+                    Loading price...
+                  </p>
+                  <p class="patch-card-desc">{{ product_description }}</p>
+                  <div class="patch-card-cta">
+                    <span class="patch-card-btn">Customize</span>
+                  </div>
+                </div>
+              </a>
+            </article>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <div style="max-width:760px;margin:0 auto;padding:32px 24px;border:1px solid #e5e7eb;border-radius:20px;background:#ffffff;text-align:center;color:#6b7280;">
+          No products are available in this collection yet.
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  {%- endif -%}
+
+  {%- if banner != blank and banner.title != blank and banner.description != blank and banner.image != blank -%}
+    <section class="collection-banner">
+      <div class="collection-banner-copy">
+        <h2 class="collection-banner-title">{{ banner.title }}</h2>
+        <div class="collection-banner-description">
+          {%- if banner.description.value != blank -%}
+            {{ banner.description | metafield_tag }}
+          {%- else -%}
+            {{ banner.description }}
+          {%- endif -%}
+        </div>
+        <a href="{{ routes.collections_url }}" class="collection-banner-cta">
+          <span>Shop All Patch Types</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+      <div class="collection-banner-media">
+        {{ banner.image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: banner.title }}
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- if faqs != blank -%}
+    <section class="collection-faq">
+      <div class="collection-faq-header">
+        <h2 class="collection-faq-title">Frequently Asked Questions</h2>
+        <p class="collection-faq-sub">Answers to common questions about this collection.</p>
+      </div>
+      <div class="collection-faq-list">
+        {%- for faq in faqs -%}
+          <details class="collection-faq-item"{% if forloop.first %} open{% endif %}>
+            <summary class="collection-faq-question">
+              <span>{{ faq.question }}</span>
+              <span class="collection-faq-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m6 9 6 6 6-6"></path>
+                </svg>
+              </span>
+            </summary>
+            <div class="collection-faq-answer">
+              <div class="collection-faq-answer-inner">{{ faq.answer }}</div>
+            </div>
+          </details>
+        {%- endfor -%}
+      </div>
+    </section>
+  {%- endif -%}
+</div>
+
+{% render 'card-pricing-script' %}
+
+{% schema %}
+{ "name": "Collection", "settings": [], "presets": [{ "name": "Collection" }] }
+{% endschema %}
+

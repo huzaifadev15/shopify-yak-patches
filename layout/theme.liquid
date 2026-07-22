@@ -1,0 +1,692 @@
+﻿<!DOCTYPE html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function() {
+      var path = window.location.pathname;
+      if (path.indexOf('/patches/') === 0) {
+        window.location.replace('/products/' + path.slice('/patches/'.length) + window.location.search + window.location.hash);
+      }
+    })();
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-XXXXXXXX');
+  </script>
+  <script>
+    window.YAK_META_PIXEL_ID = 'YOUR_PIXEL_ID';
+  </script>
+  {%- liquid
+    assign resolved_canonical_url = canonical_url
+    assign product_redirect_path = blank
+    assign patches_path_prefix = request.path | slice: 0, 9
+    assign custom_canonical_metafield = blank
+    assign robots_meta_content = 'index, follow'
+    assign custom_robots_metafield = blank
+    assign meta_description_content = page_description
+
+    if patches_path_prefix == '/patches/'
+      assign product_redirect_path = request.path | replace_first: '/patches/', '/products/'
+      assign resolved_canonical_url = shop.url | append: product_redirect_path
+    endif
+
+    if request.page_type == 'product'
+      assign custom_canonical_metafield = product.metafields.custom.canonical_url
+      assign custom_robots_metafield = product.metafields.custom.seo_robots | default: product.metafields.custom.seo_keywords
+      assign product_meta_description = product.metafields.global.description_tag.value | default: product.metafields.global.description_tag
+      assign meta_description_content = product_meta_description | default: meta_description_content | default: product.description
+    elsif request.page_type == 'collection'
+      assign custom_canonical_metafield = collection.metafields.custom.canonical_url
+      assign custom_robots_metafield = collection.metafields.custom.seo_robots | default: collection.metafields.custom.seo_keywords
+      assign collection_meta_description = collection.metafields.global.description_tag.value | default: collection.metafields.global.description_tag
+      assign meta_description_content = collection_meta_description | default: meta_description_content | default: collection.description
+    elsif request.page_type == 'blog'
+      assign custom_canonical_metafield = blog.metafields.custom.canonical_url
+      assign custom_robots_metafield = blog.metafields.custom.seo_robots | default: blog.metafields.custom.seo_keywords
+    elsif request.page_type == 'article'
+      assign custom_canonical_metafield = article.metafields.custom.canonical_url
+      assign custom_robots_metafield = article.metafields.custom.seo_robots | default: article.metafields.custom.seo_keywords
+    elsif request.page_type == 'page'
+      assign custom_canonical_metafield = page.metafields.custom.canonical_url
+      assign custom_robots_metafield = page.metafields.custom.seo_robots | default: page.metafields.custom.seo_keywords
+    endif
+
+    assign custom_canonical_url = custom_canonical_metafield.value | default: custom_canonical_metafield
+    assign custom_robots_meta_content = custom_robots_metafield.value | default: custom_robots_metafield
+
+    if custom_canonical_url != blank
+      assign resolved_canonical_url = custom_canonical_url
+    endif
+
+    if custom_robots_meta_content != blank
+      assign robots_meta_content = custom_robots_meta_content
+    endif
+
+    assign meta_description_content = meta_description_content | strip_html | strip
+  -%}
+  <link rel="canonical" href="{{ resolved_canonical_url }}">
+  {%- if product_redirect_path != blank -%}
+    <meta http-equiv="refresh" content="0;url={{ product_redirect_path }}">
+  {%- endif -%}
+  <meta name="robots" content="{{ robots_meta_content | escape }}">
+  {%- if meta_description_content != blank -%}
+    <meta name="description" content="{{ meta_description_content | escape }}">
+  {%- endif -%}
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
+  {%- else -%}
+    <link rel="icon" href="{{ 'favicon.ico' | asset_url }}" sizes="any">
+    <link rel="shortcut icon" href="{{ 'favicon.ico' | asset_url }}">
+  {%- endif -%}
+  {%- if request.page_type == 'index' -%}
+    <link rel="preload" as="image" href="{{ 'home-page-hero.webp' | asset_url }}" fetchpriority="high">
+  {%- endif -%}
+  <title>{{ page_title }} - {{ shop.name }}</title>
+    {% comment %}
+      Schema snippets are created but not currently applied.
+      Re-enable these renders when the schema is ready to publish.
+    {% endcomment %}
+    {%- if request.page_type == 'product' -%}
+      {% render 'product-schema' %}
+    {%- elsif request.page_type == 'collection' -%}
+      {% render 'collection-schema' %}
+    {%- elsif request.page_type == 'index' -%}
+      {% render 'home-schema' %}
+    {%- endif -%}
+  {{ content_for_header }}
+  <style>
+    @font-face {
+      font-family: "Averta";
+      src: url("{{ 'AvertaStd-Thin.woff' | asset_url }}") format("woff");
+      font-weight: 100 300;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Averta";
+      src: url("{{ 'Averta-Regular.woff' | asset_url }}") format("woff");
+      font-weight: 301 499;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Averta";
+      src: url("{{ 'AvertaPE-Bold.woff' | asset_url }}") format("woff");
+      font-weight: 500 749;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Averta";
+      src: url("{{ 'Averta-Black.woff' | asset_url }}") format("woff");
+      font-weight: 750 900;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+  <style>
+    html { overflow-x: clip; }
+    body { overflow-x: clip; max-width: 100%; overscroll-behavior-x: none; }
+    /* Search overlay */
+    .search-overlay { position:fixed; inset:0; z-index:9999; background:rgba(10,14,35,0.96); display:flex; flex-direction:column; opacity:0; pointer-events:none; transition:opacity 0.2s; font-family:"Averta","Segoe UI",Arial,sans-serif; }
+    .search-overlay.open { opacity:1; pointer-events:all; }
+    .search-overlay-header { display:flex; align-items:center; justify-content:space-between; padding:20px 40px; border-bottom:1px solid rgba(255,255,255,0.08); flex-shrink:0; }
+    .search-overlay-logo { height:36px; }
+    .search-close-btn { background:none; border:none; color:#fff; cursor:pointer; padding:6px; display:flex; align-items:center; justify-content:center; opacity:0.7; transition:opacity 0.2s; }
+    .search-close-btn:hover { opacity:1; }
+    .search-overlay-body { flex:1; overflow:hidden; display:flex; flex-direction:column; align-items:center; padding:40px 24px 0; }
+    .search-input-wrap { display:flex; align-items:center; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:9999px; padding:0 8px 0 20px; width:100%; max-width:600px; }
+    .search-icon-inside { flex-shrink:0; color:#9ca3af; }
+    .search-input { flex:1; border:none; outline:none; font-size:17px; padding:14px 12px; background:transparent; color:#fff; font-family:inherit; }
+    .search-input::placeholder { color:#6b7280; }
+    .search-submit-btn { flex-shrink:0; width:38px; height:38px; border-radius:50%; background:#7C4A1E; border:none; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background 0.2s; }
+    .search-submit-btn:hover { background:#e64a19; }
+    .search-tabs { display:flex; gap:8px; margin-top:20px; width:100%; max-width:600px; }
+    .search-tab { padding:6px 16px; border-radius:9999px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid rgba(255,255,255,0.2); color:#9ca3af; background:none; transition:all 0.15s; }
+    .search-tab.active { background:#7C4A1E; border-color:#7C4A1E; color:#fff; }
+    .search-results { width:100%; max-width:600px; margin-top:16px; background:rgba(255,255,255,0.05); border-radius:12px; overflow-y:auto; max-height:calc(100vh - 320px); border:1px solid rgba(255,255,255,0.08); }
+    .search-result-item { display:flex; align-items:center; gap:14px; padding:14px 16px; border-bottom:1px solid rgba(255,255,255,0.06); text-decoration:none; transition:background 0.15s; }
+    .search-result-item:last-child { border-bottom:none; }
+    .search-result-item:hover { background:rgba(255,255,255,0.07); }
+    .search-result-icon { width:40px; height:40px; border-radius:8px; background:rgba(255,87,34,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; }
+    .search-result-icon img { width:100%; height:100%; object-fit:cover; border-radius:8px; }
+    .search-result-icon svg { color:#7C4A1E; }
+    .search-result-info { flex:1; min-width:0; }
+    .search-result-title { font-size:14px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .search-result-desc { font-size:12px; color:#9ca3af; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .search-result-type { font-size:11px; color:#6b7280; margin-top:3px; }
+    .search-empty { padding:32px; text-align:center; color:#6b7280; font-size:14px; }
+    .search-overlay-footer { display:flex; align-items:center; justify-content:space-between; padding:16px 40px; border-top:1px solid rgba(255,255,255,0.08); flex-shrink:0; }
+    .search-esc-hint { font-size:12px; color:#6b7280; }
+    .search-browse-all { font-size:13px; font-weight:600; color:#7C4A1E; text-decoration:none; }
+    .search-browse-all:hover { color:#C4956A; }
+    @media(max-width:640px){ .search-overlay-header,.search-overlay-footer{ padding:16px 20px; } .search-overlay-body{ padding:24px 16px 0; } }
+  </style>
+  <script>
+    (function() {
+      var FIRST_TOUCH_KEY = 'aid_first_touch';
+      var LAST_TOUCH_KEY  = 'aid_last_touch';
+
+      function getCookie(name) {
+        var v = document.cookie.split('; ').find(function(c){ return c.startsWith(name + '='); });
+        return v ? decodeURIComponent(v.split('=')[1]) : null;
+      }
+
+      function setCookie(name, value, days) {
+        var expires = new Date();
+        expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + expires.toUTCString() + ';path=/';
+      }
+
+      var params = new URLSearchParams(window.location.search);
+      var hasGoogle = !!(params.get('gclid') || params.get('gad_source') || params.get('gad_campaignid'));
+
+      var source   = params.get('utm_source')   || (hasGoogle ? 'google' : null);
+      var medium   = params.get('utm_medium')   || (hasGoogle ? 'paid'   : null);
+      var campaign = params.get('utm_campaign') || null;
+
+      var hasData = source || medium || campaign;
+
+      if (hasData) {
+        var touch = JSON.stringify({ source: source, medium: medium, campaign: campaign });
+        // Last touch: always overwrite
+        setCookie(LAST_TOUCH_KEY, touch, 30);
+        // First touch: only set once, never overwrite
+        if (!getCookie(FIRST_TOUCH_KEY)) {
+          setCookie(FIRST_TOUCH_KEY, touch, 365);
+        }
+      }
+
+      // Expose helper so forms can read attribution at submit time
+      window.FineystAttribution = {
+        get: function() {
+          var firstRaw = getCookie(FIRST_TOUCH_KEY);
+          var lastRaw  = getCookie(LAST_TOUCH_KEY);
+          var first = firstRaw ? JSON.parse(firstRaw) : {};
+          var last  = lastRaw  ? JSON.parse(lastRaw)  : {};
+          return {
+            firstSource:   first.source   || null,
+            firstMedium:   first.medium   || null,
+            firstCampaign: first.campaign || null,
+            lastSource:    last.source    || null,
+            lastMedium:    last.medium    || null,
+            lastCampaign:  last.campaign  || null,
+            isFine:        true
+          };
+        }
+      };
+    })();
+    </script>
+  <!-- TrustBox script -->
+  <script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
+  <!-- End TrustBox script -->
+</head>
+<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXXX" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=872158915250310&ev=PageView&noscript=1"></noscript>
+
+<header class="site-header">
+  <div class="navbar-bg">
+    <div class="navbar-inner">
+
+      <!-- Mobile: hamburger -->
+      <div class="mobile-only">
+        <button class="hamburger-btn" id="mobileMenuOpen" aria-label="Open menu">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16"/><path d="M4 18h16"/><path d="M4 6h16"/></svg>
+        </button>
+      </div>
+
+      <!-- Logo -->
+      <div class="logo-wrap">
+        <a href="/" class="logo">
+          <img src="{{ 'logo.webp' | asset_url }}" alt="{{ shop.name }}" width="250" height="50" class="navbar-logo">
+        </a>
+      </div>
+
+      <!-- Mobile: cart -->
+      <div class="mobile-only mobile-cart">
+        <a href="{{ routes.cart_url }}" class="icon-btn cart-icon-link" aria-label="Cart">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          {%- if cart.item_count > 0 -%}
+            <span class="cart-count-badge" aria-label="{{ cart.item_count }} items in cart">{% if cart.item_count > 99 %}99+{% else %}{{ cart.item_count }}{% endif %}</span>
+          {%- endif -%}
+        </a>
+      </div>
+
+      <!-- Desktop nav -->
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <div class="mega-wrap">
+          <div class="nav-item has-mega" id="patchesNavItem">
+            <button class="nav-link">PATCHES
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+          </div>
+          <!-- Mega menu moved inside the hover scope to avoid hover gaps -->
+          <div class="mega-menu" id="megaMenu">
+            <div class="mega-inner">
+              <div class="mega-section-label">CUSTOM PATCHES</div>
+              <div class="mega-grid">
+                {%- capture patch_links_raw -%}{% render 'mega-menu-patch-links' %}{%- endcapture -%}
+                {%- assign patch_links = patch_links_raw | strip | split: "|" -%}
+                {%- for item in patch_links -%}
+                  {%- assign parts = item | split: "," -%}
+                  <a href="{{ parts[1] }}" class="mega-link">
+                    <span class="mega-link-icon" aria-hidden="true">
+                      {%- case parts[2] -%}
+                        {%- when 'scissors' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.12 15.88"/><path d="M14.47 14.48 20 20"/><path d="M8.12 8.12 12 12"/></svg>
+                        {%- when 'hexagon' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21 16-9 5-9-5V8l9-5 9 5z"/></svg>
+                        {%- when 'palette' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+                        {%- when 'sparkles' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.1L5 10l5.1 1.9L12 17l1.9-5.1L19 10l-5.1-1.9z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></svg>
+                        {%- when 'layers' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12.83 2.18 8.58 3.9a1 1 0 0 1 0 1.83l-8.58 3.91a2 2 0 0 1-1.66 0L2.6 7.91a1 1 0 0 1 0-1.83l8.57-3.9a2 2 0 0 1 1.66 0Z"/><path d="m2 12 9.17 4.17a2 2 0 0 0 1.66 0L22 12"/><path d="m2 17 9.17 4.17a2 2 0 0 0 1.66 0L22 17"/></svg>
+                        {%- when 'target' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                        {%- when 'award' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="m15.477 12.89 1.515 8.526L12 18l-4.992 3.416 1.515-8.526"/></svg>
+                        {%- when 'gem' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="m6 3 6 6 6-6"/><path d="m2 9h20"/></svg>
+                        {%- when 'crown' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m2 20 2-12 6 5 4-8 4 8 6-5 2 12H2Z"/></svg>
+                        {%- when 'mountain' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 3 4 8 5-5 4 8v7H3v-7l5-11z"/></svg>
+                        {%- when 'shirt' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46 16 2l-4 4-4-4-4.38 1.46A2 2 0 0 0 2 5.36V8l4 2v10h12V10l4-2V5.36a2 2 0 0 0-1.62-1.9z"/></svg>
+                        {%- when 'bookmark' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21 12 17 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                        {%- when 'feather' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.24 3.76a6 6 0 0 0-8.48 0L4 11.52V20h8.48l7.76-7.76a6 6 0 0 0 0-8.48Z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/></svg>
+                        {%- when 'circle' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                        {%- when 'flame' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A4.5 4.5 0 1 0 17 14c0-1.57-.5-2.84-1.5-4-.62 1.05-1.48 1.89-2.5 2.5.04-2.35-.78-4.93-2.5-7.5-4 3-6 6-6 10a7 7 0 1 0 14 0c0-1.65-.27-2.71-1-4-1.2 2-3 3-5 3 .2-1.1.17-2.5-1-3.5Z"/></svg>
+                        {%- when 'zap' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+                        {%- when 'waves' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6c1.5 1.5 3 1.5 4.5 0S9.5 4.5 11 6s3 1.5 4.5 0S18.5 4.5 20 6"/><path d="M2 12c1.5 1.5 3 1.5 4.5 0S9.5 10.5 11 12s3 1.5 4.5 0 3-1.5 4.5 0"/><path d="M2 18c1.5 1.5 3 1.5 4.5 0s3-1.5 4.5 0 3 1.5 4.5 0 3-1.5 4.5 0"/></svg>
+                        {%- when 'square' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                        {%- when 'star' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>
+                        {%- when 'compass' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z"/></svg>
+                        {%- when 'plane' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l5-5a1.5 1.5 0 0 0-2-2l-5 5-8.2-1.8a.5.5 0 0 0-.57.65L7 12l-1.77 4.15a.5.5 0 0 0 .57.65L14 15l5 5a1.5 1.5 0 0 0 2-2z"/></svg>
+                        {%- when 'brush' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9.06 11.9 8.04-8.04a2.83 2.83 0 1 1 4 4l-8.04 8.04"/><path d="M7.07 14.93c-1.66 1.66-2.27 4.65-1.41 5.51.86.86 3.85.25 5.51-1.41"/></svg>
+                        {%- when 'type' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                        {%- when 'flag' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22V4"/><path d="M4 4h12l-2 4 2 4H4"/></svg>
+                        {%- when 'pen' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                        {%- when 'shield' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+                        {%- when 'briefcase' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                        {%- when 'trophy' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M17 3H7v4a5 5 0 0 0 10 0z"/><path d="M6 7H4a2 2 0 0 0 0 4h2"/><path d="M18 7h2a2 2 0 0 1 0 4h-2"/></svg>
+                        {%- when 'heart' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 21-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09A6 6 0 0 1 16.5 3C19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.18z"/></svg>
+                        {%- when 'flower' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3c1.5 0 3 1.5 3 3s-1.5 3-3 3-3-1.5-3-3 1.5-3 3-3Z"/><path d="M21 12c0 1.5-1.5 3-3 3s-3-1.5-3-3 1.5-3 3-3 3 1.5 3 3Z"/><path d="M12 21c-1.5 0-3-1.5-3-3s1.5-3 3-3 3 1.5 3 3-1.5 3-3 3Z"/><path d="M3 12c0-1.5 1.5-3 3-3s3 1.5 3 3-1.5 3-3 3-3-1.5-3-3Z"/></svg>
+                        {%- when 'tree-pine' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m17 14 4 4H3l4-4"/><path d="m15 10 4 4H5l4-4"/><path d="m13 6 4 4H7l4-4"/><path d="M12 22v-4"/></svg>
+                        {%- when 'diamond' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 3 6 6 6-6"/><path d="m2 9 10 12L22 9l-4-6H6z"/></svg>
+                        {%- when 'package' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.29 7 8.71 5 8.71-5"/><path d="M12 22V12"/></svg>
+                        {%- when 'anchor' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M12 22V8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/><path d="M12 22a5 5 0 0 1-5-5V12"/><path d="M12 22a5 5 0 0 0 5-5V12"/></svg>
+                        {%- when 'book' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 7v14"/><path d="M3 18a2 2 0 0 1 2-2h7v5H5a2 2 0 0 1-2-2Z"/><path d="M21 18a2 2 0 0 0-2-2h-7v5h7a2 2 0 0 0 2-2Z"/><path d="M5 2h14a2 2 0 0 1 2 2v14"/></svg>
+                        {%- when 'coffee' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/><path d="M17 8h1a4 4 0 1 1 0 8h-1"/></svg>
+                        {%- when 'lock' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        {%- when 'edit' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                        {%- when 'sun' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                        {%- when 'lightbulb' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                        {%- when 'key' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3"/><path d="m18.5 4.5 3 3"/></svg>
+                        {%- when 'bike' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h3l2 4"/><path d="M6 17.5 9 12l3 5.5"/><path d="M9 12h6"/><path d="M10 6h4"/></svg>
+                        {%- when 'moon' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+                        {%- when 'bell' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86A2 2 0 0 1 12 3a2 2 0 0 1 1.71.86"/><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        {%- when 'search' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg>
+                        {%- when 'home' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+                        {%- when 'users' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        {%- when 'rocket' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.5-2 4.5-2 4.5s3-.5 4.5-2L11 15l-4-4-2.5 5.5Z"/><path d="M14 10 9 5c.97-2.44 2.98-4.45 5.42-5.42.63-.25 1.36-.1 1.84.38l2.78 2.78c.48.48.63 1.21.38 1.84C18.45 7.02 16.44 9.03 14 10Z"/><path d="M14 10 9 15"/><path d="M5 19 2 22"/></svg>
+                        {%- when 'globe' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        {%- when 'camera' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4H20a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.5L10 3h4z"/><circle cx="12" cy="13" r="3"/></svg>
+                        {%- when 'plus' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                        {%- when 'arrow-up' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 19 0-14"/><path d="m5 12 7-7 7 7"/></svg>
+                        {%- when 'leaf' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 4 13C4 7 11 4 20 4c0 9-3 16-9 16Z"/><path d="M4 13c2.5 0 5-1 8-4"/></svg>
+                        {%- when 'settings' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 1.74l-.12.81a2 2 0 0 1-1.51 1.61l-.78.19a2 2 0 0 1-1.89-.46l-.6-.6a2 2 0 0 0-2.83 0l-.31.31a2 2 0 0 0 0 2.83l.6.6a2 2 0 0 1 .46 1.89l-.19.78a2 2 0 0 1-1.61 1.51l-.81.12a2 2 0 0 0-1.74 2v.44a2 2 0 0 0 1.74 2l.81.12a2 2 0 0 1 1.61 1.51l.19.78a2 2 0 0 1-.46 1.89l-.6.6a2 2 0 0 0 0 2.83l.31.31a2 2 0 0 0 2.83 0l.6-.6a2 2 0 0 1 1.89-.46l.78.19a2 2 0 0 1 1.51 1.61l.12.81a2 2 0 0 0 2 1.74h.44a2 2 0 0 0 2-1.74l.12-.81a2 2 0 0 1 1.51-1.61l.78-.19a2 2 0 0 1 1.89.46l.6.6a2 2 0 0 0 2.83 0l.31-.31a2 2 0 0 0 0-2.83l-.6-.6a2 2 0 0 1-.46-1.89l.19-.78a2 2 0 0 1 1.61-1.51l.81-.12a2 2 0 0 0 1.74-2v-.44a2 2 0 0 0-1.74-2l-.81-.12a2 2 0 0 1-1.61-1.51l-.19-.78a2 2 0 0 1 .46-1.89l.6-.6a2 2 0 0 0 0-2.83l-.31-.31a2 2 0 0 0-2.83 0l-.6.6a2 2 0 0 1-1.89.46l-.78-.19a2 2 0 0 1-1.51-1.61l-.12-.81a2 2 0 0 0-2-1.74Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        {%- when 'battery' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2"/></svg>
+                        {%- else -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                      {%- endcase -%}
+                    </span>
+                    <span>{{ parts[0] }}</span>
+                  </a>
+                {%- endfor -%}
+              </div>
+              <div class="mega-footer">
+                <a href="/pages/gallery">Gallery</a>
+                {% comment %}<a href="/faqs">FAQ</a>{% endcomment %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item"><a href="/collections" class="nav-link">PATCHES OPTION</a></div>
+        <div class="nav-item"><a href="/pages/gallery" class="nav-link">GALLERY</a></div>
+        <div class="nav-item"><a href="/pages/contact-us" class="nav-link">CONTACT US</a></div>
+      </nav>
+
+      <!-- Right actions -->
+      <div class="header-actions">
+        <div class="quote-wrap">
+          <div class="quote-glow"></div>
+          <a href="/pages/custom-patches" class="btn-quote">
+            <div class="btn-quote-inner">
+              <span class="quote-free">FREE</span>
+              <span class="quote-dark">QUOTE
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="quote-arrow" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </div>
+          </a>
+        </div>
+        <button class="icon-btn" aria-label="Search" id="searchToggleBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </button>
+        <a href="{{ routes.account_login_url }}" class="icon-btn" aria-label="Account">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+        <a href="{{ routes.cart_url }}" class="icon-btn cart-icon-link" aria-label="Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          {%- if cart.item_count > 0 -%}
+            <span class="cart-count-badge" aria-label="{{ cart.item_count }} items in cart">{% if cart.item_count > 99 %}99+{% else %}{{ cart.item_count }}{% endif %}</span>
+          {%- endif -%}
+        </a>
+      </div>
+    </div>
+
+    <!-- Capsule tabs: absolute at bottom of dark bar, translateY 50% -->
+    {%- unless request.page_type == 'page' and page.handle == 'custom-patches' -%}
+      <div class="capsule-bar">
+        <div class="capsule-tabs-wrap">
+          <div class="capsule-tabs-scroll" id="capsuleTabsScroll">
+            <div class="capsule-tabs-inner">
+              {%- assign tab_links = "Embroidered,/products/embroidered-patches|PVC,/products/pvc-patches|Chenille,/products/custom-chenille-patches|Leather,/products/custom-leather-name-patches|Printed,/products/printed-patches|Woven,/products/custom-woven-patches|Heart,/products/custom-heart-patches|Applique,/products/custom-applique-patches|Brand,/products/custom-brand-patches|Varsity Letter,/products/custom-varsity-letter-patches|Sports,/products/custom-sports-patches|Rubber,/products/rubber-patches|Iron On,/products/custom-iron-on-patches|Military,/products/custom-military-patches" | split: "|" -%}
+              {%- for tab in tab_links -%}
+                {%- assign tparts = tab | split: "," -%}
+                <a href="{{ tparts[1] }}" class="capsule-tab{% if request.path == tparts[1] %} is-active{% endif %}"{% if request.path == tparts[1] %} aria-current="page"{% endif %}>{{ tparts[0] }}</a>
+              {%- endfor -%}
+            </div>
+          </div>
+          <button class="capsule-tab-arrow" id="capsuleTabArrow" aria-label="Scroll tabs right">
+            <span class="capsule-arrow-inner">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    {%- endunless -%}
+  </div>
+
+  <!-- Mobile sidebar -->
+  <div class="mobile-sidebar" id="mobileSidebar">
+    <div class="sidebar-header">
+      <a href="/">
+        <img src="{{ 'logo.webp' | asset_url }}" alt="{{ shop.name }}" width="200" height="45" class="navbar-logo">
+      </a>
+      <button class="sidebar-close" id="mobileMenuClose" aria-label="Close menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div class="sidebar-body">
+      <a href="/" class="sidebar-link">Home <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      <a href="/collections" class="sidebar-link">Shop Custom Patches <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      <a href="/pages/gallery" class="sidebar-link">Gallery <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      {% comment %}<a href="/pages/faqs" class="sidebar-link">FAQ <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>{% endcomment %}
+      <a href="/pages/contact-us" class="sidebar-link">Contact <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    </div>
+    <div class="sidebar-footer">
+      <p>Need Help?</p>
+      <a href="tel:+18884997708">1-888-499-7708</a>
+      <span>Mon-Fri: 9AM - 5PM EST</span>
+    </div>
+  </div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Search overlay -->
+  <div class="search-overlay" id="searchOverlay" aria-hidden="true" role="dialog" aria-label="Search">
+    <!-- Header -->
+    <div class="search-overlay-header">
+      <img src="{{ 'logo.webp' | asset_url }}" alt="{{ shop.name }}" class="search-overlay-logo">
+      <button class="search-close-btn" id="searchCloseBtn" aria-label="Close search">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <!-- Body -->
+    <div class="search-overlay-body">
+      <div class="search-input-wrap">
+        <svg class="search-icon-inside" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        <input type="search" id="searchInput" class="search-input" placeholder="Search productsâ€¦" autocomplete="off" aria-label="Search" spellcheck="false">
+        <button type="button" class="search-submit-btn" id="searchSubmitBtn" aria-label="Submit search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div class="search-tabs" id="searchTabs">
+        <button class="search-tab active" data-filter="all" id="tabAll">All (0)</button>
+        <button class="search-tab" data-filter="product" id="tabProducts">Products (0)</button>
+        <button class="search-tab" data-filter="page" id="tabPages">Pages (0)</button>
+      </div>
+      <div class="search-results" id="searchResults">
+        <div class="search-empty">Start typing to searchâ€¦</div>
+      </div>
+    </div>
+    <!-- Footer -->
+    <div class="search-overlay-footer">
+      <span class="search-esc-hint">Press ESC to close</span>
+      <a href="/collections/all" class="search-browse-all">Browse All Products â†’</a>
+    </div>
+  </div>
+
+</header>
+
+<main>{{ content_for_layout }}</main>
+
+{% section 'footer' %}
+
+{% comment %} <div class="chat-bubble" aria-label="Chat">&#128172;</div> {% endcomment %}
+
+<script>
+  window.FineystShopifyAnalytics = {
+    page_type: {{ request.page_type | json }},
+    currency: {{ cart.currency.iso_code | default: shop.currency | default: 'USD' | json }}
+    {%- if request.page_type == 'product' and product -%}
+    ,
+    product: {
+      id: {{ product.id | json }},
+      variant_id: {{ product.selected_or_first_available_variant.id | json }},
+      title: {{ product.title | json }},
+      type: {{ product.type | default: 'Patches' | json }},
+      variant_title: {{ product.selected_or_first_available_variant.title | json }},
+      price: {{ product.selected_or_first_available_variant.price | divided_by: 100.0 | json }}
+    }
+    {%- endif -%}
+    {%- if request.page_type == 'cart' and cart.item_count > 0 -%}
+    ,
+    cart: {
+      currency: {{ cart.currency.iso_code | default: shop.currency | default: 'USD' | json }},
+      value: {{ cart.total_price | divided_by: 100.0 | json }},
+      items: [
+        {%- for item in cart.items -%}
+          {%- assign analytics_price = item.final_price | divided_by: 100.0 -%}
+          {%- if item.properties['custom_price'] != blank -%}
+            {%- assign analytics_price = item.properties['custom_price'] | remove: '$' | strip -%}
+          {%- elsif item.properties['Calculated Unit Price'] != blank -%}
+            {%- assign analytics_price = item.properties['Calculated Unit Price'] | remove: '$' | strip -%}
+          {%- endif -%}
+          {
+            id: {{ item.variant_id | json }},
+            name: {{ item.product.title | json }},
+            category: {{ item.product.type | default: 'Patches' | json }},
+            variant: {{ item.variant.title | json }},
+            price: {{ analytics_price | json }},
+            quantity: {{ item.quantity | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+    {%- endif -%}
+    {%- if first_time_accessed and checkout -%}
+    ,
+    purchase: {
+      transaction_id: {{ checkout.order_id | default: checkout.order_number | default: checkout.id | json }},
+      value: {{ checkout.total_price | divided_by: 100.0 | json }},
+      currency: {{ checkout.currency | default: shop.currency | default: 'USD' | json }},
+      items: [
+        {%- for item in checkout.line_items -%}
+          {
+            id: {{ item.variant_id | default: item.product_id | json }},
+            name: {{ item.title | json }},
+            category: {{ item.product.type | default: 'Patches' | json }},
+            variant: {{ item.variant.title | json }},
+            price: {{ item.final_price | divided_by: 100.0 | json }},
+            quantity: {{ item.quantity | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+    {%- endif -%}
+  };
+</script>
+<script src="{{ 'fineyst-meta-events.js' | asset_url }}" defer></script>
+{{ 'fineyst-gtm-events.js' | asset_url | script_tag }}
+{{ 'theme.js' | asset_url | script_tag }}
+<script>
+(function(){
+  var overlay    = document.getElementById('searchOverlay');
+  var input      = document.getElementById('searchInput');
+  var closeBtn   = document.getElementById('searchCloseBtn');
+  var toggleBtn  = document.getElementById('searchToggleBtn');
+  var resultsEl  = document.getElementById('searchResults');
+  var submitBtn  = document.getElementById('searchSubmitBtn');
+  var tabAll     = document.getElementById('tabAll');
+  var tabProducts= document.getElementById('tabProducts');
+  var tabPages   = document.getElementById('tabPages');
+
+  var allResults = [];
+  var activeFilter = 'all';
+  var debounceTimer = null;
+
+  function openSearch(){
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden','false');
+    setTimeout(function(){ input.focus(); }, 50);
+  }
+  function closeSearch(){
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden','true');
+  }
+
+  function goToSearch(){
+    if(input.value.trim()) window.location.href = '/search?q=' + encodeURIComponent(input.value.trim()) + '&type=product,page';
+  }
+
+  toggleBtn.addEventListener('click', openSearch);
+  closeBtn.addEventListener('click', closeSearch);
+  submitBtn.addEventListener('click', goToSearch);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeSearch();
+  });
+  input.addEventListener('keydown', function(e){
+    if(e.key === 'Enter') goToSearch();
+  });
+
+  // Tab switching
+  [tabAll, tabProducts, tabPages].forEach(function(tab){
+    tab.addEventListener('click', function(){
+      activeFilter = tab.dataset.filter;
+      [tabAll, tabProducts, tabPages].forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      renderResults();
+    });
+  });
+
+  function pageIcon(){
+    return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+  }
+
+  function renderResults(){
+    var filtered = allResults.filter(function(r){
+      return activeFilter === 'all' || r.type === activeFilter;
+    });
+
+    if(!filtered.length){
+      resultsEl.innerHTML = '<div class="search-empty">No results found.</div>';
+      return;
+    }
+
+    resultsEl.innerHTML = filtered.map(function(r){
+      var iconHtml = r.image
+        ? '<img src="' + r.image + '" alt="' + r.title + '">'
+        : pageIcon();
+      var desc = r.body ? r.body.replace(/<[^>]+>/g,'').substring(0,90) + 'â€¦' : '';
+      return '<a href="' + r.url + '" class="search-result-item">'
+        + '<div class="search-result-icon">' + iconHtml + '</div>'
+        + '<div class="search-result-info">'
+          + '<div class="search-result-title">' + r.title + '</div>'
+          + (desc ? '<div class="search-result-desc">' + desc + '</div>' : '')
+          + '<div class="search-result-type">' + (r.type === 'product' ? 'Product' : 'Page') + '</div>'
+        + '</div>'
+        + '</a>';
+    }).join('');
+  }
+
+  function updateTabs(products, pages){
+    var total = products + pages;
+    tabAll.textContent      = 'All (' + total + ')';
+    tabProducts.textContent = 'Products (' + products + ')';
+    tabPages.textContent    = 'Pages (' + pages + ')';
+  }
+
+  input.addEventListener('input', function(){
+    clearTimeout(debounceTimer);
+    var q = input.value.trim();
+    if(!q){
+      allResults = [];
+      updateTabs(0,0);
+      resultsEl.innerHTML = '<div class="search-empty">Start typing to searchâ€¦</div>';
+      return;
+    }
+    debounceTimer = setTimeout(function(){
+      fetch('/search/suggest.json?q=' + encodeURIComponent(q) + '&resources[type]=product%2Cpage&resources[limit]=8')
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          console.log('[Search API]', data);
+          var resources = (data.resources && data.resources.results) || {};
+          var products  = (resources.products || []).map(function(p){
+            var img = p.featured_image ? p.featured_image.url : (p.image ? p.image.url : null);
+            var desc = p.description || p.body || '';
+            return { type:'product', title:p.title, url:p.url, image:img, body:desc };
+          });
+          var pages = (resources.pages || []).map(function(p){
+            var desc = p.body || p.body_html || '';
+            return { type:'page', title:p.title, url:p.url, image:null, body:desc };
+          });
+          allResults = products.concat(pages);
+          updateTabs(products.length, pages.length);
+          renderResults();
+        })
+        .catch(function(){ resultsEl.innerHTML = '<div class="search-empty">Something went wrong.</div>'; });
+    }, 250);
+  });
+})();
+</script>
+<script>
+(function(){
+  if (window.innerWidth > 768) return;
+  var header = document.querySelector('.site-header');
+  if (!header) return;
+  var lastY = 0;
+  window.addEventListener('scroll', function(){
+    if (window.innerWidth > 768) return;
+    var y = window.scrollY;
+    if (y > lastY && y > 60) {
+      header.classList.add('header-hidden');
+    } else {
+      header.classList.remove('header-hidden');
+    }
+    lastY = y;
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>
+
+

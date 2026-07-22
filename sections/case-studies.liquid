@@ -1,0 +1,44 @@
+﻿{% comment %} Case Studies Section {% endcomment %}
+<section class="case-studies-section" aria-labelledby="case-studies-heading">
+  <div class="case-studies-container">
+
+    <header class="case-studies-header">
+      <h2 id="case-studies-heading" class="case-studies-title">Custom Patch Case Studies â€” Brands &amp; Organizations</h2>
+      <p class="case-studies-subtitle">See how our patches make a difference</p>
+    </header>
+
+    <div class="case-studies-grid">
+
+      {%- assign cases = "CUERO STREET,cuero-street.webp,When your brand message has to be worn with custom embroidered patches,/pages/case-study-cuero-street|STEEL WOLVES MC,steel-wolves.webp,For those who wear their brotherhood on their back with weatherproof embroidered patches,/pages/case-study-steel-wolves|TECHGEAR SOLUTIONS,tech-gear.webp,Turning a corporate event into a brand experience with woven logo patches,/pages/case-study-techgear" | split: "|" -%}
+
+      {%- for case in cases -%}
+        {%- assign parts = case | split: "," -%}
+        <article class="case-card">
+          <div class="case-card-accent"></div>
+          <div class="case-card-body">
+            <div class="case-card-logo">
+              <img src="{{ parts[1] | asset_url }}" alt="{{ parts[0] }} logo" width="120" height="60" loading="lazy">
+            </div>
+            <p class="case-card-name">{{ parts[0] }}</p>
+            <p class="case-card-tagline">{{ parts[2] }}</p>
+          </div>
+          <div class="case-card-footer">
+            <a href="{{ parts[3] }}" class="case-card-btn" aria-label="Read case study about {{ parts[0] }}">
+              Read Case Study
+            </a>
+          </div>
+        </article>
+      {%- endfor -%}
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Case Studies",
+  "settings": [],
+  "presets": [{ "name": "Case Studies" }]
+}
+{% endschema %}
+

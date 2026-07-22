@@ -1,0 +1,37 @@
+﻿{% comment %} How to Apply Patches Section {% endcomment %}
+<section class="apply-section">
+  <div class="apply-container">
+
+    <div class="apply-header">
+      <h2 class="apply-title">How to Apply Custom Patches â€” Iron-On, Heatpress, Sew-On &amp; Velcro</h2>
+      <p class="apply-subtitle">Patch Application Made Easy</p>
+    </div>
+
+    <div class="apply-grid">
+
+      {%- assign methods = "HEATPRESS FOR GARMENTS,heat-press-for-garments.webp,Heat press machine applying a colorful embroidered patch|HEATPRESS FOR HATS,heat-press-for-hats.webp,Heat press machine applying a patch to a hat|IRON ON FOR GARMENTS,iron-on-for-garments.webp,Iron applying a patch to a garment|PEEL & STICK,peel-and-stick.webp,Hand peeling backing from an adhesive patch" | split: "|" -%}
+
+      {%- for method in methods -%}
+        {%- assign parts = method | split: "," -%}
+        <div class="apply-card">
+          <div class="apply-card-img">
+            <img src="{{ parts[1] | asset_url }}" alt="{{ parts[2] }}" loading="lazy">
+          </div>
+          <div class="apply-card-label">
+            <p>{{ parts[0] }}</p>
+          </div>
+        </div>
+      {%- endfor -%}
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "How to Apply",
+  "settings": [],
+  "presets": [{ "name": "How to Apply" }]
+}
+{% endschema %}
+

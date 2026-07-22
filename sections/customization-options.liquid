@@ -1,0 +1,198 @@
+﻿{% comment %} Customization Options Section {% endcomment %}
+<section class="custom-opts-section">
+  <div class="custom-opts-container">
+
+    <h2 class="custom-opts-title">Custom Patch Options â€“ Thread, Edge, Backing &amp; Design Techniques</h2>
+
+    <div class="custom-opts-layout">
+
+      <!-- Left sidebar -->
+      <div class="custom-opts-sidebar">
+        <div class="custom-opts-sidebar-inner">
+          <p class="custom-opts-sidebar-hint">Select a category to learn more</p>
+          <div class="custom-opts-nav" id="customOptsNav">
+
+            {%- assign categories = "Thread & Finish Options,layers|Edge Types,shield|Color Options,palette|Design Techniques,pen-tool|Packaging Options,package|Patch Backing Types,package|Additional Services,file-text" | split: "|" -%}
+
+            {%- for cat in categories -%}
+              {%- assign parts = cat | split: "," -%}
+              {%- assign cat_name = parts[0] -%}
+              {%- assign cat_icon = parts[1] -%}
+              <button class="custom-opts-nav-btn{% if forloop.first %} active{% endif %}" data-tab="{{ forloop.index0 }}">
+                <div class="custom-opts-nav-icon">
+                  {%- if cat_icon == 'layers' -%}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>
+                  {%- elsif cat_icon == 'shield' -%}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+                  {%- elsif cat_icon == 'palette' -%}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+                  {%- elsif cat_icon == 'pen-tool' -%}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"/><path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"/><path d="m2.3 2.3 7.286 7.286"/><circle cx="11" cy="11" r="2"/></svg>
+                  {%- elsif cat_icon == 'file-text' -%}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                  {%- else -%}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg>
+                  {%- endif -%}
+                </div>
+                <span>{{ cat_name }}</span>
+              </button>
+            {%- endfor -%}
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Right content panel -->
+      <div class="custom-opts-content">
+        <div class="custom-opts-panel" id="customOptsPanel">
+
+          <!-- Tab 0: Thread & Finish -->
+          <div class="custom-opts-tab" data-tab="0">
+            <div class="custom-opts-panel-header">
+              <div class="custom-opts-panel-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg></div>
+              <p class="custom-opts-panel-title">Thread &amp; Finish Options</p>
+            </div>
+            <p class="custom-opts-panel-desc">Get the right texture, tone, and durability â€” whether you're ordering for uniforms, team branding, or promotional giveaways.</p>
+            <div class="custom-opts-cards">
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Standard Embroidery Thread</p><p class="custom-opts-card-desc">Classic, cost-effective, and long-lasting</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Metallic Thread</p><p class="custom-opts-card-desc">Adds a high-end shimmer; great for premium branding.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Glow-in-the-Dark</p><p class="custom-opts-card-desc">For novelty patches or safety wear.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Neon Thread</p><p class="custom-opts-card-desc">High visibility for fashion or streetwear patches.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">3D Puff Embroidery</p><p class="custom-opts-card-desc">Adds dimension; ideal for caps, varsity jackets.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Woven Finish</p><p class="custom-opts-card-desc">Best for small text or detailed designs.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Chenille Texture</p><p class="custom-opts-card-desc">Bold, fuzzy finish perfect for school patches.</p></div>
+            </div>
+          </div>
+
+          <!-- Tab 1: Edge Types -->
+          <div class="custom-opts-tab" data-tab="1" style="display:none">
+            <div class="custom-opts-panel-header">
+              <div class="custom-opts-panel-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></div>
+              <p class="custom-opts-panel-title">Edge Types</p>
+            </div>
+            <p class="custom-opts-panel-desc">Choose an edge style that enhances durability and reflects your brand's style. Best for: military patches, sports teams, and industrial gear.</p>
+            <div class="custom-opts-cards">
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Merrowed Border</p><p class="custom-opts-card-desc">Rounded, reinforced edge; ideal for circle/square patches.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Laser-Cut Edge</p><p class="custom-opts-card-desc">Precision for complex shapes.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Hot-Cut Edge</p><p class="custom-opts-card-desc">Modern look with sealed borders.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Vintage Frayed Edge</p><p class="custom-opts-card-desc">Great for fashion and distressed styles.</p></div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Color Options -->
+          <div class="custom-opts-tab" data-tab="2" style="display:none">
+            <div class="custom-opts-panel-header">
+              <div class="custom-opts-panel-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></svg></div>
+              <p class="custom-opts-panel-title">Color Options</p>
+            </div>
+            <p class="custom-opts-panel-desc">Ensure your patches align perfectly with your brand's identity. Used for: matching corporate branding, national flags, or team colors.</p>
+            <div class="custom-opts-cards">
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Pantone</p><p class="custom-opts-card-desc">PMS (Pantone) Color Matching available.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Multicolor</p><p class="custom-opts-card-desc">Up to 12 thread colors free with every order.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Specialty</p><p class="custom-opts-card-desc">Neon &amp; Metallic options for standout looks.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Minimalist</p><p class="custom-opts-card-desc">Monochrome, grayscale &amp; duotone finishes available.</p></div>
+            </div>
+          </div>
+
+          <!-- Tab 3: Design Techniques -->
+          <div class="custom-opts-tab" data-tab="3" style="display:none">
+            <div class="custom-opts-panel-header">
+              <div class="custom-opts-panel-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"/><path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"/><path d="m2.3 2.3 7.286 7.286"/><circle cx="11" cy="11" r="2"/></svg></div>
+              <p class="custom-opts-panel-title">Design Techniques</p>
+            </div>
+            <p class="custom-opts-panel-desc">Different patch types for different business needs. Use Case: Choose based on fabric type, complexity of logo, and weather exposure.</p>
+            <div class="custom-opts-cards">
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Embroidered Patches</p><p class="custom-opts-card-desc">Textured, traditional look with up to 75% or 100% embroidery.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Woven Patches</p><p class="custom-opts-card-desc">Clean, flat surface for fine detail and small lettering.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Printed (Sublimated)</p><p class="custom-opts-card-desc">Photo-realistic and full-color prints.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">PVC Patches</p><p class="custom-opts-card-desc">Rugged, waterproof; ideal for outdoor gear and uniforms.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Leather &amp; Faux Leather</p><p class="custom-opts-card-desc">Premium, stylish, ideal for fashion/lifestyle.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Hybrid Patches</p><p class="custom-opts-card-desc">Combine embroidery + PVC or print for a unique result.</p></div>
+            </div>
+          </div>
+
+          <!-- Tab 4: Packaging -->
+          <div class="custom-opts-tab" data-tab="4" style="display:none">
+            <div class="custom-opts-panel-header">
+              <div class="custom-opts-panel-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg></div>
+              <p class="custom-opts-panel-title">Packaging Options</p>
+            </div>
+            <p class="custom-opts-panel-desc">Deliver your patches with professionalism and ease. Ideal for: eCommerce brands, schools, corporate programs.</p>
+            <div class="custom-opts-cards">
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Bulk Bagged</p><p class="custom-opts-card-desc">Free standard option for mass orders.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Individual Polybags</p><p class="custom-opts-card-desc">Great for giveaways and resale.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Custom Header Cards</p><p class="custom-opts-card-desc">Display your logo or instructions.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Retail-Ready Kits</p><p class="custom-opts-card-desc">Add branding, QR codes, or backer cards.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Drop-Shipping Available</p><p class="custom-opts-card-desc">Ship directly to team members or clients.</p></div>
+            </div>
+          </div>
+
+          <!-- Tab 5: Patch Backing -->
+          <div class="custom-opts-tab" data-tab="5" style="display:none">
+            <div class="custom-opts-panel-header">
+              <div class="custom-opts-panel-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg></div>
+              <p class="custom-opts-panel-title">Patch Backing Types</p>
+            </div>
+            <p class="custom-opts-panel-desc">The right patch backing makes all the difference in how your patch is applied and how long it lasts.</p>
+            <div class="custom-opts-cards">
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Iron-On Backing</p><p class="custom-opts-card-desc">Fast application on cotton, denim, and polyester.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Velcro Backing (Hook &amp; Loop)</p><p class="custom-opts-card-desc">Tactical gear, uniforms, reusable patches.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Sew-On Backing</p><p class="custom-opts-card-desc">Permanent application to any fabric.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Peel &amp; Stick Backing</p><p class="custom-opts-card-desc">Temporary branding or quick fixes.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Additional Backing Options</p><p class="custom-opts-card-desc">Iron-on with extra stitching for long wear.</p></div>
+            </div>
+          </div>
+
+          <!-- Tab 6: Additional Services -->
+          <div class="custom-opts-tab" data-tab="6" style="display:none">
+            <div class="custom-opts-panel-header">
+              <div class="custom-opts-panel-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></div>
+              <p class="custom-opts-panel-title">Additional Services</p>
+            </div>
+            <p class="custom-opts-panel-desc">Streamline production with our value-added solutions. Built for agencies, distributors, and corporate buyers who need high-volume patch manufacturing.</p>
+            <div class="custom-opts-cards">
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Proofing</p><p class="custom-opts-card-desc">Free Digital Proof &amp; Edits.</p></div>
+              <div class="custom-opts-card">
+                <div class="custom-opts-card-header"><p class="custom-opts-card-name">Sampling</p><span class="custom-opts-popular">Popular</span></div>
+                <p class="custom-opts-card-desc">Sample Approval (digital or physical).</p>
+              </div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Rush</p><p class="custom-opts-card-desc">Rush Orders â€“ As fast as 3â€“5 days.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Kits</p><p class="custom-opts-card-desc">Custom Patch Kits â€“ Include designs, cards, and packaging.</p></div>
+              <div class="custom-opts-card"><p class="custom-opts-card-name">Fulfillment</p><p class="custom-opts-card-desc">Custom Patches USA â€“ Nationwide Delivery.</p></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  var nav = document.getElementById('customOptsNav');
+  var panel = document.getElementById('customOptsPanel');
+  if (!nav || !panel) return;
+  var btns = nav.querySelectorAll('.custom-opts-nav-btn');
+  var tabs = panel.querySelectorAll('.custom-opts-tab');
+  btns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = btn.getAttribute('data-tab');
+      btns.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      tabs.forEach(function(t) { t.style.display = 'none'; });
+      var active = panel.querySelector('.custom-opts-tab[data-tab="' + idx + '"]');
+      if (active) active.style.display = 'block';
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Customization Options",
+  "settings": [],
+  "presets": [{ "name": "Customization Options" }]
+}
+{% endschema %}
+

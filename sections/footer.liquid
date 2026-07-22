@@ -1,0 +1,379 @@
+﻿<style>
+  /* ===== FOOTER ===== */
+  .ft { background: #3D1F0A; padding: 48px 16px 0; font-family: "Averta", "Segoe UI", Arial, sans-serif; }
+  .ft *, .ft *::before, .ft *::after { box-sizing: border-box; }
+  .ft a { text-decoration: none; }
+  .ft-inner { max-width: 1440px; margin: 0 auto; padding: 0 16px; }
+
+  /* Top grid */
+  .ft-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-bottom: 48px; }
+  @media (min-width: 640px) { .ft-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 900px) { .ft-grid { grid-template-columns: 2fr 1fr 1fr 1fr 1fr; } }
+
+  /* Brand col */
+  .ft-brand { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+  @media (min-width: 900px) { .ft-brand { align-items: flex-start; padding-right: 24px; } }
+
+  .ft-logo-wrap { display: flex; flex-direction: column; align-items: center; }
+  @media (min-width: 900px) { .ft-logo-wrap { align-items: flex-start; } }
+  .ft-logo { height: 48px; width: 200px; object-fit: contain; display: block; margin-bottom: 12px; transition: opacity 0.2s; }
+  .ft-logo:hover { opacity: 0.8; }
+  .ft-tagline { color: #d1d5db; font-size: 14px; font-weight: 600; text-align: center; }
+  @media (min-width: 900px) { .ft-tagline { text-align: left; } }
+
+  /* Contact info */
+  .ft-contact { display: flex; flex-direction: column; gap: 14px; width: 100%; align-items: center; }
+  @media (min-width: 900px) { .ft-contact { align-items: flex-start; } }
+  .ft-contact-row { display: flex; align-items: flex-start; gap: 10px; }
+  .ft-contact-icon { color: #7C4A1E; flex-shrink: 0; margin-top: 2px; }
+  .ft-contact-row a, .ft-contact-row span { color: #d1d5db; font-size: 14px; font-weight: 600; line-height: 1.5; transition: color 0.2s; }
+  .ft-contact-row a:hover { color: #fff; }
+
+  .ft-hours { margin-top: 8px; text-align: center; display: flex; flex-direction: column; gap: 12px; }
+  @media (min-width: 900px) { .ft-hours { text-align: left; } }
+  .ft-hours-label { color: #fff; font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+  .ft-hours p { color: #d1d5db; font-size: 14px; font-weight: 600; margin: 0; }
+
+  /* Link columns */
+  .ft-col { }
+  .ft-col-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; background: none; border: none; border-bottom: 1px solid #374151; padding-bottom: 10px; margin-bottom: 0; cursor: pointer; color: #7C4A1E; font-family: "Averta", "Segoe UI", Arial, sans-serif; font-weight: 700; font-size: 16px; text-align: left; }
+  @media (min-width: 900px) { .ft-col-btn { border-bottom: none; padding-bottom: 0; margin-bottom: 16px; cursor: default; pointer-events: none; } }
+  .ft-col-chevron { flex-shrink: 0; transition: transform 0.25s; color: #7C4A1E; }
+  .ft-col-chevron.open { transform: rotate(180deg); }
+  @media (min-width: 900px) { .ft-col-chevron { display: none; } }
+
+  .ft-col-links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; overflow: hidden; max-height: 0; transition: max-height 0.3s ease, padding 0.3s ease; }
+  .ft-col-links.open { max-height: 400px; padding-top: 12px; }
+  @media (min-width: 900px) { .ft-col-links { max-height: none !important; padding-top: 0 !important; } }
+  .ft-col-links a { color: #d1d5db; font-size: 14px; font-weight: 600; transition: color 0.2s; }
+  .ft-col-links a:hover { color: #fff; }
+  .ft-col-links .ft-view-all { color: #fff; font-weight: 500; }
+  .ft-col-links .ft-view-all:hover { color: #7C4A1E; }
+
+  /* Middle row: social + newsletter */
+  .ft-mid { display: flex; flex-direction: column; align-items: center; gap: 32px; border-top: 1px solid #2A1008; padding: 32px 0; }
+  @media (min-width: 900px) { .ft-mid { flex-direction: row; justify-content: space-between; align-items: center; } }
+
+  /* Social */
+  .ft-social { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  @media (min-width: 900px) { .ft-social { flex-direction: row; align-items: center; margin-top:40px; } }
+  .ft-follow-label { color: #d1d5db; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; }
+  .ft-social-links { display: flex; gap: 12px; }
+  .ft-social-link { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(124,74,30,0.5); background: transparent; color: #7C4A1E; transition: border-color 0.3s, background 0.3s; }
+  .ft-social-link:hover { border-color: #7C4A1E; background: rgba(124,74,30,0.1); }
+  .ft-social-link svg { width: 20px; height: 20px; display: block; flex-shrink: 0; }
+  .ft-social-link .ft-social-icon--stroke { fill: none; stroke: currentColor; }
+  .ft-social-link .ft-social-icon--fill { fill: currentColor; stroke: none; }
+
+  /* Newsletter */
+  .ft-newsletter { max-width: 380px; width: 100%; text-align: center; padding: 0 8px; }
+  .ft-nl-title { color: #fff; font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+  .ft-nl-sub { color: #d1d5db; font-size: 13px; margin-bottom: 14px; }
+  .ft-nl-form { display: flex; }
+  .ft-nl-input { flex: 1; background: #2A1008; border: 1px solid #374151; border-right: none; border-radius: 6px 0 0 6px; padding: 10px 16px; color: #fff; font-size: 14px; font-family: "Averta", "Segoe UI", Arial, sans-serif; outline: none; transition: border-color 0.2s; }
+  .ft-nl-input:focus { border-color: #7C4A1E; }
+  .ft-nl-input::placeholder { color: #6b7280; }
+  .ft-nl-btn { background: #7C4A1E; color: #fff; border: none; border-radius: 0 6px 6px 0; padding: 10px 18px; font-size: 14px; font-weight: 600; font-family: "Averta", "Segoe UI", Arial, sans-serif; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+  .ft-nl-btn:hover { background: #6B3A18; }
+  .ft-nl-btn:disabled { cursor: wait; opacity: 0.72; }
+  .ft-nl-status { min-height: 18px; margin: 8px 0 0; color: #d1d5db; font-size: 12px; line-height: 1.4; }
+  .ft-nl-status.success { color: #86efac; }
+  .ft-nl-status.error { color: #fca5a5; }
+  .trustpilot-widget { width: auto; max-width: 220px; }
+  @media (max-width: 899px) { .trustpilot-widget { margin-top: 0 !important; } }
+
+  /* Bottom bar */
+  .ft-bottom { border-top: 1px solid #2A1008; padding: 24px 0 32px; }
+  .ft-bottom-inner { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  @media (min-width: 900px) { .ft-bottom-inner { flex-direction: row; justify-content: space-between; align-items: center; } }
+
+  .ft-copy { color: #9ca3af; font-size: 14px; text-align: center; }
+  @media (min-width: 900px) { .ft-copy { text-align: left; width: 33%; } }
+  .ft-copy-mobile { color: #9ca3af; font-size: 13px; text-align: center; margin-top: 16px; }
+  @media (min-width: 900px) { .ft-copy-mobile { display: none; } }
+  .ft-copy-desktop { display: none; }
+  @media (min-width: 900px) { .ft-copy-desktop { display: block; } }
+
+  .ft-country { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  @media (min-width: 900px) { .ft-country { width: 33%; } }
+  .ft-country-label { color: #9ca3af; font-size: 12px; }
+  .ft-country-btn { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; color: #111; padding: 8px 16px; font-size: 14px; font-weight: 500; font-family: "Averta", "Segoe UI", Arial, sans-serif; cursor: pointer; transition: background 0.2s; }
+  .ft-country-btn:hover { background: #f3f4f6; }
+
+  .ft-payments { text-align: center; }
+  @media (min-width: 900px) { .ft-payments { text-align: right; width: 33%; } }
+  .ft-payments-label { color: #9ca3af; font-size: 12px; margin-bottom: 8px; }
+  .ft-payments img { height: 32px; width: auto; display: inline-block; }
+</style>
+
+<footer class="ft">
+  <div class="ft-inner">
+
+    <!-- Top grid: brand + 4 link columns -->
+    <div class="ft-grid">
+
+      <!-- Brand / Contact -->
+      <div class="ft-brand">
+        <div class="ft-logo-wrap">
+          <a href="/">
+            <img src="{{ 'logo.webp' | asset_url }}" alt="Yak Patches" class="ft-logo">
+          </a>
+          <p class="ft-tagline">Crafting Premium Quality Custom Patches</p>
+        </div>
+
+        <div class="ft-contact">
+          <div class="ft-contact-row">
+            <span class="ft-contact-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <span><a href="https://www.google.com/maps/place/122+Henderson+Rd,+Sandy+Creek,+NY+13145,+USA/@43.6753337,-76.1654487,17z/data=!3m1!4b1!4m6!3m5!1s0x89d83725ea5925ed:0xfc34d1bcfa6f4763!8m2!3d43.6753337!4d-76.1654487!16s%2Fg%2F11kpjwbkc_?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" style="color:#d1d5db;font-size:14px;">122 Henderson Rd, Sandy Creek, NY 13145, USA</a></span>
+          </div>
+          <div class="ft-contact-row">
+            <span class="ft-contact-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
+            </span>
+            <span><a href="tel:+18884997708" style="color:#d1d5db;font-size:14px;">+1-888-499-7708</a></span>
+          </div>
+          <div class="ft-contact-row">
+            <span class="ft-contact-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+            </span>
+            <span><a href="mailto:info@yakpatches.com" style="color:#d1d5db;font-size:14px;">info@yakpatches.com</a></span>
+          </div>
+
+          <div class="ft-hours">
+            <div>
+              <div class="ft-hours-label">Chat</div>
+              <p>Available 24 hours a Day. 7 days a Week. 365 Days a Year.</p>
+            </div>
+            <div>
+              <div class="ft-hours-label">Phone</div>
+              <p>Mon-Sat: 9:00am - 6:00pm EST</p>
+              <p>Sun: Closed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Patches Types -->
+      <div class="ft-col">
+        <button class="ft-col-btn" onclick="ftToggle(this)" aria-expanded="false">
+          <span>PATCHES TYPES</span>
+          <svg class="ft-col-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <ul class="ft-col-links">
+          <li><a href="/products/embroidered-patches">Custom Embroidered Patches</a></li>
+          <li><a href="/products/custom-chenille-patches">Custom Chenille Patches</a></li>
+          <li><a href="/products/printed-patches">Custom Printed Patches</a></li>
+          <li><a href="/products/custom-leather-name-patches">Custom Leather Patches</a></li>
+          <li><a href="/products/pvc-patches">PVC Patches</a></li>
+          <li><a href="/collections" class="ft-view-all">View all</a></li>
+        </ul>
+      </div>
+
+      <!-- Patches For -->
+      <div class="ft-col">
+        <button class="ft-col-btn" onclick="ftToggle(this)" aria-expanded="false">
+          <span>PATCHES FOR</span>
+          <svg class="ft-col-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <ul class="ft-col-links">
+          <li><a href="/collections/patches-for-jackets">Patches for Jackets</a></li>
+          <li><a href="/collections/patches-for-backpack">Patches for Backpack</a></li>
+          <li><a href="/collections/patches-for-vest">Patches for Vest</a></li>
+          <li><a href="/collections/patches-for-hats">Patches for Hats</a></li>
+          <li><a href="/collections/patches-for-clothes">Patches for Clothes</a></li>
+          <li><a href="/collections" class="ft-view-all">View all</a></li>
+        </ul>
+      </div>
+
+      <!-- Company -->
+      <div class="ft-col">
+        <button class="ft-col-btn" onclick="ftToggle(this)" aria-expanded="false">
+          <span>COMPANY</span>
+          <svg class="ft-col-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <ul class="ft-col-links">
+          <li><a href="/pages/about-us">About Us</a></li>
+        
+          <li><a href="/blogs/news">Blogs</a></li>
+          <li><a href="/pages/contact-us">Contact</a></li>
+          <li><a href="/pages/charts">Size &amp; Color Charts</a></li>
+          <li><a href="/pages/author">Author</a></li>
+          <li><a href="/pages/faqs">FAQs</a></li>
+          <li><a href="/pages/submit-an-order-issue">Order Issue Form</a></li>
+          <li><a href="/pages/satisfaction-guarantee">Satisfaction Guarantee</a></li>
+          <li><a href="/pages/reviews">Reviews</a></li>
+          <li><a href="/pages/sitemap">Sitemap</a></li>
+        </ul>
+      </div>
+
+      <!-- Policies -->
+      <div class="ft-col">
+        <button class="ft-col-btn" onclick="ftToggle(this)" aria-expanded="false">
+          <span>POLICIES</span>
+          <svg class="ft-col-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <ul class="ft-col-links">
+          <li><a href="/pages/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/pages/terms-and-conditions">Terms &amp; Service</a></li>
+          <li><a href="/pages/shipping-policy">Shipping Policy</a></li>
+          <li><a href="/pages/refund-returns-policy">Refund Policy</a></li>
+          <li><a href="/pages/cookie-policy">Cookie Policy</a></li>
+          <li><a href="/pages/do-not-sell-or-share-my-personal-information">Do Not Sell</a></li>
+          <li><a href="/pages/customer-data-request">Data Request</a></li>
+        </ul>
+      </div>
+
+    </div><!-- /ft-grid -->
+
+    <!-- Middle: Social + Newsletter -->
+    <div class="ft-mid">
+
+      <div class="ft-social">
+        <span class="ft-follow-label">FOLLOW US</span>
+        <div class="ft-social-links">
+          <a class="ft-social-link" href="https://www.instagram.com/yakpatches" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram">
+            <svg class="ft-social-icon--stroke" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+          </a>
+          <a class="ft-social-link" href="https://www.pinterest.com/yakpatches" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Pinterest">
+            <svg class="ft-social-icon--fill" width="20" height="20" viewBox="0 0 496 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M496 256c0 137-111 248-248 248-25.6 0-50.2-3.9-73.4-11.1 10.1-16.5 25.2-43.5 30.8-65 3-11.6 15.4-59 15.4-59 8.1 15.4 31.7 28.5 56.8 28.5 74.8 0 128.7-68.8 128.7-154.3 0-81.9-66.9-143.2-152.9-143.2-107 0-163.9 71.8-163.9 150.1 0 36.4 19.4 81.7 50.3 96.1 4.7 2.2 7.2 1.2 8.3-3.3.8-3.4 5-20.3 6.9-28.1.6-2.5.3-4.7-1.7-7.1-10.1-12.5-18.3-35.3-18.3-56.6 0-54.7 41.4-107.6 112-107.6 60.9 0 103.6 41.5 103.6 100.9 0 67.1-33.9 113.6-78 113.6-24.3 0-42.6-20.1-36.7-44.8 7-29.5 20.5-61.3 20.5-82.6 0-19-10.2-34.9-31.4-34.9-24.9 0-44.9 25.7-44.9 60.2 0 22 7.4 36.8 7.4 36.8s-24.5 103.8-29 123.2c-5 21.4-3 51.6-.9 71.2C65.4 450.9 0 361.1 0 256 0 119 111 8 248 8s248 111 248 248z"/></svg>
+          </a>
+          <a class="ft-social-link" href="https://www.facebook.com/yakpatches" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook">
+            <svg class="ft-social-icon--stroke" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a class="ft-social-link" href="https://www.twitter.com/yakpatches" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter / X">
+            <svg class="ft-social-icon--stroke" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+          </a>
+          <a class="ft-social-link" href="https://www.youtube.com/@yakpatches" target="_blank" rel="noopener noreferrer" aria-label="Follow us on YouTube">
+            <svg class="ft-social-icon--stroke" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="ft-newsletter">
+        <div class="ft-nl-title">Subscribe to Our Newsletter</div>
+        <p class="ft-nl-sub">Get exclusive offers, design tips, and industry news</p>
+        <form class="ft-nl-form" data-newsletter-form>
+          <input type="email" name="email" placeholder="Your email address" required class="ft-nl-input" data-newsletter-email>
+          <button type="submit" class="ft-nl-btn">Subscribe</button>
+        </form>
+        <p class="ft-nl-status" data-newsletter-status aria-live="polite"></p>
+      </div>
+
+      <div class="trustpilot-widget" style="margin-top:46px;" data-locale="en-US" data-template-id="56278e9abfbbba0bdcd568bc" data-businessunit-id="TRUSTPILOT_BUSINESS_ID" data-style-height="52px" data-style-width="100%" data-token="TRUSTPILOT_TOKEN">
+        <a href="https://www.trustpilot.com/review/yakpatches.com" target="_blank" rel="noopener">Trustpilot</a>
+      </div>
+
+    </div><!-- /ft-mid -->
+
+    <!-- Bottom bar -->
+    <div class="ft-bottom">
+      <div class="ft-bottom-inner">
+
+        <div class="ft-copy ft-copy-desktop">
+          <p>&copy; {{ 'now' | date: '%Y' }} Yak Patches. All rights reserved.</p>
+        </div>
+
+        {% comment %}
+        <div class="ft-country">
+          <p class="ft-country-label">Select Country</p>
+          <button class="ft-country-btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span>US</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+        </div>
+        {% endcomment %}
+
+        <div class="ft-payments">
+          <p class="ft-payments-label">Accepted Payment Methods</p>
+          <img src="{{ 'payment-methods.webp' | asset_url }}" alt="Accepted Payment Methods" loading="lazy" height="32">
+          <p class="ft-copy-mobile">&copy; {{ 'now' | date: '%Y' }} Yak Patches. All rights reserved.</p>
+        </div>
+
+      </div>
+    </div><!-- /ft-bottom -->
+
+  </div><!-- /ft-inner -->
+</footer>
+
+<script>
+  function ftToggle(btn) {
+    var list = btn.nextElementSibling;
+    var chevron = btn.querySelector('.ft-col-chevron');
+    var isOpen = list.classList.contains('open');
+    list.classList.toggle('open', !isOpen);
+    chevron.classList.toggle('open', !isOpen);
+    btn.setAttribute('aria-expanded', !isOpen);
+  }
+
+  (function () {
+    var form = document.querySelector('[data-newsletter-form]');
+    if (!form) return;
+
+    var input = form.querySelector('[data-newsletter-email]');
+    var button = form.querySelector('.ft-nl-btn');
+    var status = document.querySelector('[data-newsletter-status]');
+    var endpoint = 'https://outjackets.com/api/yak-patches/forms/newsletter';
+    var secondaryEndpoint = 'https://dash.yakpatches.com/api/forms/newsletter';
+
+    function setStatus(message, state) {
+      if (!status) return;
+      status.textContent = message;
+      status.classList.remove('success', 'error');
+      if (state) status.classList.add(state);
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      var email = input.value.trim();
+      if (!email) {
+        setStatus('Please enter your email address.', 'error');
+        input.focus();
+        return;
+      }
+
+      button.disabled = true;
+      setStatus('Subscribing...');
+
+      var endpoints = [endpoint];
+      endpoints.push(secondaryEndpoint);
+
+      Promise.all(endpoints.map(function (url) {
+        return fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          keepalive: true,
+          headers: {
+            'Content-Type': 'text/plain;charset=UTF-8'
+          },
+          body: JSON.stringify({ email: email })
+        }).then(function () {
+          return true;
+        }).catch(function () {
+          return false;
+        });
+      })).then(function (results) {
+        if (results.some(function (result) { return result; })) {
+          form.reset();
+          setStatus('Thanks for subscribing.', 'success');
+          return;
+        }
+
+        setStatus('Subscription failed. Please try again.', 'error');
+      }).finally(function () {
+        button.disabled = false;
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": []
+}
+{% endschema %}
+

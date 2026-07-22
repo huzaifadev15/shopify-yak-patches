@@ -1,0 +1,524 @@
+﻿{%- liquid
+  assign schema_site_url = shop.url
+  assign schema_site_domain = schema_site_url | remove: 'https://' | remove: 'http://'
+  assign schema_site_name = 'Yak Patches'
+  assign schema_product_url = product.url | prepend: schema_site_url
+  assign schema_product_title = product.title
+  assign schema_product_description = page_description | default: product.description | strip_html | strip | truncate: 500 | default: schema_product_title
+  assign schema_page_description = page_description | default: product.description | strip_html | strip | truncate: 300 | default: schema_product_title
+  assign schema_date_modified = product.updated_at | default: product.published_at | default: product.created_at
+  assign schema_primary_image = product.featured_image | default: product.images.first
+  assign schema_material_metafield = product.metafields.custom.material.value | default: product.metafields.custom.material
+  assign schema_material = schema_material_metafield | default: product.type | default: 'Fineyst patch'
+  assign schema_color_metafield = product.metafields.custom.color.value | default: product.metafields.custom.color
+  assign schema_color = schema_color_metafield | default: 'Custom'
+  assign schema_pattern_metafield = product.metafields.custom.pattern.value | default: product.metafields.custom.pattern
+  assign schema_pattern = schema_pattern_metafield | default: 'Custom'
+  assign schema_breadcrumb_collection = product.metafields.custom.collection_breadcrumb.value
+  assign schema_primary_collection = schema_breadcrumb_collection | default: collection | default: product.collections.first
+  assign schema_show_primary_collection = true
+  if schema_primary_collection.handle == 'patches-for-backpack' or schema_primary_collection.url contains '/collections/patches-for-backpack'
+    assign schema_show_primary_collection = false
+  endif
+  assign schema_category = product.type | default: schema_primary_collection.title | default: schema_site_name
+  assign schema_product_group_id = product.selected_or_first_available_variant.sku | split: '-' | first | default: product.id
+  assign schema_size_option_index = 0
+  assign schema_color_option_index = 0
+  assign schema_backing_option_index = 0
+  assign schema_reviews = product.metafields.custom.reviews.value
+  assign schema_faqs = product.metafields.custom.faq.value
+  assign schema_feature_entries = product.metafields.custom.features.value
+  assign schema_faq_entries = blank
+  assign schema_review_count = 0
+  assign schema_review_sum = 0
+  assign schema_rating_value = 5.0
+  assign schema_review_count_display = 900
+  assign schema_offer_price = blank
+  assign schema_offer_price_valid_until = '2030-12-31'
+  assign schema_howto_rows = blank
+
+  if schema_faqs != blank
+    if schema_faqs.question
+      assign schema_faq_entries = schema_faq_entries | append: schema_faqs.question.value | append: '##' | append: schema_faqs.answer.value | append: '||'
+    else
+      for faq in schema_faqs
+        assign faq_question = faq.question.value | default: faq.question
+        assign faq_answer = faq.answer.value | default: faq.answer
+        assign schema_faq_entries = schema_faq_entries | append: faq_question | append: '##' | append: faq_answer | append: '||'
+      endfor
+    endif
+  endif
+
+  if schema_faq_entries != blank
+    assign schema_faq_entries = schema_faq_entries | split: '||'
+  endif
+
+  for option in product.options_with_values
+    assign option_name_downcase = option.name | downcase
+    if option_name_downcase contains 'size'
+      assign schema_size_option_index = forloop.index
+    endif
+    if option_name_downcase contains 'color' or option_name_downcase contains 'colour'
+      assign schema_color_option_index = forloop.index
+      if schema_color_metafield == blank and option.values.first != blank
+        assign schema_color = option.values.first
+      endif
+    endif
+    if option_name_downcase contains 'backing'
+      assign schema_backing_option_index = forloop.index
+    endif
+  endfor
+
+  if schema_reviews != blank
+    assign schema_review_count = schema_reviews.size
+    for review in schema_reviews
+      assign review_rating_value = review.rating.value | default: review.rating | plus: 0
+      if review_rating_value > 0
+        assign schema_review_sum = schema_review_sum | plus: review_rating_value
+      endif
+    endfor
+  endif
+
+  if schema_review_count > 0
+    assign schema_rating_times_10 = schema_review_sum | times: 10 | divided_by: schema_review_count
+    assign schema_rating_whole = schema_rating_times_10 | divided_by: 10
+    assign schema_rating_fraction = schema_rating_times_10 | modulo: 10
+    assign schema_rating_value = schema_rating_whole | append: '.' | append: schema_rating_fraction
+    assign schema_review_count_display = schema_review_count
+  endif
+
+  if schema_feature_entries != blank
+    if schema_feature_entries.question
+      assign feature_question = schema_feature_entries.question.value | default: schema_feature_entries.question | strip_html | strip
+      assign feature_answer = schema_feature_entries.answer.value | default: schema_feature_entries.answer | strip_html | strip
+      assign feature_question_prefix = feature_question | downcase | slice: 0, 3
+      if feature_question_prefix == 'how'
+        if schema_howto_rows != blank
+          assign schema_howto_rows = schema_howto_rows | append: '||'
+        endif
+        assign schema_howto_rows = schema_howto_rows | append: feature_question | append: '##' | append: feature_answer
+      endif
+    else
+      for feature in schema_feature_entries
+        assign feature_question = feature.question.value | default: feature.question | strip_html | strip
+        assign feature_answer = feature.answer.value | default: feature.answer | strip_html | strip
+        assign feature_question_prefix = feature_question | downcase | slice: 0, 3
+        if feature_question_prefix == 'how'
+          if schema_howto_rows != blank
+            assign schema_howto_rows = schema_howto_rows | append: '||'
+          endif
+          assign schema_howto_rows = schema_howto_rows | append: feature_question | append: '##' | append: feature_answer
+        endif
+      endfor
+    endif
+  endif
+
+  for faq_entry in schema_faq_entries
+    assign faq_parts = faq_entry | split: '##'
+    assign faq_question = faq_parts[0] | default: blank | strip_html | strip
+    assign faq_answer = faq_parts[1] | default: blank | strip_html | strip
+    assign faq_question_prefix = faq_question | downcase | slice: 0, 3
+    if faq_question != blank and faq_question_prefix == 'how'
+      if schema_howto_rows != blank
+        assign schema_howto_rows = schema_howto_rows | append: '||'
+      endif
+      assign schema_howto_rows = schema_howto_rows | append: faq_question | append: '##' | append: faq_answer
+    endif
+  endfor
+
+  if schema_howto_rows != blank
+    assign schema_howto_steps = schema_howto_rows | split: '||'
+  endif
+-%}
+
+<script type="application/ld+json" id="fineyst-product-schema">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      "@id": {{ schema_product_url | append: "#webpage" | json }},
+      "url": {{ schema_product_url | json }},
+      "name": {{ schema_product_title | json }},
+      "description": {{ schema_product_description | json }},
+      "isPartOf": { "@id": {{ schema_site_url | append: "/#website" | json }} },
+      "about": { "@id": {{ schema_product_url | append: "#productgroup" | json }} },
+      {%- if schema_primary_image != blank %}
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": {{ schema_primary_image | image_url: width: 1200 | prepend: 'https:' | replace: shop.permanent_domain, schema_site_domain | json }},
+        "width": {{ schema_primary_image.width | default: 1200 | json }},
+        "height": {{ schema_primary_image.height | default: 1200 | json }}
+      },
+      {%- endif %}
+      "datePublished": {{ product.created_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+      "dateModified": {{ schema_date_modified | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+      "breadcrumb": { "@id": {{ schema_product_url | append: "#breadcrumb" | json }} }
+      {%- if schema_product_offer_variant != blank %}
+      ,
+      "offers": {
+        "@type": "Offer",
+        "@id": {{ schema_product_url | append: "#offer" | json }},
+        "url": {{ schema_product_offer_url | json }},
+        "price": {{ schema_product_offer_price | json }},
+        "priceCurrency": {{ cart.currency.iso_code | default: shop.currency | default: 'USD' | json }},
+        "priceValidUntil": {{ schema_offer_price_valid_until | json }},
+        "availability": "{% if schema_product_offer_variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": { "@id": {{ schema_site_url | append: "/#organization" | json }} }
+      }
+      {%- endif %}
+      ,
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": {{ schema_rating_value | json }},
+        "reviewCount": {{ schema_review_count_display | json }},
+        "bestRating": "5",
+        "worstRating": "4"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": {{ schema_product_url | append: "#webpage" | json }},
+      "url": {{ schema_product_url | json }},
+      "name": {{ schema_product_title | json }},
+      "description": {{ schema_page_description | json }},
+      "isPartOf": { "@id": {{ schema_site_url | append: "/#website" | json }} },
+      "about": { "@id": {{ schema_site_url | append: "/#organization" | json }} },
+      {%- if schema_primary_image != blank %}
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": {{ schema_primary_image | image_url: width: 1200 | prepend: 'https:' | replace: shop.permanent_domain, schema_site_domain | json }}
+      },
+      {%- endif %}
+      "breadcrumb": { "@id": {{ schema_product_url | append: "#breadcrumb" | json }} }
+    },
+    {
+      "@type": "WebSite",
+      "@id": {{ schema_site_url | append: "/#website" | json }},
+      "url": {{ schema_site_url | json }},
+      "name": {{ schema_site_name | json }},
+      "publisher": { "@id": {{ schema_site_url | append: "/#organization" | json }} }
+    },
+    {
+      "@type": "Organization",
+      "@id": {{ schema_site_url | append: "/#organization" | json }},
+      "name": {{ schema_site_name | json }},
+      "url": {{ schema_site_url | json }},
+      "description": {{ shop.description | default: 'Yak Patches creates premium custom patches for brands, uniforms, jackets, hats, backpacks, teams, clubs, events, and wholesale orders.' | json }},
+      "telephone": "+1-888-499-7708",
+      "email": "info@yakpatches.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": {{ 'logo.webp' | asset_url | prepend: 'https:' | json }},
+        "contentUrl": {{ 'logo.webp' | asset_url | prepend: 'https:' | json }},
+        "caption": {{ schema_site_name | append: ' logo' | json }}
+      },
+      "image": {{ 'logo.webp' | asset_url | prepend: 'https:' | json }},
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "122 Henderson Rd",
+        "addressLocality": "Sandy Creek",
+        "addressRegion": "NY",
+        "postalCode": "13145",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 43.6753337,
+        "longitude": -76.1654487
+      },
+      "hasMap": "https://www.google.com/maps/place/122+Henderson+Rd,+Sandy+Creek,+NY+13145,+USA/@43.6753337,-76.1654487,17z/data=!3m1!4b1!4m6!3m5!1s0x89d83725ea5925ed:0xfc34d1bcfa6f4763!8m2!3d43.6753337!4d-76.1654487!16s%2Fg%2F11kpjwbkc_?entry=ttu&g_ep=EgoyMDI2MDUxMy4wIKXMDSoASAFQAw%3D%3D",
+      "sameAs": [
+        "https://www.instagram.com/yakpatches",
+        "https://www.pinterest.com/yakpatches",
+        "https://www.facebook.com/yakpatches",
+        "https://www.twitter.com/yakpatches",
+        "https://www.youtube.com/@yakpatches"
+      ],
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "telephone": "+1-888-499-7708",
+          "email": "info@yakpatches.com",
+          "contactType": "Customer Service",
+          "areaServed": ["US", "CA", "GB", "AU"],
+          "availableLanguage": ["English"]
+        }
+      ]
+    },
+    {
+      "@type": "MerchantReturnPolicy",
+      "@id": {{ schema_site_url | append: "/#returnpolicy" | json }},
+      "applicableCountry": ["US", "CA", "GB", "AU"],
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 30,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "returnFees": "https://schema.org/ReturnShippingFees",
+      "refundType": "https://schema.org/FullRefund",
+      "url": {{ schema_site_url | append: "/pages/refund-returns-policy" | json }}
+    },
+    {
+      "@type": "ShippingDeliveryTime",
+      "@id": {{ schema_site_url | append: "/#shipping" | json }},
+      "businessDays": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+      },
+      "handlingTime": {
+        "@type": "QuantitativeValue",
+        "minValue": 1,
+        "maxValue": 2,
+        "unitCode": "DAY"
+      },
+      "transitTime": {
+        "@type": "QuantitativeValue",
+        "minValue": 4,
+        "maxValue": 7,
+        "unitCode": "DAY"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": {{ schema_product_url | append: "#breadcrumb" | json }},
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": {{ schema_site_url | append: "/" | json }}
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ schema_site_name | json }},
+          "item": {{ routes.collections_url | prepend: schema_site_url | json }}
+        }
+        {%- if schema_primary_collection != blank and schema_show_primary_collection -%}
+        ,{
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ schema_primary_collection.title | json }},
+          "item": {{ schema_primary_collection.url | prepend: schema_site_url | json }}
+        }
+        {%- endif -%}
+        ,{
+          "@type": "ListItem",
+          "position": {% if schema_primary_collection != blank and schema_show_primary_collection %}4{% else %}3{% endif %},
+          "name": {{ schema_product_title | json }},
+          "item": {{ schema_product_url | json }}
+        }
+      ]
+    },
+    {
+      "@type": "ProductGroup",
+      "@id": {{ schema_product_url | append: "#productgroup" | json }},
+      "name": {{ schema_product_title | json }},
+      "url": {{ schema_product_url | json }},
+      "description": {{ schema_product_description | json }},
+      "brand": { "@id": {{ schema_site_url | append: "/#organization" | json }} },
+      "color": {{ schema_color | json }},
+      "material": {{ schema_material | json }},
+      "pattern": {{ schema_pattern | json }},
+      "category": {{ schema_category | json }},
+      "countryOfOrigin": {
+        "@type": "Country",
+        "name": "USA"
+      },
+      "itemCondition": "https://schema.org/NewCondition",
+      "image": [
+        {%- for image in product.images limit: 6 -%}
+          {
+            "@type": "ImageObject",
+            "url": {{ image | image_url: width: 1200 | prepend: 'https:' | replace: shop.permanent_domain, schema_site_domain | json }},
+            "width": {{ image.width | default: 1200 | json }},
+            "height": {{ image.height | default: 1200 | json }},
+            "name": {{ schema_product_title | append: ' image ' | append: forloop.index | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ],
+      "productGroupID": {{ schema_product_group_id | json }},
+      "variesBy": "https://schema.org/size",
+      "hasVariant": [
+        {%- for variant in product.variants -%}
+          {%- liquid
+            assign schema_variant_size = variant.title
+            assign schema_variant_color = schema_color
+            assign schema_variant_backing = blank
+            if schema_size_option_index == 1
+              assign schema_variant_size = variant.option1
+            elsif schema_size_option_index == 2
+              assign schema_variant_size = variant.option2
+            elsif schema_size_option_index == 3
+              assign schema_variant_size = variant.option3
+            endif
+            if schema_color_option_index == 1
+              assign schema_variant_color = variant.option1
+            elsif schema_color_option_index == 2
+              assign schema_variant_color = variant.option2
+            elsif schema_color_option_index == 3
+              assign schema_variant_color = variant.option3
+            endif
+            if schema_backing_option_index == 1
+              assign schema_variant_backing = variant.option1
+            elsif schema_backing_option_index == 2
+              assign schema_variant_backing = variant.option2
+            elsif schema_backing_option_index == 3
+              assign schema_variant_backing = variant.option3
+            endif
+            assign schema_variant_url = schema_product_url | append: '?variant=' | append: variant.id
+            assign schema_variant_sku = variant.sku | default: variant.id
+            assign schema_variant_image = variant.featured_image | default: schema_primary_image
+          -%}
+          {
+            "@type": "Product",
+            "@id": {{ schema_variant_url | append: "#variant" | json }},
+            "name": {{ schema_product_title | append: ' | ' | append: schema_variant_size | json }},
+            "sku": {{ schema_variant_sku | json }},
+            "mpn": {{ variant.barcode | default: schema_variant_sku | json }},
+            "color": {{ schema_variant_color | json }},
+            "material": {{ schema_material | json }},
+            {%- if schema_variant_backing != blank %}
+            "additionalProperty": [
+              {
+                "@type": "PropertyValue",
+                "name": "Backing",
+                "value": {{ schema_variant_backing | json }}
+              }
+            ],
+            {%- endif %}
+            {%- if schema_variant_image != blank %}
+            "image": {{ schema_variant_image | image_url: width: 1200 | prepend: 'https:' | replace: shop.permanent_domain, schema_site_domain | json }},
+            {%- endif %}
+            "itemCondition": "https://schema.org/NewCondition",
+            "size": {{ schema_variant_size | json }},
+            "inProductGroupWithID": {{ schema_product_group_id | json }},
+            "brand": { "@id": {{ schema_site_url | append: "/#organization" | json }} },
+            "offers": {
+              "@type": "Offer",
+              "@id": {{ schema_variant_url | append: "#offer" | json }},
+              "url": {{ schema_variant_url | json }},
+              {%- if schema_offer_price != blank %}
+              "price": {{ schema_offer_price | json }},
+              {%- endif %}
+              "priceCurrency": {{ cart.currency.iso_code | default: shop.currency | default: 'USD' | json }},
+              "priceValidUntil": {{ schema_offer_price_valid_until | json }},
+              "availability": "{% if variant.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+              "itemCondition": "https://schema.org/NewCondition",
+              "seller": { "@id": {{ schema_site_url | append: "/#organization" | json }} },
+              "shippingDetails": { "@id": {{ schema_site_url | append: "/#shipping" | json }} },
+              "hasMerchantReturnPolicy": { "@id": {{ schema_site_url | append: "/#returnpolicy" | json }} }
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+      {%- if schema_reviews != blank -%}
+      ,
+      "review": [
+        {%- for review in schema_reviews limit: 10 -%}
+          {%- liquid
+            assign review_author = review.reviewer_name.value | default: review.reviewer_name | default: review.reviewer.value | default: review.reviewer | default: review.name.value | default: review.name | default: review.author.value | default: review.author | default: review.customer_name.value | default: review.customer_name | default: 'Yak Patches customer'
+            assign review_title = review.review_title.value | default: review.review_title | default: review.title.value | default: review.title | default: review.heading.value | default: review.heading | strip_html | strip
+            assign review_text = review.review_text.value | default: review.review_text | default: review.review.value | default: review.review | default: review.text.value | default: review.text | default: review.body.value | default: review.body | default: review.content.value | default: review.content | default: review.description.value | default: review.description | strip_html | strip
+            if review_text == blank and review_title != blank
+              assign review_text = review_title
+            endif
+            assign review_rating = review.rating.value | default: review.rating | default: review.score.value | default: review.score | plus: 0
+          -%}
+          {
+            "@type": "Review",
+            "author": {
+              "@type": "Person",
+              "name": {{ review_author | json }}
+            },
+            "reviewBody": {{ review_text | json }},
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": {{ review_rating | json }},
+              "bestRating": "5"
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+      {%- endif -%}
+    }
+    {%- if schema_howto_steps != blank -%}
+    ,
+    {
+      "@type": "HowTo",
+      "@id": {{ schema_product_url | append: "#howto" | json }},
+      "name": {{ schema_product_title | append: ' how-to guide' | json }},
+      "description": {{ schema_product_description | json }},
+      "totalTime": "PT30M",
+      "step": [
+        {%- for howto_entry in schema_howto_steps -%}
+          {%- assign howto_parts = howto_entry | split: '##' -%}
+          {%- assign howto_question = howto_parts[0] | strip_html | strip -%}
+          {%- assign howto_answer = howto_parts[1] | default: blank | strip_html | strip -%}
+          {%- if howto_question != blank -%}
+          {
+            "@type": "HowToStep",
+            "name": {{ howto_question | json }},
+            "text": {{ howto_answer | json }}
+          }{% unless forloop.last %},{% endunless %}
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    }
+    {%- endif -%}
+    {%- if schema_faq_entries != blank -%}
+    ,
+    {
+      "@type": "FAQPage",
+      "@id": {{ schema_product_url | append: "#faq" | json }},
+      "url": {{ schema_product_url | json }},
+      "isPartOf": { "@id": {{ schema_site_url | append: "/#website" | json }} },
+      "mainEntity": [
+        {%- for faq_entry in schema_faq_entries -%}
+          {%- assign faq_parts = faq_entry | split: '##' -%}
+          {%- assign faq_question = faq_parts[0] | default: blank | strip_html | strip -%}
+          {%- assign faq_answer = faq_parts[1] | default: blank | strip_html | strip -%}
+          {%- if faq_question != blank -%}
+          {
+            "@type": "Question",
+            "name": {{ faq_question | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ faq_answer | json }}
+            }
+          }{% unless forloop.last %},{% endunless %}
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    }
+    {%- endif -%}
+  ]
+}
+</script>
+<script>
+  window.FineystSetProductSchemaPrice = window.FineystSetProductSchemaPrice || function (price) {
+    var schemaScript = document.getElementById('fineyst-product-schema');
+    if (!schemaScript) return;
+    var parsedPrice = Number(price);
+    if (!isFinite(parsedPrice) || parsedPrice <= 0) return;
+
+    try {
+      var schema = JSON.parse(schemaScript.textContent);
+      var graph = Array.isArray(schema['@graph']) ? schema['@graph'] : [];
+
+      graph.forEach(function (node) {
+        if (!node || node['@type'] !== 'ProductGroup' || !Array.isArray(node.hasVariant)) return;
+        node.hasVariant.forEach(function (variant) {
+          if (variant && variant.offers && typeof variant.offers === 'object') {
+            variant.offers.price = Number(parsedPrice.toFixed(2));
+          }
+        });
+      });
+
+      schemaScript.textContent = JSON.stringify(schema, null, 2);
+    } catch (error) {
+      console.warn('Unable to update product schema price:', error);
+    }
+  };
+</script>
+

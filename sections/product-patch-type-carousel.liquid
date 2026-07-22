@@ -1,0 +1,4075 @@
+﻿{%- assign fallback_product = all_products['embroidered-patches'] -%}
+{%- assign product_path_prefix = request.path | slice: 0, 10 -%}
+{%- assign has_selected_patch_type = false -%}
+{%- if product != blank and product_path_prefix == '/products/' -%}
+  {%- assign has_selected_patch_type = true -%}
+{%- endif -%}
+{%- if product == blank -%}
+  {%- assign product = fallback_product -%}
+{%- endif -%}
+{%- assign pp_display_title = product.title -%}
+{%- assign pp_review_items = product.metafields.custom.reviews.value -%}
+{%- assign pp_review_count = 143 -%}
+{%- assign pp_patch_type_links = "Embroidered,/products/embroidered-patches|PVC,/products/pvc-patches|Chenille,/products/custom-chenille-patches|Leather,/products/custom-leather-name-patches|Printed,/products/printed-patches|Woven,/products/custom-woven-patches|Heart,/products/custom-heart-patches|Applique,/products/custom-applique-patches|Brand,/products/custom-brand-patches|Varsity Letter,/products/custom-varsity-letter-patches|Sports,/products/custom-sports-patches|Rubber,/products/rubber-patches|Iron On,/products/custom-iron-on-patches|Military,/products/custom-military-patches" | split: "|" -%}
+{%- if pp_review_items != blank -%}
+  {%- assign pp_review_count = pp_review_items.size -%}
+{%- endif -%}
+{%- unless has_selected_patch_type -%}
+  {%- assign pp_display_title = 'Custom Patches' -%}
+{%- endunless -%}
+{% render 'pp-carousel-styles' %}
+<script>
+(function(){
+  if ({{ has_selected_patch_type | json }}) return;
+  var handle = new URLSearchParams(window.location.search).get('patch_type') || '';
+  if (/^[a-z0-9][a-z0-9-]*$/.test(handle.trim())) document.documentElement.classList.add('pp-direct-patch-booting');
+})();
+</script>
+
+<div class="pp-wrap" id="ppPriceCalc">
+  <div class="pp-inner">
+
+    <!-- Gallery -->
+    <div class="pp-gallery">
+      <div class="pp-main-img-box" id="ppImgBox">
+        {%- if has_selected_patch_type -%}
+          {%- for image in product.images -%}
+            {%- assign slide_loading = 'lazy' -%}
+            {%- assign slide_fetchpriority = 'auto' -%}
+            {%- if forloop.first -%}
+              {%- assign slide_loading = 'eager' -%}
+              {%- assign slide_fetchpriority = 'high' -%}
+            {%- endif -%}
+            <div class="pp-img-slide {% if forloop.first %}active{% else %}inactive{% endif %}" data-idx="{{ forloop.index0 }}">
+              {{ image | image_url: width: 900 | image_tag: alt: pp_display_title, loading: slide_loading, fetchpriority: slide_fetchpriority, class: 'pp-product-img' }}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {%- assign fallback_gallery_idx = 0 -%}
+          {%- for tab in pp_patch_type_links -%}
+            {%- assign tparts = tab | split: "," -%}
+            {%- assign product_handle = tparts[1] | split: "/products/" | last -%}
+            {%- assign linked_product = all_products[product_handle] -%}
+            {%- if linked_product.featured_image != blank -%}
+              {%- assign fallback_alt = linked_product.title | default: tparts[0] -%}
+              <div class="pp-img-slide {% if fallback_gallery_idx == 0 %}active{% else %}inactive{% endif %}" data-idx="{{ fallback_gallery_idx }}">
+                {%- if fallback_gallery_idx == 0 -%}
+                  {{ linked_product.featured_image | image_url: width: 900 | image_tag: alt: fallback_alt, loading: 'eager', fetchpriority: 'high', class: 'pp-product-img' }}
+                {%- else -%}
+                  {{ linked_product.featured_image | image_url: width: 900 | image_tag: alt: fallback_alt, loading: 'lazy', class: 'pp-product-img' }}
+                {%- endif -%}
+              </div>
+              {%- assign fallback_gallery_idx = fallback_gallery_idx | plus: 1 -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if fallback_gallery_idx == 0 and product.featured_image != blank -%}
+            <div class="pp-img-slide active" data-idx="0">
+              {{ product.featured_image | image_url: width: 900 | image_tag: alt: pp_display_title, loading: 'eager', fetchpriority: 'high', class: 'pp-product-img' }}
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+        <button class="pp-arrow pp-arrow-prev" id="ppPrev" aria-label="Previous">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button class="pp-arrow pp-arrow-next" id="ppNext" aria-label="Next">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="pp-thumbs">
+        {%- if has_selected_patch_type -%}
+          {%- for image in product.images -%}
+            {%- assign thumb_loading = 'lazy' -%}
+            {%- if forloop.index <= 4 -%}{%- assign thumb_loading = 'eager' -%}{%- endif -%}
+            <button class="pp-thumb {% if forloop.first %}active{% endif %}" data-idx="{{ forloop.index0 }}" aria-label="View image {{ forloop.index }}">
+              {{ image | image_url: width: 180, height: 180, crop: 'center' | image_tag: alt: pp_display_title, loading: thumb_loading, class: 'pp-thumb-img' }}
+            </button>
+          {%- endfor -%}
+        {%- else -%}
+          {%- assign fallback_thumb_idx = 0 -%}
+          {%- for tab in pp_patch_type_links -%}
+            {%- assign tparts = tab | split: "," -%}
+            {%- assign product_handle = tparts[1] | split: "/products/" | last -%}
+            {%- assign linked_product = all_products[product_handle] -%}
+            {%- if linked_product.featured_image != blank -%}
+              {%- assign fallback_alt = linked_product.title | default: tparts[0] -%}
+              {%- assign fallback_thumb_loading = 'lazy' -%}
+              {%- if fallback_thumb_idx < 4 -%}{%- assign fallback_thumb_loading = 'eager' -%}{%- endif -%}
+              <button class="pp-thumb {% if fallback_thumb_idx == 0 %}active{% endif %}" data-idx="{{ fallback_thumb_idx }}" aria-label="View {{ fallback_alt | escape }} image">
+                {{ linked_product.featured_image | image_url: width: 180, height: 180, crop: 'center' | image_tag: alt: fallback_alt, loading: fallback_thumb_loading, class: 'pp-thumb-img' }}
+              </button>
+              {%- assign fallback_thumb_idx = fallback_thumb_idx | plus: 1 -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if fallback_thumb_idx == 0 and product.featured_image != blank -%}
+            <button class="pp-thumb active" data-idx="0" aria-label="View fallback image">
+              {{ product.featured_image | image_url: width: 180, height: 180, crop: 'center' | image_tag: alt: pp_display_title, loading: 'eager', class: 'pp-thumb-img' }}
+            </button>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- Details -->
+    <div>
+      <nav class="pp-breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        <a href="/collections/all">Patches</a>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        <span style="color:#111;font-weight:600;">{{ pp_display_title }}</span>
+      </nav>
+
+     
+
+      {%- assign pp_title_image = nil -%}
+      {%- if has_selected_patch_type and product.images.size > 0 -%}
+        {%- assign pp_title_image = product.images.first -%}
+      {%- elsif product.featured_image != blank -%}
+        {%- assign pp_title_image = product.featured_image -%}
+      {%- endif -%}
+      <div class="pp-title-row">
+        {%- if pp_title_image -%}
+          <button type="button" class="pp-title-thumb pp-thumb active" data-idx="0" aria-label="View image 1">
+            {{ pp_title_image | image_url: width: 140, height: 140, crop: 'center' | image_tag: alt: pp_display_title, loading: 'lazy', class: 'pp-thumb-img' }}
+          </button>
+        {%- endif -%}
+        <div class="pp-title-copy">
+          <h1 class="pp-title">{{ pp_display_title }}</h1>
+          <div class="pp-title-mobile-info">
+            <div class="pp-title-meta-row{% unless has_selected_patch_type %} pp-title-meta-row--fallback{% endunless %}">
+              <div class="pp-stars">
+                {%- for i in (1..5) -%}
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
+                {%- endfor -%}
+              </div>
+              <span class="pp-review-count">{{ pp_review_count }} Reviews</span>
+            </div>
+
+            <div class="pp-price-row" id="ppInitialPriceRow"{% if has_selected_patch_type %} style="display:none;"{% endif %}>
+              <strong id="ppInitialPrice">{% if has_selected_patch_type %}—{% else %}$2.30{% endif %}</strong> <span>{% if has_selected_patch_type %}each{% else %}upto{% endif %} at 100 pieces.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {%- if has_selected_patch_type and product.metafields.custom.product_top_description != blank -%}
+        <div class="pp-desc">{{ product.metafields.custom.product_top_description | metafield_tag }}</div>
+      {%- else -%}
+        <div class="pp-desc pp-desc--fallback">Select a patch type below to get started.</div>
+      {%- endif -%}
+
+ <section class="pp-type-carousel" data-patch-type-carousel aria-labelledby="ppTypeCarouselTitle">
+        <div class="pp-type-carousel-head">
+          <div class="pp-type-carousel-title" id="ppTypeCarouselTitle"><span class="pp-type-carousel-step">1</span><span>Select Patch Type</span></div>
+          {%- if has_selected_patch_type -%}<span class="pp-type-carousel-current">Current</span>{%- endif -%}
+        </div>
+        <button class="pp-type-arrow pp-type-arrow-prev" type="button" data-patch-type-prev aria-label="Previous patch types">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="pp-type-track" data-patch-type-track>
+          {%- for tab in pp_patch_type_links -%}
+            {%- assign tparts = tab | split: "," -%}
+            {%- assign product_handle = tparts[1] | split: "/products/" | last -%}
+            {%- assign linked_product = all_products[product_handle] -%}
+            {%- assign card_title = linked_product.title | default: tparts[0] -%}
+            {%- assign card_loading = 'lazy' -%}
+            {%- assign card_fetchpriority = 'auto' -%}
+            {%- if forloop.index <= 3 -%}
+              {%- assign card_loading = 'eager' -%}
+              {%- if forloop.first -%}{%- assign card_fetchpriority = 'high' -%}{%- endif -%}
+            {%- endif -%}
+            <a href="{{ tparts[1] }}" class="pp-type-card{% if has_selected_patch_type %}{% if request.path == tparts[1] or product.handle == product_handle %} is-active{% endif %}{% endif %}" data-patch-type-link{% if has_selected_patch_type %}{% if request.path == tparts[1] or product.handle == product_handle %} aria-current="page"{% endif %}{% endif %}>
+              <span class="pp-type-card-img">
+                {%- if linked_product.featured_image != blank -%}
+                    {{ linked_product.featured_image | image_url: width: 420 | image_tag: alt: card_title, loading: card_loading, fetchpriority: card_fetchpriority }}
+                  {%- else -%}
+                  <span class="pp-type-placeholder" aria-hidden="true"></span>
+                {%- endif -%}
+              </span>
+              <span class="pp-type-card-title">{{ card_title }}</span>
+            </a>
+          {%- endfor -%}
+        </div>
+        <button class="pp-type-arrow pp-type-arrow-next" type="button" data-patch-type-next aria-label="Next patch types">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </section>
+      
+      <div class="pp-trust">
+        <span class="pp-trust-item">Free Physical Proof</span>
+        <span class="pp-trust-sep">|</span>
+        <span class="pp-trust-item">No Art or Set Up Fees</span>
+        <span class="pp-trust-sep">|</span>
+        <span class="pp-trust-item">Free Shipping <span class="pp-trust-note" style="font-weight:500;color:#6b7280;">(for 100+ pieces)</span></span>
+      </div>
+
+        
+
+      <!-- Hidden AI cart properties (underscore prefix hides them from checkout/order summary) -->
+      <input type="hidden" id="aiPropProvider" name="properties[_AI Provider]" value="">
+      <input type="hidden" id="aiPropModel" name="properties[_AI Model]" value="">
+      <input type="hidden" id="aiPropPrompt" name="properties[_AI Prompt]" value="">
+      <input type="hidden" id="aiPropRequestId" name="properties[_AI Request ID]" value="">
+      <input type="hidden" id="aiPropImageUrl" name="properties[_AI Image URL]" value="">
+
+      <!-- Upload box (pre-upload) -->
+      <div id="ppPreUpload" style="display:none;" aria-hidden="true">
+        <div class="pp-upload-box" id="ppUploadBox">
+          <input type="file" id="ppDesignUpload" accept=".jpg,.jpeg,.png,.gif,.webp,.svg,.pdf,.ai,.eps,.psd" style="position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;">
+          <div id="ppUploadDefault">
+            <button class="pp-upload-btn" id="ppUploadBtn">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="1.5" stroke-width="1.5"/><path d="M21 15l-5-5L5 21" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Upload Design to get started
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 4v12m0-12l-4 4m4-4l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 16v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <p class="pp-upload-hint">or drop file here</p>
+            <p class="pp-upload-sub">All file types accepted (No .DST or .EMB Files Please)</p>
+          </div>
+        </div>
+        <!-- AI box -->
+        <div class="pp-ai-box">
+          <div class="pp-ai-inner">
+            <div>
+              <p class="pp-ai-title">Create a design with AI</p>
+              <p class="pp-ai-sub">Describe your vision and let AI generate a patch design for you</p>
+            </div>
+            <button class="pp-ai-btn" id="openAiModal">
+              Create an Image
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5L12 2z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Configurator (post-upload) -->
+      <div id="ppConfigurator" class="pp-configurator-shell{% unless has_selected_patch_type %} is-locked{% endunless %}" aria-disabled="{% unless has_selected_patch_type %}true{% else %}false{% endunless %}">
+        <div class="pp-configurator-head">
+          <div class="pp-configurator-title"><span class="pp-configurator-step">2</span><span>Customization</span></div>
+        </div>
+        <div class="pp-configurator-lock-note">Select a patch type to continue</div>
+        <div class="cfg-wrap">
+          <!-- Image preview + pricing table -->
+          <div class="cfg-top-grid">
+            <!-- Image preview with ruler -->
+            <div class="cfg-preview-col">
+              <div class="cfg-ruler-wrap">
+                <div class="cfg-ruler-h">
+                  <div class="cfg-ruler-line"></div>
+                  <div class="cfg-ruler-tick cfg-ruler-tick-l"></div>
+                  <div class="cfg-ruler-tick cfg-ruler-tick-r"></div>
+                  <p class="cfg-ruler-label" id="cfgWidthLabel">2.25"</p>
+                </div>
+                <div class="cfg-img-frame" id="cfgImgFrame" style="position:relative;">
+                  <div class="cfg-remove-wrap">
+                    <button id="cfgRemoveBtn" class="cfg-remove-btn" title="Remove uploaded image" style="display:none;">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                  </div>
+                  <div class="cfg-ruler-v" id="cfgRulerV">3.00"</div>
+                  <button type="button" class="cfg-img-btn" id="cfgImgBtn" aria-label="Upload a new image">
+                    <img id="cfgPreviewImg" src="https://cdn.shopify.com/s/files/1/0670/4703/0883/files/placeholder-patches.webp?v=1784140622" alt="Design preview" class="cfg-preview-img">
+                    <span class="cfg-upload-badge">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 4v12m0-12l-4 4m4-4l4 4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 16v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                  </button>
+                  <div class="cfg-zoom-lens" id="cfgZoomLens"></div>
+                  <div class="cfg-zoom-result" id="cfgZoomResult"></div>
+                </div>
+                <div class="cfg-upload-later-block">
+                  <div class="cfg-upload-later-divider" aria-hidden="true"><span>or</span></div>
+                  <p class="cfg-upload-error" id="cfgUploadErr" role="alert">Image is mandatory. Upload a design or select upload image later.</p>
+                  <label class="cfg-upload-later" for="ppUploadLater">
+                    <input type="checkbox" id="ppUploadLater">
+                    <span>Upload image later</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <!-- Pricing table -->
+            <div class="cfg-price-table-wrap">
+              <table class="cfg-price-table">
+                <thead><tr><th>Quantity</th><th>Price</th><th>Qty Discount</th></tr></thead>
+                <tbody id="cfgPriceTableBody">
+                  <tr><td colspan="3" style="text-align:center;color:#9ca3af;padding:16px;font-size:13px;">Loading prices…</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="cfg-toggles" id="cfgToggles">
+              <div class="cfg-toggle-group">
+                <label class="cfg-toggle-label">
+                  <span class="cfg-toggle-text">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></svg>
+                    Crop &amp; Trim
+                  </span>
+                  <button type="button" role="switch" class="cfg-switch" id="cfgCropSwitch" aria-checked="false">
+                    <span class="cfg-switch-thumb"></span>
+                  </button>
+                </label>
+                <label class="cfg-toggle-label">
+                  <span class="cfg-toggle-text">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21H8a2 2 0 0 1-1.42-.587l-3.994-3.999a2 2 0 0 1 0-2.828l10-10a2 2 0 0 1 2.829 0l5.999 6a2 2 0 0 1 0 2.828L12.834 21"/><path d="m5.082 11.09 8.828 8.828"/></svg>
+                    Remove Background
+                  </span>
+                  <button type="button" role="switch" class="cfg-switch" id="cfgBgSwitch" aria-checked="false">
+                    <span class="cfg-switch-thumb"></span>
+                  </button>
+                </label>
+              </div>
+              <button type="button" class="cfg-ai-edit-btn" id="openAiModal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
+                Edit with AI
+              </button>
+            </div>
+            </div>
+
+            <div class="cfg-size-guide-row" id="cfgSizeGuideRow">
+              <span>Select Your Patch Size:</span>
+              <button type="button" class="cfg-size-guide-btn" id="cfgSizeGuideBtn" aria-haspopup="dialog" aria-controls="cfgSizeGuideModal">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21 21 3"/><path d="M7 21h-4v-4"/><path d="M17 3h4v4"/><path d="M3 7V3h4"/><path d="M21 17v4h-4"/></svg>
+                <span>Patch Size Guide</span>
+              </button>
+          </div>
+          <!-- W / H / Qty inputs + live price -->
+          <div class="cfg-dims">
+            <div class="cfg-dim-group">
+              <label class="cfg-dim-label">Width (inches) <span style="color:#7C4A1E;">*</span> <span class="cfg-field-err" id="cfgWidthErr"></span></label>
+              <div class="cfg-stepper">
+                <button type="button" class="cfg-step-btn" id="cfgWMinus">&minus;</button>
+                <input type="text" id="cfgWidth" placeholder="0.00" class="cfg-step-input" inputmode="decimal" autocomplete="off" maxlength="6">
+                <button type="button" class="cfg-step-btn" id="cfgWPlus">+</button>
+              </div>
+            </div>
+            <div class="cfg-dim-group">
+              <label class="cfg-dim-label">Height (inches) <span style="color:#7C4A1E;">*</span> <span class="cfg-field-err" id="cfgHeightErr"></span></label>
+              <div class="cfg-stepper">
+                <button type="button" class="cfg-step-btn" id="cfgHMinus">&minus;</button>
+                <input type="text" id="cfgHeight" placeholder="0.00" class="cfg-step-input" inputmode="decimal" autocomplete="off" maxlength="6">
+                <button type="button" class="cfg-step-btn" id="cfgHPlus">+</button>
+              </div>
+            </div>
+            <div class="cfg-dim-group">
+              <label class="cfg-dim-label" style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                <span>Qty <span class="cfg-field-err" id="cfgQtyErr"></span></span>
+                <span style="color:#7C4A1E;font-size:10px;font-weight:700;">10 Piece Min.</span>
+              </label>
+              <div class="cfg-stepper" id="cfgQtyStepper">
+                <button type="button" class="cfg-step-btn" id="cfgQMinus">&minus;</button>
+                <input type="text" id="cfgQty" value="10" class="cfg-step-input" inputmode="numeric" autocomplete="off" maxlength="10">
+                <button type="button" class="cfg-step-btn" id="cfgQPlus">+</button>
+              </div>
+            </div>
+          </div>
+         
+          <div class="cfg-patch-size">
+            <span class="cfg-patch-size-label">Patch Size <span>-</span> <span class="cfg-patch-size-value" id="cfgPatchSizeValue">-</span></span>
+            <span class="cfg-patch-size-help-wrap">
+              <button type="button" class="cfg-patch-size-help" id="cfgPatchSizeHelp" aria-describedby="cfgPatchSizeTooltip" aria-label="Patch size information">i</button>
+              <span class="cfg-patch-size-tooltip" id="cfgPatchSizeTooltip" role="tooltip">
+                Your patch size is determined by taking the height and width, adding them together, and dividing by 2.<br>
+                <strong>Example: 3W + 2H / 2 = 2.5" Patch</strong>
+                <em>This is for pricing purposes only.</em>
+              </span>
+            </span>
+          </div>
+          <div class="cfg-price-display">
+            <div id="cfgPricePerPatch" style="color:#7C4A1E;font-size:16px;font-weight:600;"></div>
+            <div id="cfgPriceTotal" style="font-size:16px;font-weight:700;color:#111;"></div>
+            <div id="cfgPriceSub" style="font-size:12px;color:#6b7280;"></div>
+          </div>
+
+          <!-- Design notes -->
+          <label class="cfg-notes-label">
+            <input type="checkbox" id="cfgNotesCheck" style="width:16px;height:16px;accent-color:#7C4A1E;">
+            Add Free Design Notes (Optional)
+          </label>
+          <textarea id="cfgNotes" placeholder="Any special instructions for your design..." class="cfg-notes-textarea" style="display:none;"></textarea>
+
+          <hr class="cfg-divider">
+
+          <!-- Shape -->
+          <div class="cfg-section">
+            <p class="cfg-section-title">Select Shape: <span style="color:#7C4A1E;">*</span> <span id="cfgShapeLabel" style="color:#7C4A1E;font-size:14px;font-weight:500;">Custom</span></p>
+            <div class="cfg-options">
+              <button type="button" class="cfg-opt-btn cfg-opt-active" data-shape="Custom" aria-label="Custom shape">
+                <img src="https://cdn.shopify.com/s/files/1/0670/4703/0883/files/custom.webp?v=1784140631" alt="Custom Shape" class="cfg-opt-img">
+              </button>
+              <button type="button" class="cfg-opt-btn" data-shape="Circle" aria-label="Circle shape">
+                <img src="https://cdn.shopify.com/s/files/1/0670/4703/0883/files/circle.webp?v=1784140631" alt="Circle" class="cfg-opt-img">
+              </button>
+              <button type="button" class="cfg-opt-btn" data-shape="Square" aria-label="Square shape">
+                <img src="https://cdn.shopify.com/s/files/1/0670/4703/0883/files/square.webp?v=1784140631" alt="Square" class="cfg-opt-img">
+              </button>
+              <button type="button" class="cfg-opt-btn" data-shape="Rectangle" aria-label="Rectangle shape">
+                <img src="https://cdn.shopify.com/s/files/1/0670/4703/0883/files/rectengle.webp?v=1784140631" alt="Rectangle" class="cfg-opt-img">
+              </button>
+            </div>
+          </div>
+
+          <!-- Background color -->
+          <div class="cfg-section">
+            <p class="cfg-section-title">Patch Background Color: <span style="color:#7C4A1E;">*</span> <span class="cfg-field-err" id="cfgBgColorErr"></span></p>
+            <input type="text" id="cfgBgColor" placeholder="Enter number of colors (e.g., 5, 10, 15+)" class="cfg-text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+          </div>
+
+          <!-- Border -->
+          <div class="cfg-section">
+            <p class="cfg-section-title">Select Your Border: <span style="color:#7C4A1E;">*</span> <span class="cfg-field-err" id="cfgBorderErr"></span></p>
+            <input type="text" id="cfgBorder" placeholder="Enter border preference (e.g., Merrow, Heat Cut)" class="cfg-text-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+          </div>
+
+          <!-- Backing -->
+          <div class="cfg-section">
+            <p class="cfg-section-title">Select Your Backing: <span style="color:#7C4A1E;">*</span> <span class="cfg-field-err" id="cfgBackingErr"></span> <span id="cfgBackingLabel" style="color:#7C4A1E;font-size:14px;font-weight:500;">No Backing</span></p>
+            <div class="cfg-options">
+              <div class="cfg-opt-wrap">
+                <button type="button" class="cfg-opt-btn cfg-opt-active" data-backing="No Backing" aria-label="No Backing" style="justify-content:center;gap:6px;">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                  <span class="cfg-opt-name">NO BACKING</span>
+                </button>
+              </div>
+              <div class="cfg-opt-wrap">
+                <button type="button" class="cfg-opt-btn" data-backing="Heat Applied" aria-label="Heat Applied">
+                  <span class="cfg-backing-fee">$0.50</span>
+                  <img src="https://cdn.shopify.com/s/files/1/0670/4703/0883/files/backing-1.webp?v=1784140089" alt="Heat Applied" class="cfg-opt-img" style="object-fit:cover;padding:0;height:75%;">
+                  <span class="cfg-opt-name">HEAT APPLIED</span>
+                </button>
+                <span class="cfg-opt-sub">(Most popular)</span>
+              </div>
+              <div class="cfg-opt-wrap">
+                <button type="button" class="cfg-opt-btn" data-backing="Peel & Stick" aria-label="Peel & Stick">
+                  <span class="cfg-backing-fee">$0.50</span>
+                  <img src="https://cdn.shopify.com/s/files/1/0670/4703/0883/files/backing-2.webp?v=1784140096" alt="Peel & Stick" class="cfg-opt-img" style="object-fit:cover;padding:0;height:75%;">
+                  <span class="cfg-opt-name">PEEL &amp; STICK</span>
+                </button>
+              </div>
+              <div class="cfg-opt-wrap">
+                <button type="button" class="cfg-opt-btn" data-backing="Velcro" aria-label="Velcro">
+                  <span class="cfg-backing-fee">$0.50</span>
+                  <img src="https://cdn.shopify.com/s/files/1/0670/4703/0883/files/backing-3.webp?v=1784140096" alt="Velcro" class="cfg-opt-img" style="object-fit:cover;padding:0;height:75%;">
+                  <span class="cfg-opt-name">VELCRO</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA buttons -->
+          <div class="cfg-cta">
+            <button type="button" class="cfg-btn-checkout" id="cfgCheckout">Proceed to Checkout</button>
+            <button type="button" class="cfg-btn-quote" id="cfgSubmitQuoteBtn">Submit Quote Request</button>
+          </div>
+
+          <div class="cfg-mobile-sticky-actions" id="cfgMobileStickyActions" aria-hidden="true">
+            <div class="cfg-mobile-sticky-summary" id="cfgMobileStickySummary" hidden>
+              <div class="cfg-mobile-sticky-summary-inner">
+                <p class="cfg-mobile-sticky-price" id="cfgMobileStickyPrice"></p>
+                <p class="cfg-mobile-sticky-sub" id="cfgMobileStickySub"></p>
+              </div>
+            </div>
+            <button type="button" class="cfg-mobile-sticky-btn cfg-mobile-sticky-btn-quote" id="cfgMobileStickyQuote">
+              <span id="cfgMobileStickyQuoteSpinner" hidden class="cfg-mobile-sticky-spinner"></span>
+              <span>Submit Quote</span>
+            </button>
+            <button type="button" class="cfg-mobile-sticky-btn cfg-mobile-sticky-btn-checkout" id="cfgMobileStickyCheckout">
+              <span id="cfgMobileStickyCheckoutSpinner" hidden class="cfg-mobile-sticky-spinner"></span>
+              <span id="cfgMobileStickyCheckoutLabel">Proceed to Checkout</span>
+            </button>
+          </div>
+
+          <!-- Payment icons -->
+          <div class="cfg-payment">
+            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px;">
+              <svg style="width:14px;height:14px;color:#9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              <span style="font-size:12px;color:#9ca3af; font-weight:500">Secure checkout powered by trusted partners</span>
+            </div>
+            <img src="https://cdn.shopify.com/s/files/1/0670/4703/0883/files/payments.webp?v=1784140616" alt="Accepted payment methods" style="width:100%;height:auto;object-fit:contain;">
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <hr class="pp-hr">
+
+  <!-- Shop Custom Patch Types Section -->
+  <section class="pp-shop-types-section">
+    <h2 class="shop-heading">Shop Custom Patch Types - Embroidered, PVC, Chenille, Leather &amp; More</h2>
+    <div class="patch-grid">
+      {%- assign patch_products = "PVC PATCHES,pvc-patches,$1.97,Waterproof with 3D raised effect.|EMBROIDERED PATCHES,embroidered-patches,$1.34,Classic look with premium stitching.|PRINTED PATCHES,printed-patches,$0.84,Vibrant colors at cost-effective price.|CHENILLE PATCHES,custom-chenille-patches,$3.07,Removable design for easy swapping.|WOVEN PATCHES,custom-woven-patches,$1.00,Fine detail with a smooth clean woven finish.|MILITARY PATCHES,custom-military-patches,$1.34,Personalized with custom fonts.|LEATHER PATCHES,custom-leather-name-patches,$1.22,Premium vintage look and feel.|3D EMBROIDERED PATCHES,3d-embroidered-patches,$2.78,Raised texture that adds depth and detail." | split: "|" -%}
+      {%- for item in patch_products -%}
+        {%- assign parts = item | split: "," -%}
+        {%- assign patch_product = all_products[parts[1]] -%}
+        {%- assign patch_image = patch_product.featured_image | default: patch_product.images.first -%}
+        {%- if patch_product != blank -%}
+          {%- assign patch_url = patch_product.url -%}
+        {%- else -%}
+          {%- assign patch_url = parts[1] | prepend: '/products/' -%}
+        {%- endif -%}
+        <article class="patch-card">
+          <a href="{{ patch_url }}" class="patch-card-link" aria-label="View {{ parts[0] }}" data-patch-type-shop-link data-patch-type-handle="{{ parts[1] }}">
+            <figure class="patch-card-fig">
+              <span class="patch-badge">10pc min</span>
+              {%- if patch_image != blank -%}
+                <img
+                  src="{{ patch_image | image_url: width: 700, height: 700, crop: 'center' }}"
+                  alt="{{ patch_image.alt | default: parts[0] | escape }}"
+                  width="225"
+                  height="225"
+                  {%- if forloop.index <= 3 %}loading="eager"{% if forloop.first %} fetchpriority="high"{% endif %}{% else %}loading="lazy"{% endif %}
+                >
+              {%- endif -%}
+            </figure>
+            <div class="patch-card-body">
+              <p class="patch-card-name">{{ parts[0] }}</p>
+              <p class="patch-card-price">As low as {{ parts[2] }} ea.</p>
+              <p class="patch-card-desc averta-bold">{{ parts[3] }}</p>
+              <div class="patch-card-cta">
+                <span class="patch-card-btn">Get a Quote</span>
+              </div>
+            </div>
+          </a>
+        </article>
+      {%- endfor -%}
+    </div>
+  </section>
+  <!-- Gallery Section -->
+  {%- assign dynamic_gallery = product.metafields.custom.image_gallery.value -%}
+  <section class="pp-gallery-section">
+    <div class="pp-gallery-header">
+      <div class="pp-gallery-title-wrap">
+        <h2 class="pp-gallery-title">Custom Patches Gallery</h2>
+        <div class="pp-gallery-underline"></div>
+      </div>
+      <p class="pp-gallery-sub">Explore our stunning collection of custom patches crafted with precision and creativity</p>
+      <div class="pp-gallery-cta" id="ppGalleryCreateDesignCta" hidden>
+        <button type="button" class="pp-gallery-cta-btn" id="ppCreatePatchDesignBtn">Create Your Patch Design</button>
+      </div>
+    </div>
+    <div class="pp-gallery-grid" id="ppGalleryGrid">
+      {%- if dynamic_gallery != blank -%}
+        {%- for image in dynamic_gallery limit: 8 -%}
+          {%- assign gallery_alt = image.alt | default: product.title | default: 'Custom patch gallery image' -%}
+          {%- assign gallery_views = forloop.index | times: 13 | plus: 300 -%}
+          {%- assign gallery_likes = forloop.index | times: 7 | plus: 50 -%}
+          <div class="pp-gcard">
+            <div class="pp-gcard-inner">
+              <div class="pp-gcard-img-wrap">
+                <img src="{{ image | image_url: width: 800 }}" alt="{{ gallery_alt | escape }}" loading="{%- if forloop.index <= 4 -%}eager{%- else -%}lazy{%- endif -%}" class="pp-gcard-img">
+                {%- if forloop.index == 1 or forloop.index == 3 or forloop.index == 4 or forloop.index == 7 -%}
+                  <span class="pp-gcard-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
+                    Featured
+                  </span>
+                {%- endif -%}
+                <div class="pp-gcard-overlay">
+                  <div class="pp-gcard-stats">
+                    <span class="pp-gcard-stat">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                      {{ gallery_views }}
+                    </span>
+                    <span class="pp-gcard-stat">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>
+                      {{ gallery_likes }}
+                    </span>
+                  </div>
+                  <button class="pp-gcard-view" type="button" data-modal-src="{{ image | image_url: width: 1400 }}" data-modal-alt="{{ gallery_alt | escape }}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="m21 3-7 7"/><path d="m3 21 7-7"/><path d="M9 21H3v-6"/></svg>
+                    View
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- assign gallery_string = 'embroidered skull.jpeg,Embroidered skull custom patch,true,412,87|embroidered only on earth.jpeg,Only on earth embroidered patch,false,356,64|collections.jpeg,Collection of custom embroidered patches,true,498,102|snowy wolf chenille patch.jpeg,Snowy wolf chenille patch,true,441,95|rise.jpeg,Rise custom embroidered patch,false,389,71|embroidered 3.jpeg,Floral embroidered custom patch,false,318,55|embroidered patches.jpeg,Round embroidered badge patch set,true,467,93|ovc 3.jpeg,PVC odyssey adventure patch,false,342,62' -%}
+        {%- assign gallery_items = gallery_string | split: '|' -%}
+        {%- for item in gallery_items -%}
+          {%- assign parts = item | split: ',' -%}
+          <div class="pp-gcard">
+            <div class="pp-gcard-inner">
+              <div class="pp-gcard-img-wrap">
+                <img src="{{ parts[0] | asset_url }}" alt="{{ parts[1] }}" loading="{%- if forloop.index <= 4 -%}eager{%- else -%}lazy{%- endif -%}" class="pp-gcard-img">
+                {%- if parts[2] == 'true' -%}
+                  <span class="pp-gcard-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
+                    Featured
+                  </span>
+                {%- endif -%}
+                <div class="pp-gcard-overlay">
+                  <div class="pp-gcard-stats">
+                    <span class="pp-gcard-stat">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                      {{ parts[3] }}
+                    </span>
+                    <span class="pp-gcard-stat">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>
+                      {{ parts[4] }}
+                    </span>
+                  </div>
+                  <button class="pp-gcard-view" type="button" data-modal-src="{{ parts[0] | asset_url }}" data-modal-alt="{{ parts[1] }}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="m21 3-7 7"/><path d="m3 21 7-7"/><path d="M9 21H3v-6"/></svg>
+                    View
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </section>
+
+  <div class="pp-gallery-modal" id="ppGalleryModal" aria-hidden="true">
+    <div class="pp-gallery-modal-inner">
+      <button class="pp-gallery-modal-close" id="ppGalleryModalClose" type="button" aria-label="Close image preview">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+      <img src="" alt="" class="pp-gallery-modal-img" id="ppGalleryModalImg">
+    </div>
+  </div>
+
+  {%- if has_selected_patch_type -%}
+  <!-- Reviews Section -->
+  {%- assign product_reviews = product.metafields.custom.reviews.value -%}
+  {%- if product_reviews != blank -%}
+  {%- assign total_reviews = product_reviews.size -%}
+  {%- assign sum_ratings = 0 -%}
+  {%- assign count_5 = 0 -%}{%- assign count_4 = 0 -%}{%- assign count_3 = 0 -%}{%- assign count_2 = 0 -%}{%- assign count_1 = 0 -%}
+  {%- for review in product_reviews -%}
+    {%- assign r = review.rating.value | plus: 0 -%}
+    {%- assign sum_ratings = sum_ratings | plus: r -%}
+    {%- if r == 5 -%}{%- assign count_5 = count_5 | plus: 1 -%}{%- endif -%}
+    {%- if r == 4 -%}{%- assign count_4 = count_4 | plus: 1 -%}{%- endif -%}
+    {%- if r == 3 -%}{%- assign count_3 = count_3 | plus: 1 -%}{%- endif -%}
+    {%- if r == 2 -%}{%- assign count_2 = count_2 | plus: 1 -%}{%- endif -%}
+    {%- if r == 1 -%}{%- assign count_1 = count_1 | plus: 1 -%}{%- endif -%}
+  {%- endfor -%}
+  {%- assign avg_whole = sum_ratings | divided_by: total_reviews -%}
+  {%- assign avg_dec = sum_ratings | modulo: total_reviews | times: 10 | divided_by: total_reviews -%}
+  {%- assign pct_5 = count_5 | times: 100 | divided_by: total_reviews -%}
+  {%- assign pct_4 = count_4 | times: 100 | divided_by: total_reviews -%}
+  {%- assign pct_3 = count_3 | times: 100 | divided_by: total_reviews -%}
+  {%- assign pct_2 = count_2 | times: 100 | divided_by: total_reviews -%}
+  {%- assign pct_1 = count_1 | times: 100 | divided_by: total_reviews -%}
+
+  <div class="pp-rev-section">
+    <h2 class="pp-rev-title">Customer Reviews</h2>
+
+    <!-- Summary -->
+    <div class="pp-rev-summary">
+      <div class="pp-rev-avg-col">
+        <span class="pp-rev-avg-num">{{ avg_whole }}.{{ avg_dec }}</span>
+        <div class="pp-rev-avg-right">
+          <div class="pp-rev-avg-stars">
+            {%- for i in (1..5) -%}
+              <span class="pp-rev-avg-star{% if i > avg_whole %} empty{% endif %}">&#9733;</span>
+            {%- endfor -%}
+          </div>
+          <span class="pp-rev-avg-sub">Based on {{ total_reviews }} review{% if total_reviews != 1 %}s{% endif %}</span>
+        </div>
+      </div>
+      <div class="pp-rev-breakdown">
+        <div class="pp-rev-bar-row">
+          <span class="pp-rev-bar-label">5</span><span class="pp-rev-bar-star">&#9733;</span>
+          <div class="pp-rev-bar-track"><div class="pp-rev-bar-fill" style="width:{{ pct_5 }}%"></div></div>
+          <span class="pp-rev-bar-count">{{ count_5 }}</span>
+        </div>
+        <div class="pp-rev-bar-row">
+          <span class="pp-rev-bar-label">4</span><span class="pp-rev-bar-star">&#9733;</span>
+          <div class="pp-rev-bar-track"><div class="pp-rev-bar-fill" style="width:{{ pct_4 }}%"></div></div>
+          <span class="pp-rev-bar-count">{{ count_4 }}</span>
+        </div>
+        <div class="pp-rev-bar-row">
+          <span class="pp-rev-bar-label">3</span><span class="pp-rev-bar-star">&#9733;</span>
+          <div class="pp-rev-bar-track"><div class="pp-rev-bar-fill" style="width:{{ pct_3 }}%"></div></div>
+          <span class="pp-rev-bar-count">{{ count_3 }}</span>
+        </div>
+        <div class="pp-rev-bar-row">
+          <span class="pp-rev-bar-label">2</span><span class="pp-rev-bar-star">&#9733;</span>
+          <div class="pp-rev-bar-track"><div class="pp-rev-bar-fill" style="width:{{ pct_2 }}%"></div></div>
+          <span class="pp-rev-bar-count">{{ count_2 }}</span>
+        </div>
+        <div class="pp-rev-bar-row">
+          <span class="pp-rev-bar-label">1</span><span class="pp-rev-bar-star">&#9733;</span>
+          <div class="pp-rev-bar-track"><div class="pp-rev-bar-fill" style="width:{{ pct_1 }}%"></div></div>
+          <span class="pp-rev-bar-count">{{ count_1 }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews with media -->
+    {%- assign media_reviews = product_reviews | where: 'image' -%}
+    {%- if media_reviews.size > 0 -%}
+    <div class="pp-rev-media-wrap">
+      <div class="pp-rev-media-header">
+        <span class="pp-rev-media-title">Reviews with media</span>
+        <div class="pp-rev-media-nav">
+          <button class="pp-rev-media-btn" id="ppRevMediaPrev" type="button" aria-label="Previous">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button class="pp-rev-media-btn" id="ppRevMediaNext" type="button" aria-label="Next">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="pp-rev-media-strip" id="ppRevMediaStrip">
+        {%- for review in product_reviews -%}
+          {%- if review.image.value -%}
+          <div class="pp-rev-media-thumb">
+            <img src="{{ review.image.value | image_url: width: 280 }}" alt="Review photo" loading="lazy">
+          </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- endif -%}
+
+    <!-- Filters -->
+    <div class="pp-rev-filters">
+      <div class="pp-rev-search-wrap">
+        <input type="search" class="pp-rev-search" id="ppRevSearch" placeholder="Search reviews">
+        <svg class="pp-rev-search-icon" width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </div>
+      <button class="pp-rev-filter-btn active" data-rating="all" id="ppRevRatingFilter" type="button">Rating</button>
+      <label class="pp-rev-media-toggle">
+        <button type="button" class="pp-rev-toggle-switch" id="ppRevMediaToggle" aria-checked="false"><span class="pp-rev-toggle-thumb"></span></button>
+        With media
+      </label>
+    </div>
+    <div class="pp-rev-sort-row">
+      Sort by: <select class="pp-rev-sort-select" id="ppRevSort"><option value="recent">Most recent</option><option value="highest">Highest rated</option><option value="lowest">Lowest rated</option></select>
+    </div>
+
+    <!-- Review list -->
+    <div class="pp-rev-list" id="ppRevList">
+      {%- for review in product_reviews -%}
+        {%- assign rev_name = review.reviewer_name.value -%}
+        {%- assign rev_parts = rev_name | split: ' ' -%}
+        {%- assign rev_init = rev_parts[0] | slice: 0 | upcase -%}
+        {%- if rev_parts[1] -%}{%- assign rev_init2 = rev_parts[1] | slice: 0 | upcase -%}{%- assign rev_init = rev_init | append: rev_init2 -%}{%- endif -%}
+        {%- assign rev_rating = review.rating.value | plus: 0 -%}
+        <div class="pp-rev-item" data-rating="{{ rev_rating }}" data-has-image="{% if review.image.value %}true{% else %}false{% endif %}" data-date="{{ review.date.value }}" data-text="{{ rev_name | downcase }} {{ review.review_title.value | downcase }} {{ review.review_text.value | downcase }}">
+          <div class="pp-rev-avatar">
+            {%- if review.image.value -%}
+              <img src="{{ review.image.value | image_url: width: 88 }}" alt="{{ rev_name }}">
+            {%- else -%}
+              {{ rev_init }}
+            {%- endif -%}
+          </div>
+          <div class="pp-rev-left">
+            <span class="pp-rev-name">{{ rev_name }} <span class="pp-rev-location">{{ review.location.value }}</span></span>
+            {%- if review.verified_buyer.value -%}
+            <span class="pp-rev-verified"><span class="pp-rev-verified-dot"></span>Verified Buyer</span>
+            {%- endif -%}
+          </div>
+          <div class="pp-rev-date">{{ review.date.value | date: "%m/%d/%y" }}</div>
+          <div class="pp-rev-body">
+            <div class="pp-rev-top">
+              <div class="pp-rev-stars">
+                {%- for i in (1..5) -%}<span class="pp-rev-star{% if i > rev_rating %} empty{% endif %}">&#9733;</span>{%- endfor -%}
+              </div>
+              <span class="pp-rev-review-title">{{ review.review_title.value }}</span>
+            </div>
+            <p class="pp-rev-text">{{ review.review_text.value }}</p>
+            {%- if review.image.value -%}
+            <div class="pp-rev-rev-image">
+              <img src="{{ review.image.value | image_url: width: 160 }}" alt="Review image">
+            </div>
+            {%- endif -%}
+            <div class="pp-rev-helpful">
+              Was this review helpful?
+              <button class="pp-rev-helpful-btn" type="button">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                0
+              </button>
+              <button class="pp-rev-helpful-btn" type="button">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+                0
+              </button>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+  {%- endif -%}
+  {%- endif -%}
+
+</div>
+
+<!-- Price Calculator Modal -->
+<style>
+#pcModal { display:none; position:fixed; inset:0; z-index:9000; }
+#pcModal.open { display:flex; align-items:center; justify-content:center; }
+.pcm-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.5); }
+.pcm-panel, .pcm-panel * { box-sizing:border-box; }
+.pcm-panel { position:relative; background:#fff; border-radius:16px; padding:32px; width:calc(100% - 48px); max-width:480px; z-index:1; box-shadow:0 20px 60px rgba(0,0,0,0.2); box-sizing:border-box; overflow:hidden; max-height:calc(100vh - 48px); overflow-y:auto; }
+.pcm-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+.pcm-title { font-size:20px; font-weight:800; color:#3D1F0A; }
+.pcm-close { background:none; border:none; cursor:pointer; color:#6b7280; padding:4px; line-height:1; }
+.pcm-close:hover { color:#3D1F0A; }
+.pcm-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; min-width:0; }
+.pcm-field { display:flex; flex-direction:column; gap:6px; min-width:0; }
+.pcm-label { font-size:13px; font-weight:600; color:#374151; }
+.pcm-stepper { display:flex; align-items:center; border:1.5px solid #e5e7eb; border-radius:8px; overflow:hidden; min-width:0; width:100%; }
+.pcm-stepper button { width:36px; height:36px; background:#f9fafb; border:none; cursor:pointer; font-size:18px; color:#374151; flex-shrink:0; }
+.pcm-stepper button:hover { background:#f3f4f6; }
+.pcm-stepper input { flex:1; border:none; text-align:center; font-size:14px; font-weight:600; color:#3D1F0A; outline:none; min-width:0; font-family:inherit; height:36px; }
+.pcm-table { width:100%; border-collapse:collapse; margin-top:20px; font-size:14px; table-layout:fixed; }
+.pcm-table th { text-align:left; padding:10px 12px; background:#f9fafb; color:#6b7280; font-weight:600; font-size:13px; border-bottom:1px solid #e5e7eb; }
+.pcm-table td { padding:10px 12px; border-bottom:1px solid #f3f4f6; color:#3D1F0A; }
+.pcm-table th, .pcm-table td { overflow-wrap:anywhere; }
+.pcm-table tr.pcm-row-active td { background:#fff7f5; font-weight:700; color:#7C4A1E; }
+.pcm-table .pcm-discount { color:#16a34a; font-weight:600; }
+.pcm-loading { text-align:center; padding:24px; color:#9ca3af; font-size:14px; }
+.pcm-get-quote { display:block; width:100%; margin-top:20px; padding:14px; background:#7C4A1E; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+.pcm-get-quote:hover { background:#e04a1c; }
+@media (max-width: 640px) {
+  .pcm-panel {
+    width: calc(100% - 24px);
+    padding: 20px 16px;
+    max-height: calc(100vh - 24px);
+    border-radius: 14px;
+  }
+  .pcm-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .pcm-header {
+    margin-bottom: 18px;
+  }
+  .pcm-title {
+    font-size: 18px;
+  }
+  .pcm-table {
+    font-size: 13px;
+  }
+  .pcm-table th,
+  .pcm-table td {
+    padding: 9px 8px;
+  }
+  .pcm-stepper button {
+    width: 34px;
+  }
+  .pcm-get-quote {
+    margin-top: 16px;
+    padding: 13px;
+  }
+}
+</style>
+<div id="pcModal" aria-hidden="true">
+  <div class="pcm-backdrop" id="pcmBackdrop"></div>
+  <div class="pcm-panel" role="dialog" aria-modal="true" aria-labelledby="pcmTitle">
+    <div class="pcm-header">
+      <h2 class="pcm-title" id="pcmTitle">Price Calculator</h2>
+      <button class="pcm-close" id="pcmClose" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="pcm-row">
+      <div class="pcm-field">
+        <label class="pcm-label">Width (inches)</label>
+        <div class="pcm-stepper">
+          <button type="button" id="pcmWMinus">−</button>
+          <input type="text" id="pcmWidth" placeholder="0.00" inputmode="decimal" autocomplete="off">
+          <button type="button" id="pcmWPlus">+</button>
+        </div>
+      </div>
+      <div class="pcm-field">
+        <label class="pcm-label">Height (inches)</label>
+        <div class="pcm-stepper">
+          <button type="button" id="pcmHMinus">−</button>
+          <input type="text" id="pcmHeight" placeholder="0.00" inputmode="decimal" autocomplete="off">
+          <button type="button" id="pcmHPlus">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="pcm-field" style="margin-bottom:4px;">
+      <label class="pcm-label">Quantity</label>
+      <div class="pcm-stepper">
+        <button type="button" id="pcmQtyMinus">−</button>
+        <input type="text" id="pcmQty" value="100" inputmode="numeric" autocomplete="off">
+        <button type="button" id="pcmQtyPlus">+</button>
+      </div>
+    </div>
+    <table class="pcm-table">
+      <thead><tr><th>Quantity</th><th>Price Each</th><th>Discount</th></tr></thead>
+      <tbody id="pcmTableBody"><tr><td colspan="3" class="pcm-loading">Loading prices…</td></tr></tbody>
+    </table>
+    <button class="pcm-get-quote" id="pcmGetQuote">Get a Quote</button>
+  </div>
+</div>
+
+<!-- Quote Request Modal -->
+<div id="quoteRequestModal" aria-hidden="true">
+  <div class="qrm-backdrop" id="qrmBackdrop"></div>
+  <div class="qrm-panel" role="dialog" aria-modal="true" aria-labelledby="qrmTitle">
+    <div class="qrm-header">
+      <h2 class="qrm-title" id="qrmTitle">Submit Quote Request</h2>
+      <button type="button" class="qrm-close" id="qrmClose" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="quoteRequestForm" novalidate>
+      <div class="qrm-body">
+        <div class="qrm-field">
+          <label class="qrm-label" for="qrmName">Customer Name <span class="qrm-req">*</span> <span class="qrm-field-error" id="qrmNameErr">Mandatory field!</span></label>
+          <input type="text" id="qrmName" class="qrm-input" placeholder="Enter your name" required>
+        </div>
+        <div class="qrm-field">
+          <label class="qrm-label" for="qrmPhone">Phone Number <span class="qrm-req">*</span> <span class="qrm-field-error" id="qrmPhoneErr">Mandatory field!</span></label>
+          <input type="tel" id="qrmPhone" class="qrm-input" placeholder="Enter your phone number" required>
+        </div>
+        <div class="qrm-field">
+          <label class="qrm-label" for="qrmEmail">Email <span class="qrm-req">*</span> <span class="qrm-field-error" id="qrmEmailErr">Mandatory field!</span></label>
+          <input type="email" id="qrmEmail" class="qrm-input" placeholder="Enter your email" required>
+        </div>
+        <div class="qrm-field">
+          <label class="qrm-label" for="qrmSchedule">Schedule Call <span class="qrm-opt">(optional)</span></label>
+          <select id="qrmSchedule" class="qrm-input qrm-select">
+            <option value="">Select a time slot</option>
+            <option value="Morning (9am - 12pm)">Morning (9am - 12pm)</option>
+            <option value="Afternoon (12pm - 3pm)">Afternoon (12pm - 3pm)</option>
+            <option value="Late Afternoon (3pm - 6pm)">Late Afternoon (3pm - 6pm)</option>
+            <option value="Evening (6pm - 8pm)">Evening (6pm - 8pm)</option>
+          </select>
+        </div>
+        <div class="qrm-success" id="qrmSuccess">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Your quote request has been submitted! We&#39;ll be in touch shortly.
+        </div>
+        <div class="qrm-err-banner" id="qrmErrBanner">Something went wrong. Please try again.</div>
+      </div>
+      <div class="qrm-footer">
+        <button type="button" class="qrm-btn-cancel" id="qrmCancel">Cancel</button>
+        <button type="submit" class="qrm-btn-submit" id="qrmSubmit">Submit Quote</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<!-- Crop & Trim Modal -->
+<div id="cropModal" aria-hidden="true">
+  <div class="crpm-backdrop" id="crpmBackdrop"></div>
+  <div class="crpm-panel" role="dialog" aria-modal="true" aria-labelledby="crpmTitle">
+    <div class="crpm-header">
+      <p class="crpm-title" id="crpmTitle">Crop &amp; Trim</p>
+      <p class="crpm-subtitle" id="crpmSubtitle">Adjust framing to match proportions.</p>
+      <button class="crpm-close" id="crpmClose" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="crpm-canvas-wrap" id="crpmCanvasWrap">
+      <img id="crpmImg" src="" alt="Crop preview">
+      <div class="crpm-box" id="crpmBox">
+        <div class="crpm-corner crpm-corner-tl" data-dir="nw"></div>
+        <div class="crpm-corner crpm-corner-tr" data-dir="ne"></div>
+        <div class="crpm-corner crpm-corner-bl" data-dir="sw"></div>
+        <div class="crpm-corner crpm-corner-br" data-dir="se"></div>
+        <div class="crpm-edge crpm-edge-t" data-dir="n"></div>
+        <div class="crpm-edge crpm-edge-b" data-dir="s"></div>
+        <div class="crpm-edge crpm-edge-l" data-dir="w"></div>
+        <div class="crpm-edge crpm-edge-r" data-dir="e"></div>
+      </div>
+    </div>
+    <div class="crpm-footer">
+      <button class="crpm-btn-cancel" id="crpmCancel">Cancel</button>
+      <button class="crpm-btn-apply" id="crpmApply">Apply Crop</button>
+    </div>
+  </div>
+</div>
+
+<div id="cfgSizeGuideModal" aria-hidden="true">
+  <div class="cfg-size-guide-backdrop" id="cfgSizeGuideBackdrop"></div>
+  <div class="cfg-size-guide-panel" role="dialog" aria-modal="true" aria-labelledby="cfgSizeGuideTitle">
+    <button type="button" class="cfg-size-guide-close" id="cfgSizeGuideClose" aria-label="Close patch size guide">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="cfg-size-guide-table">
+      <div class="cfg-size-guide-head">
+        <span id="cfgSizeGuideTitle">Product</span>
+        <span>Preferred Size</span>
+      </div>
+      <div class="cfg-size-guide-row-item">
+        <span>Hat Square/Circle Patch</span>
+        <span>2 inches</span>
+      </div>
+      <div class="cfg-size-guide-row-item">
+        <span>Hat Rectangle Patch</span>
+        <span>4 inches</span>
+      </div>
+      <div class="cfg-size-guide-row-item">
+        <span>Front Left Chest Shirt</span>
+        <span>4 inches</span>
+      </div>
+      <div class="cfg-size-guide-row-item">
+        <span>Sleeve</span>
+        <span>3 inches</span>
+      </div>
+      <div class="cfg-size-guide-row-item">
+        <span>Back Neckline</span>
+        <span>3 inches</span>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Shopify contact form — offscreen so Turnstile can initialize, response loads into hidden iframe -->
+<iframe name="sqp_sink" style="display:none" aria-hidden="true" tabindex="-1"></iframe>
+<div style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+  {% form 'contact' %}
+    <input type="hidden" name="contact[customer_name]" id="sqpCustomerName">
+    <input type="email" name="contact[email]"      id="sqpEmail"     value="">
+    <input type="hidden" name="contact[phone]"      id="sqpPhone">
+    <input type="hidden" name="contact[patch_type]" id="sqpPatchType">
+    <input type="hidden" name="contact[shape]"      id="sqpShape">
+    <input type="hidden" name="contact[backing]"    id="sqpBacking">
+    <input type="hidden" name="contact[border]"     id="sqpBorder">
+    <input type="hidden" name="contact[colors]"     id="sqpColors">
+    <input type="hidden" name="contact[size]"       id="sqpSize">
+    <input type="hidden" name="contact[quantity]"   id="sqpQty">
+    <input type="hidden" name="contact[unit_price]" id="sqpUnitPrice">
+    <input type="hidden" name="contact[subtotal]"   id="sqpSubtotal">
+    <input type="hidden" name="contact[notes]"      id="sqpNotes">
+    <input type="hidden" name="contact[files]"           id="sqpFiles">
+    <input type="hidden" name="contact[first_source]"   id="sqpFirstSource">
+    <input type="hidden" name="contact[first_medium]"   id="sqpFirstMedium">
+    <input type="hidden" name="contact[first_campaign]" id="sqpFirstCampaign">
+    <input type="hidden" name="contact[last_source]"    id="sqpLastSource">
+    <input type="hidden" name="contact[last_medium]"    id="sqpLastMedium">
+    <input type="hidden" name="contact[last_campaign]"  id="sqpLastCampaign">
+    <input type="hidden" name="contact[is_fine]"        id="sqpIsFine">
+  {% endform %}
+</div>
+
+<!-- AI Modal -->
+<div id="aiModal">
+  <div class="ai-modal-panel" id="aiModalPanel">
+
+    <!-- Header -->
+    <div class="ai-modal-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="ai-modal-logo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/>
+            <path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/>
+          </svg>
+        </div>
+        <span style="font-size:14px;font-weight:700;color:#3D1F0A;">Fineyst AI</span>
+      </div>
+      <button id="closeAiModal" style="width:28px;height:28px;border-radius:8px;background:#f3f4f6;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="ai-modal-sidebar" id="aiSidebar">
+      <button class="ai-sidebar-toggle" id="aiSidebarToggle" title="Show history">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m14 9 3 3-3 3"/>
+        </svg>
+      </button>
+      <div class="ai-sidebar-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+        <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:#9ca3af;">Session History</span>
+        <span id="aiHistoryCount" style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:9999px;background:rgba(255,87,34,0.1);color:#7C4A1E;">0</span>
+      </div>
+      <div class="ai-sidebar-list" id="aiHistoryList"></div>
+    </div>
+
+    <!-- Body -->
+    <div class="ai-modal-body">
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+
+        <div class="ai-prompt-area">
+          <div class="ai-prompt-label">
+            <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#9ca3af;">Prompt</span>
+            <span id="aiCharCount" style="font-size:10px;color:#d1d5db;">0/500</span>
+          </div>
+          <div style="margin-top:10px;display:flex;align-items:center;gap:8px;">
+            <button class="ai-new-chat" id="aiNewChat">
+              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+              New chat
+            </button>
+          </div>
+          <div class="ai-textarea-wrap" style="margin-top:10px;">
+            <textarea class="ai-textarea" id="aiPrompt" placeholder="Describe your patch design…" rows="3" maxlength="500"></textarea>
+          </div>
+          <div class="ai-hint" style="margin-top:8px;">
+            <span class="ai-hint-label">Hint:</span>
+            <span style="color:#9ca3af;font-weight:400;">Generate </span>
+            <span class="ai-underline-wrap">
+              <span class="ai-hint-patch">an embroidered patch</span>
+              <span class="ai-underline">
+                <span class="ai-underline-bar"></span>
+                <span class="ai-underline-tag">patch type</span>
+              </span>
+            </span>
+            <span style="color:#9ca3af;font-weight:400;"> of </span>
+            <span class="ai-underline-wrap">
+              <span class="ai-hint-subject">a man holding a gun</span>
+              <span class="ai-underline">
+                <span class="ai-underline-bar-dark"></span>
+                <span class="ai-underline-tag-dark">subject</span>
+              </span>
+            </span>
+          </div>
+          <p class="ai-prompts-used" id="aiPromptsUsed">Prompts used: 0/5</p>
+        </div>
+
+        <div class="ai-preview-area">
+          <div class="ai-preview-box">
+            <div class="ai-preview-dots"></div>
+            <img class="ai-preview-img" id="aiPreviewImg" alt="Generated patch">
+            <div class="ai-preview-placeholder" id="aiPreviewPlaceholder">
+              <div class="ai-preview-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+              </div>
+              <div>
+                <p style="color:#9ca3af;font-weight:600;font-size:14px;">Patch Preview</p>
+                <p style="color:#d1d5db;font-size:12px;margin-top:4px;max-width:200px;line-height:1.5;">Your AI-generated patch design will materialize in this space</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="ai-modal-footer">
+        <div class="ai-edit-row" id="aiEditRow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
+          <input class="ai-edit-input" id="aiEditInput" placeholder="Describe your edit (e.g. change the border to red)" maxlength="500">
+          <button class="ai-edit-btn" id="aiEditBtn" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
+            Edit Image
+          </button>
+        </div>
+        <div class="ai-footer-row">
+          <button class="ai-discard-btn" id="aiDiscardBtn" disabled>Discard</button>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="ai-use-btn" id="aiUseBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              Use This Image
+            </button>
+            <button class="ai-generate-btn" id="aiGenerateBtn" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+              Generate
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  var root = document.getElementById('ppPriceCalc');
+  if (!root) return;
+  var params = new URLSearchParams(window.location.search);
+  var isCustomPatchesPage = window.location.pathname.replace(/\/$/, '') === '/pages/custom-patches';
+  root.classList.toggle('pp-no-quote', isCustomPatchesPage && params.has('no_quote'));
+})();
+(function(){
+  // AI Modal
+  var modal = document.getElementById('aiModal');
+  var panel = document.getElementById('aiModalPanel');
+  var promptEl = document.getElementById('aiPrompt');
+  var charCount = document.getElementById('aiCharCount');
+  var generateBtn = document.getElementById('aiGenerateBtn');
+  var discardBtn = document.getElementById('aiDiscardBtn');
+  var previewImg = document.getElementById('aiPreviewImg');
+  var placeholder = document.getElementById('aiPreviewPlaceholder');
+  var historyList = document.getElementById('aiHistoryList');
+  var historyCount = document.getElementById('aiHistoryCount');
+  var promptsUsed = document.getElementById('aiPromptsUsed');
+  var editRow = document.getElementById('aiEditRow');
+  var editInput = document.getElementById('aiEditInput');
+  var editBtn = document.getElementById('aiEditBtn');
+  var useBtn = document.getElementById('aiUseBtn');
+  var usedCount = 0;
+  var maxPrompts = 5;
+  var history = [];
+  var currentImageUrl = null;
+
+  document.querySelectorAll('#openAiModal').forEach(function(btn){
+    btn.onclick = function(){ 
+      modal.classList.add('open'); 
+      
+      // If this is the "Edit with AI" button and there's an uploaded image
+      if(btn.classList.contains('cfg-ai-edit-btn') && window.uploadedImageUrl){
+        // Show the uploaded image in the preview
+        previewImg.src = window.uploadedImageUrl;
+        previewImg.style.display = 'block';
+        placeholder.style.display = 'none';
+        discardBtn.disabled = false;
+        currentImageUrl = window.uploadedImageUrl;
+        editRow.classList.add('visible');
+        editInput.value = '';
+        editBtn.disabled = true;
+        
+        // Hide prompt area and generate button in edit mode
+        document.querySelector('.ai-prompt-area').style.display = 'none';
+        generateBtn.style.display = 'none';
+      } else {
+        // Show prompt area and generate button in normal mode
+        document.querySelector('.ai-prompt-area').style.display = 'block';
+        generateBtn.style.display = 'flex';
+      }
+    };
+  });
+  document.getElementById('closeAiModal').onclick = function(){ 
+    modal.classList.remove('open'); 
+    // Reset to normal mode when closing
+    document.querySelector('.ai-prompt-area').style.display = 'block';
+    generateBtn.style.display = 'flex';
+  };
+  modal.onclick = function(e){ 
+    if(e.target === modal) {
+      modal.classList.remove('open'); 
+      // Reset to normal mode when closing
+      document.querySelector('.ai-prompt-area').style.display = 'block';
+      generateBtn.style.display = 'flex';
+    }
+  };
+
+  document.getElementById('aiSidebarToggle').onclick = function(){
+    panel.classList.toggle('history-open');
+  };
+
+  promptEl.oninput = function(){
+    var len = promptEl.value.length;
+    charCount.textContent = len + '/500';
+    generateBtn.disabled = len === 0 || usedCount >= maxPrompts;
+  };
+
+  document.getElementById('aiNewChat').onclick = function(){
+    promptEl.value = '';
+    charCount.textContent = '0/500';
+    generateBtn.disabled = true;
+    discardBtn.disabled = true;
+    previewImg.style.display = 'none';
+    placeholder.style.display = 'flex';
+  };
+
+  var AI_GENERATE_URL     = 'https://shopify-backend-app-omega.vercel.app/api/ai/generate';
+  var AI_STATUS_URL       = 'https://shopify-backend-app-omega.vercel.app/api/ai/generate';
+  var AI_EDIT_URL         = 'https://shopify-backend-app-omega.vercel.app/api/ai/edit';
+  var AI_EDIT_STATUS_URL  = 'https://shopify-backend-app-omega.vercel.app/api/ai/edit';
+  var currentRequestId = null;
+  var currentPrompt = null;
+
+  var EDIT_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>';
+  var GEN_ICON  = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>';
+
+  function resetGenerateBtn() {
+    generateBtn.innerHTML = GEN_ICON + ' Generate';
+    generateBtn.disabled = promptEl.value.length === 0 || usedCount >= maxPrompts;
+    editBtn.innerHTML = EDIT_ICON + ' Edit Image';
+    editBtn.disabled = editInput.value.trim().length === 0;
+  }
+
+  function extractImageUrl(data){
+    if(data.images && data.images.length > 0 && data.images[0].url) return data.images[0].url;
+    if(data.image && data.image.url) return data.image.url;
+    if(data.output && typeof data.output === 'string') return data.output;
+    if(data.output && data.output.images && data.output.images.length > 0 && data.output.images[0].url) return data.output.images[0].url;
+    return null;
+  }
+
+  function pollStatus(requestId, attempt, startTime, statusBase) {
+    var base = statusBase || AI_STATUS_URL;
+    var elapsed = Date.now() - startTime;
+    if (elapsed > 90000) { resetGenerateBtn(); return; }
+    fetch(base + '/' + requestId)
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data.status === 'completed'){
+          var imageUrl = extractImageUrl(data);
+          if(imageUrl){
+            fetch(imageUrl)
+              .then(function(r){ return r.blob(); })
+              .then(function(blob){
+                var url = URL.createObjectURL(blob);
+                previewImg.src = url;
+                previewImg.style.display = 'block';
+                placeholder.style.display = 'none';
+                discardBtn.disabled = false;
+                currentImageUrl = imageUrl;
+                editRow.classList.add('visible');
+                editInput.value = '';
+                editBtn.disabled = true;
+                useBtn.style.display = 'flex';
+                // Populate hidden cart properties
+                document.getElementById('aiPropProvider').value = 'fal.ai';
+                document.getElementById('aiPropModel').value = 'Flux';
+                document.getElementById('aiPropPrompt').value = currentPrompt;
+                document.getElementById('aiPropRequestId').value = requestId;
+                document.getElementById('aiPropImageUrl').value = imageUrl;
+                history.unshift({ url: url, prompt: currentPrompt, requestId: requestId, imageUrl: imageUrl });
+                historyCount.textContent = history.length;
+                renderHistory();
+                resetGenerateBtn();
+              })
+              .catch(function(){ resetGenerateBtn(); });
+          } else {
+            resetGenerateBtn();
+          }
+        } else if(data.status === 'failed'){
+          resetGenerateBtn();
+        } else {
+          setTimeout(function(){ pollStatus(requestId, attempt + 1, startTime, base); }, 2500);
+        }
+      })
+      .catch(function(){ setTimeout(function(){ pollStatus(requestId, attempt + 1, startTime, base); }, 2500); });
+  }
+
+  generateBtn.onclick = function(){
+    var prompt = promptEl.value.trim();
+    if(!prompt || usedCount >= maxPrompts) return;
+    generateBtn.disabled = true;
+    generateBtn.textContent = 'Generating…';
+    usedCount++;
+    currentPrompt = prompt;
+    promptsUsed.textContent = 'Prompts used: ' + usedCount + '/' + maxPrompts;
+    fetch(AI_GENERATE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        magicMode : false,
+        prompt: prompt      
+      })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var reqId = data.requestId || data.generation_id || data.id;
+      if(reqId){
+        currentRequestId = reqId;
+        pollStatus(reqId, 0, Date.now(), AI_GENERATE_URL);
+      } else {
+        resetGenerateBtn();
+      }
+    })
+    .catch(function(){ resetGenerateBtn(); });
+  };
+
+  discardBtn.onclick = function() {
+    previewImg.style.display = 'none';
+    placeholder.style.display = 'flex';
+    discardBtn.disabled = true;
+    currentImageUrl = null;
+    editRow.classList.remove('visible');
+    editInput.value = '';
+    editBtn.disabled = true;
+    useBtn.style.display = 'none';
+  };
+
+  useBtn.onclick = function() {
+    if (!currentImageUrl) return;
+    // Fetch the image and convert to data URL
+    fetch(currentImageUrl)
+      .then(function(r) { return r.blob(); })
+      .then(function(blob) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          // Close modal
+          modal.classList.remove('open');
+          // Show configurator with the image
+          var cfgImg = document.getElementById('cfgPreviewImg');
+          cfgImg.src = e.target.result;
+          window.uploadedImageUrl = e.target.result;
+          syncRemoveButtonVisibility();
+          document.getElementById('ppPreUpload').style.display = 'none';
+          document.getElementById('ppConfigurator').style.display = 'block';
+          document.getElementById('cfgToggles').style.display = 'flex';
+          // Trigger price update
+          var updateEvent = new Event('input');
+          document.getElementById('cfgWidth').dispatchEvent(updateEvent);
+        };
+        reader.readAsDataURL(blob);
+      })
+      .catch(function(err) {
+        console.error('Failed to use image:', err);
+      });
+  };
+
+  editInput.oninput = function() {
+    editBtn.disabled = editInput.value.trim().length === 0;
+  };
+
+  editBtn.onclick = function() {
+    var editPrompt = editInput.value.trim();
+    if (!editPrompt || !currentImageUrl) return;
+    editBtn.disabled = true;
+    editBtn.textContent = 'Editing…';
+
+    // Use the already-uploaded URL from the initial file upload, falling back to currentImageUrl if it's already a remote URL
+    var imageUrlForEdit = (window.uploadedFiles && window.uploadedFiles[0] && window.uploadedFiles[0].fileUrl)
+      ? window.uploadedFiles[0].fileUrl
+      : (currentImageUrl.startsWith('data:') ? null : currentImageUrl);
+
+    if (!imageUrlForEdit) {
+      console.error('No uploaded image URL available for editing');
+      resetGenerateBtn();
+      return;
+    }
+
+    fetch(AI_EDIT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'edit', imageUrl: imageUrlForEdit, prompt: editPrompt })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var reqId = data.requestId || data.generation_id || data.id;
+      if (reqId) {
+        currentRequestId = reqId;
+        currentPrompt = editPrompt;
+        pollStatus(reqId, 0, Date.now(), AI_EDIT_URL);
+      } else {
+        resetGenerateBtn();
+      }
+    })
+    .catch(function(err) {
+      console.error('Edit error:', err);
+      resetGenerateBtn();
+    });
+  };
+
+  function renderHistory(){
+    historyList.innerHTML = '';
+    history.forEach(function(item, idx){
+      var div = document.createElement('div');
+      div.className = 'ai-history-item';
+      div.innerHTML = '<button class="ai-history-del" title="Remove"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button><img class="ai-history-img" src="'+item.url+'" alt="'+item.prompt+'">';
+      div.querySelector('.ai-history-del').onclick = function(){
+        history.splice(idx, 1);
+        historyCount.textContent = history.length;
+        renderHistory();
+      };
+      div.querySelector('.ai-history-img').onclick = function(){
+        previewImg.src = item.url;
+        previewImg.style.display = 'block';
+        placeholder.style.display = 'none';
+        discardBtn.disabled = false;
+      };
+      historyList.appendChild(div);
+    });
+  }
+})();
+
+(function(){
+  // File Upload + Configurator
+  var fileInput    = document.getElementById('ppDesignUpload');
+  var uploadBox    = document.getElementById('ppUploadBox');
+  var cfgPatchSizeValue = document.getElementById('cfgPatchSizeValue');
+  var uploadBtn    = document.getElementById('ppUploadBtn');
+  var createDesignBtn = document.getElementById('ppCreatePatchDesignBtn');
+  var defaultEl    = document.getElementById('ppUploadDefault');
+  var laterCb      = document.getElementById('ppUploadLater');
+  var preUpload    = document.getElementById('ppPreUpload');
+  var configurator = document.getElementById('ppConfigurator');
+  var cfgImg       = document.getElementById('cfgPreviewImg');
+  var cfgImgBtn    = document.getElementById('cfgImgBtn');
+  var cfgRemoveBtn = document.getElementById('cfgRemoveBtn');
+  window._fineyst = window._fineyst || {};
+  function scrollToUploadSection() {
+    if (!configurator) return;
+    var offset = 110;
+    var top = configurator.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  }
+  window._fineyst.scrollToUploadSection = scrollToUploadSection;
+  if (createDesignBtn && new URLSearchParams(window.location.search).get('patch_type')) {
+    var galleryCreateDesignCta = document.getElementById('ppGalleryCreateDesignCta') || createDesignBtn.closest('.pp-gallery-cta');
+    if (galleryCreateDesignCta) galleryCreateDesignCta.hidden = false;
+  }
+  function syncRemoveButtonVisibility() {
+    if (!cfgRemoveBtn) return;
+    cfgRemoveBtn.style.display = window.uploadedImageUrl ? 'inline-flex' : 'none';
+  }
+  window._fineyst.syncRemoveButtonVisibility = syncRemoveButtonVisibility;
+  var cfgWidthLabel= document.getElementById('cfgWidthLabel');
+  var cfgRulerV    = document.getElementById('cfgRulerV');
+  var cfgImgFrame  = document.getElementById('cfgImgFrame');
+
+  var pricingData = null; // loaded from API (array of size objects)
+  var currentSizeData = null; // current size pricing object
+  // Expose to window so other IIFEs (e.g. quote modal) can access them
+  window._fineyst = window._fineyst || {};
+  Object.defineProperty(window._fineyst, 'pricingData', {
+    get: function() { return pricingData; },
+    set: function(v) { pricingData = v; },
+    configurable: true
+  });
+  Object.defineProperty(window._fineyst, 'currentSizeData', {
+    get: function() { return currentSizeData; },
+    set: function(v) { currentSizeData = v; },
+    configurable: true
+  });
+  var HAS_SELECTED_PATCH_TYPE = {{ has_selected_patch_type | json }};
+  var PRODUCT_NAME = '{{ product.title }}';
+  var PRODUCT_HANDLE = '{{ product.handle }}';
+  var PRODUCT_TYPE = '{{ product.type }}';
+  var PRODUCT_ID = {{ product.id | json }};
+  // Shopify cart/add.js needs the variant ID here, not the product ID.
+  var CART_VARIANT_ID = {{ product.variants.first.id | json }};
+  var PRICING_API_URL = 'https://shopify-backend-app-omega.vercel.app/api/pricing/by-page-title';
+  var DRAFT_STORAGE_KEY = 'fineyst_patch_draft_' + PRODUCT_HANDLE;
+
+  function syncConfiguratorLockState() {
+    if (!configurator) return;
+    var locked = !HAS_SELECTED_PATCH_TYPE;
+    configurator.classList.toggle('is-locked', locked);
+    configurator.setAttribute('aria-disabled', locked ? 'true' : 'false');
+    configurator.querySelectorAll('input, select, textarea, button').forEach(function(control) {
+      if (control.closest('.pp-configurator-lock-note')) return;
+      control.disabled = locked;
+    });
+  }
+
+  function scrollToPatchTypeStep() {
+    var patchTypeStep = document.querySelector('[data-patch-type-carousel]');
+    if (!patchTypeStep) return;
+    var offset = window.matchMedia('(min-width: 992px)').matches ? 350 : 210;
+    var top = patchTypeStep.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    var firstCard = patchTypeStep.querySelector('.pp-type-card');
+    if (firstCard) setTimeout(function(){ firstCard.focus({ preventScroll: true }); }, 450);
+  }
+
+  if (configurator) {
+    configurator.addEventListener('click', function(event) {
+      if (!configurator.classList.contains('is-locked')) return;
+      event.preventDefault();
+      scrollToPatchTypeStep();
+    });
+  }
+
+  function readPatchDraft() {
+    try {
+      return JSON.parse(sessionStorage.getItem(DRAFT_STORAGE_KEY) || 'null');
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writePatchDraft(data) {
+    try {
+      sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(data));
+    } catch (error) {}
+  }
+
+  function getValue(id) {
+    var el = document.getElementById(id);
+    return el ? el.value : '';
+  }
+
+  function getChecked(id) {
+    var el = document.getElementById(id);
+    return !!(el && el.checked);
+  }
+
+  function setValue(id, value) {
+    var el = document.getElementById(id);
+    if (el && value !== undefined && value !== null) el.value = value;
+  }
+
+  function setChecked(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.checked = !!value;
+  }
+
+  function selectOptionByData(attr, value, labelId) {
+    if (!value) return;
+    var selector = '[data-' + attr + ']';
+    document.querySelectorAll(selector).forEach(function(btn){
+      btn.classList.toggle('cfg-opt-active', btn.getAttribute('data-' + attr) === value);
+    });
+    var label = document.getElementById(labelId);
+    if (label) label.textContent = value;
+  }
+
+  function collectPatchDraft() {
+    return {
+      width: getValue('cfgWidth'),
+      height: getValue('cfgHeight'),
+      qty: getValue('cfgQty'),
+      bgColor: getValue('cfgBgColor'),
+      border: getValue('cfgBorder'),
+      notes: getValue('cfgNotes'),
+      notesChecked: getChecked('cfgNotesCheck'),
+      uploadLater: getChecked('ppUploadLater'),
+      shape: ((document.getElementById('cfgShapeLabel') || {}).textContent || '').trim(),
+      backing: ((document.getElementById('cfgBackingLabel') || {}).textContent || '').trim(),
+      previewImage: window.uploadedImageUrl || '',
+      uploadedFiles: window.uploadedFiles || [],
+      erpUploadedFile: window.erpUploadedFile || null
+    };
+  }
+
+  function savePatchDraft() {
+    writePatchDraft(collectPatchDraft());
+  }
+
+  function clearPatchDraft() {
+    try {
+      sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch (error) {}
+  }
+
+  function resetPatchDraftFields() {
+    setValue('cfgWidth', '');
+    setValue('cfgHeight', '');
+    setValue('cfgQty', '10');
+    setValue('cfgBgColor', '');
+    setValue('cfgBorder', '');
+    setValue('cfgNotes', '');
+    setChecked('cfgNotesCheck', false);
+    setChecked('ppUploadLater', false);
+    selectOptionByData('shape', 'Custom', 'cfgShapeLabel');
+    selectOptionByData('backing', 'No Backing', 'cfgBackingLabel');
+    var notes = document.getElementById('cfgNotes');
+    if (notes) notes.style.display = 'none';
+    if (cfgImg) cfgImg.src = '';
+    window.uploadedImageUrl = null;
+    if (window._fineyst && typeof window._fineyst.syncRemoveButtonVisibility === 'function') window._fineyst.syncRemoveButtonVisibility();
+    window.uploadedFiles = [];
+    window.erpUploadedFile = null;
+    window.originalImageUrl = null;
+    window.removedBgImageUrl = null;
+    var preview = document.getElementById('cfgPreviewImg');
+    if (preview) preview.removeAttribute('src');
+    if (window._fineyst && typeof window._fineyst.syncRemoveButtonVisibility === 'function') window._fineyst.syncRemoveButtonVisibility();
+    var preUploadWrap = document.getElementById('ppPreUpload');
+    var configuratorWrap = document.getElementById('ppConfigurator');
+    if (preUploadWrap) preUploadWrap.style.display = 'none';
+    if (configuratorWrap) configuratorWrap.style.display = 'block';
+    var toggles = document.getElementById('cfgToggles');
+    if (toggles) toggles.style.display = 'none';
+    if (typeof updatePriceDisplay === 'function') updatePriceDisplay();
+  }
+
+  window.FineystPatchDraftSave = savePatchDraft;
+  window.FineystPatchDraftClear = clearPatchDraft;
+
+  function bindPatchDraftStorage() {
+    [preUpload, configurator].forEach(function(root){
+      if (!root) return;
+      root.addEventListener('input', savePatchDraft);
+      root.addEventListener('change', function(){ setTimeout(savePatchDraft, 0); });
+      root.addEventListener('click', function(event){
+        if (event.target.closest('.cfg-opt-btn') || event.target.closest('.cfg-step-btn') || event.target.closest('#cfgRemoveBtn')) {
+          setTimeout(savePatchDraft, 0);
+        }
+      });
+    });
+  }
+
+  function restorePatchDraft() {
+    if (!HAS_SELECTED_PATCH_TYPE) return;
+    var draft = readPatchDraft();
+    if (!draft) return;
+
+    setValue('cfgWidth', draft.width);
+    setValue('cfgHeight', draft.height);
+    setValue('cfgQty', draft.qty || '10');
+    setValue('cfgBgColor', draft.bgColor);
+    setValue('cfgBorder', draft.border);
+    setValue('cfgNotes', draft.notes);
+    setChecked('cfgNotesCheck', draft.notesChecked);
+    setChecked('ppUploadLater', draft.uploadLater);
+    selectOptionByData('shape', draft.shape, 'cfgShapeLabel');
+    selectOptionByData('backing', draft.backing, 'cfgBackingLabel');
+
+    var notes = document.getElementById('cfgNotes');
+    if (notes) notes.style.display = draft.notesChecked ? 'block' : 'none';
+
+    window.uploadedFiles = Array.isArray(draft.uploadedFiles) ? draft.uploadedFiles : [];
+    window.erpUploadedFile = draft.erpUploadedFile || null;
+
+    if (draft.previewImage) {
+      showConfigurator(draft.previewImage);
+    } else if (draft.uploadLater) {
+      cfgImg.src = '';
+      window.uploadedImageUrl = null;
+      syncRemoveButtonVisibility();
+      preUpload.style.display = 'none';
+      configurator.style.display = 'block';
+      document.getElementById('cfgToggles').style.display = 'none';
+      updatePriceDisplay();
+    } else {
+      updatePriceDisplay();
+    }
+  }
+
+  // Find pricing data for specific size
+  function findSizeData(sizeInches) {
+    if (!pricingData || !Array.isArray(pricingData)) return null;
+
+    var nearest = null;
+    var nearestDiff = Infinity;
+
+    pricingData.forEach(function(sizeObj) {
+      var size = parseFloat(sizeObj.size);
+      if (isNaN(size)) return;
+      var diff = Math.abs(size - sizeInches);
+      if (diff < nearestDiff) {
+        nearestDiff = diff;
+        nearest = sizeObj;
+      }
+    });
+
+    return nearest;
+  }
+  
+  // Get price for specific quantity from size data
+  function getPriceForQuantity(sizeData, qty) {
+    if (!sizeData) return 0;
+    
+    // Define quantity breakpoints in order
+    var qtyKeys = [
+      { min: 10000, key: 'qty10000' },
+      { min: 5000, key: 'qty5000' },
+      { min: 2500, key: 'qty2500' },
+      { min: 2000, key: 'qty2000' },
+      { min: 1500, key: 'qty1500' },
+      { min: 1000, key: 'qty1000' },
+      { min: 750, key: 'qty750' },
+      { min: 700, key: 'qty700' },
+      { min: 500, key: 'qty500' },
+      { min: 300, key: 'qty300' },
+      { min: 250, key: 'qty250' },
+      { min: 200, key: 'qty200' },
+      { min: 100, key: 'qty100' },
+      { min: 75, key: 'qty75' },
+      { min: 50, key: 'qty50' },
+      { min: 25, key: 'qty25' },
+      { min: 20, key: 'qty20' },
+      { min: 10, key: 'qty10' },
+      { min: 5, key: 'qty5' }
+    ];
+    
+    // Cap at 1000 — quantities above 1000 use the 1000-tier price
+    var effectiveQty = Math.min(qty, 1000);
+
+    // Find the appropriate price tier
+    for (var i = 0; i < qtyKeys.length; i++) {
+      if (effectiveQty >= qtyKeys[i].min) {
+        var price = parseFloat(sizeData[qtyKeys[i].key]);
+        if (!isNaN(price) && price > 0) {
+          return price;
+        }
+      }
+    }
+    
+    // Fallback: use the highest-priced available tier (lowest quantity tier with a value)
+    for (var j = qtyKeys.length - 1; j >= 0; j--) {
+      var fbPrice = parseFloat(sizeData[qtyKeys[j].key]);
+      if (!isNaN(fbPrice) && fbPrice > 0) {
+        return fbPrice;
+      }
+    }
+    return 0;
+  }
+
+  // Expose pricing helpers globally for other IIFEs
+  window._fineyst.findSizeData = findSizeData;
+  window._fineyst.getPriceForQuantity = getPriceForQuantity;
+  window._fineyst.productId = PRODUCT_ID;
+  window._fineyst.variantId = CART_VARIANT_ID;
+
+  // Render pricing table from API data
+  function renderPricingTableFromAPI(sizeData, qty) {
+    if (!sizeData) return false;
+    
+    var tbody = document.getElementById('cfgPriceTableBody');
+    var html = '';
+    
+    // Define tier structure for display with their actual API keys
+    var tiers = [
+      { min: 10, max: 24, label: '10-24 pcs', qtyKey: 'qty10' },
+      { min: 25, max: 49, label: '25-49', qtyKey: 'qty25' },
+      { min: 50, max: 99, label: '50-99', qtyKey: 'qty50' },
+      { min: 100, max: 199, label: '100-199', qtyKey: 'qty100' },
+      { min: 200, max: 499, label: '200-499', qtyKey: 'qty250' },
+      { min: 500, max: 999, label: '500-999', qtyKey: 'qty500' },
+      { min: 1000, max: null, label: '1000+', qtyKey: 'qty1000' }
+    ];
+    
+    var basePrice = getPriceForQuantity(sizeData, 10);
+    if (!basePrice || basePrice === 0) return false;
+    
+    tiers.forEach(function(tier) {
+      // Get the actual price for this tier using the quantity-based lookup
+      var price = getPriceForQuantity(sizeData, tier.min);
+      
+      var discountPercent = Math.round(((basePrice - price) / basePrice) * 100);
+      var active = qty >= tier.min && (tier.max === null || qty <= tier.max);
+      
+      html += '<tr' + (active ? ' class="cfg-row-active"' : '') + ' data-cfg-tier-qty="' + tier.min + '" tabindex="0" role="button">' +
+        '<td>' + tier.label + '</td>' +
+        '<td>$' + price.toFixed(2) + ' ea</td>' +
+        '<td class="cfg-discount">' + (discountPercent > 0 ? discountPercent + '% off' : '') + '</td>' +
+        '</tr>';
+    });
+    
+    tbody.innerHTML = html;
+    return true;
+  }
+
+
+
+  var BACKING_SURCHARGE = 0.50;
+
+  /*
+    var patchSize = 0;
+  if (false) {
+    if (w > 0 && h > 0) {
+      patchSize = Math.ceil((((w + h) / 2) * 2)) / 2;
+    }
+  function getBackingSurcharge(){
+  }
+    var backing = (document.getElementById('cfgBackingLabel') || {}).textContent || '';
+  if (false) {
+    if (cfgPatchSizeValue) {
+      cfgPatchSizeValue.textContent = patchSize > 0 ? patchSize.toFixed(1).replace(/\.0$/, '') + '"' : '?';
+  }
+    }
+  */
+  function getBackingSurcharge(){
+    var backing = (document.getElementById('cfgBackingLabel') || {}).textContent || '';
+    return backing === 'No Backing' ? 0 : BACKING_SURCHARGE;
+  }
+
+  /*
+    return backing === 'No Backing' ? 0 : BACKING_SURCHARGE;
+  }
+
+  */
+  function updatePriceDisplay(){
+    var w = parseFloat(document.getElementById('cfgWidth').value) || 0;
+    var h = parseFloat(document.getElementById('cfgHeight').value) || 0;
+    var patchSize = 0;
+    if (w > 0 && h > 0) {
+      patchSize = Math.ceil((((w + h) / 2) * 2)) / 2;
+    }
+    var q = parseInt(document.getElementById('cfgQty').value) || 10;
+    if(q < 10) q = 10;
+    var size = Math.max(w, h);
+
+    // Update labels immediately
+    if (cfgPatchSizeValue) {
+      cfgPatchSizeValue.textContent = patchSize > 0 ? patchSize.toFixed(1).replace(/\.0$/, '') + '"' : '-';
+    }
+    cfgWidthLabel.textContent = w.toFixed(2) + '"';
+    cfgRulerV.textContent = h.toFixed(2) + '"';
+    document.getElementById('cfgPriceSub').textContent = '{{ pp_display_title }} • ' + w.toFixed(2) + '×' + h.toFixed(2) + '" • ' + q + ' pcs';
+
+    // Find size data and update pricing
+    if (pricingData) {
+      currentSizeData = findSizeData(size);
+      if (currentSizeData) {
+        var basePrice = getPriceForQuantity(currentSizeData, q);
+        var backingTotal = getBackingSurcharge() * q;
+        var total = (basePrice * q + backingTotal).toFixed(2);
+
+        document.getElementById('cfgPricePerPatch').textContent = basePrice > 0 ? '$' + basePrice.toFixed(2) + ' per patch' : '—';
+        document.getElementById('cfgPriceTotal').textContent = basePrice > 0 ? 'Total: $' + total : '—';
+
+        // Update pricing table
+        renderPricingTableFromAPI(currentSizeData, q);
+      } else {
+        document.getElementById('cfgPricePerPatch').textContent = 'Size not available';
+        document.getElementById('cfgPriceTotal').textContent = '';
+      }
+    } else {
+      document.getElementById('cfgPricePerPatch').textContent = 'Loading...';
+      document.getElementById('cfgPriceTotal').textContent = '';
+    }
+  }
+
+  var uploadedImageUrl = null; // Track uploaded image
+
+  function showConfigurator(dataUrl){
+    cfgImg.src = dataUrl;
+    window.uploadedImageUrl = dataUrl; // Store globally
+    if (window._fineyst && typeof window._fineyst.syncRemoveButtonVisibility === 'function') window._fineyst.syncRemoveButtonVisibility();
+    window.originalImageUrl = dataUrl; // Preserve original for toggle restore
+    window.removedBgImageUrl = null;   // Clear bg-removal cache for new image
+    preUpload.style.display = 'none';
+    configurator.style.display = 'block';
+    document.getElementById('cfgToggles').style.display = 'flex';
+    updatePriceDisplay();
+  }
+
+  function hasUsablePricingRows(rows) {
+    if (!rows || !Array.isArray(rows) || !rows.length) return false;
+    return rows.some(function(row) {
+      return Object.keys(row).some(function(key) {
+        if (key.indexOf('qty') !== 0 && key !== 'price') return false;
+        var price = parseFloat(row[key]);
+        return !isNaN(price) && price > 0;
+      });
+    });
+  }
+
+  function loadPricingRowsFromAPI(title) {
+    return fetch(PRICING_API_URL + '?title=' + encodeURIComponent(title))
+      .then(function(r) {
+        if (!r.ok) return [];
+        return r.json().catch(function() { return []; });
+      })
+      .then(function(data) { return hasUsablePricingRows(data) ? data : []; })
+      .catch(function() { return []; });
+  }
+
+  function groupFlatPricingRows(rows) {
+    var sizeMap = {};
+    rows.forEach(function(item) {
+      var s = String(item.size);
+      if (!sizeMap[s]) sizeMap[s] = { size: item.size };
+      sizeMap[s]['qty' + item.quantity] = item.price;
+    });
+    return Object.keys(sizeMap).map(function(k) { return sizeMap[k]; });
+  }
+
+  function loadPricingRowsFromAsset() {
+    return fetch('{{ "pricing-updt.json" | asset_url }}')
+      .then(function(r) { return r.ok ? r.json() : []; })
+      .then(function(data) {
+        if (!data || !Array.isArray(data) || !data.length) return [];
+        return groupFlatPricingRows(data.filter(function(item) { return item.name === PRODUCT_NAME; }));
+      })
+      .catch(function() { return []; });
+  }
+
+  function applyLoadedPricingData(data, sourceLabel) {
+    if (!hasUsablePricingRows(data)) {
+      var initialPriceRow = document.getElementById('ppInitialPriceRow');
+      if (initialPriceRow) initialPriceRow.style.display = 'none';
+      document.getElementById('ppInitialPrice').textContent = 'Price unavailable';
+      return;
+    }
+
+    pricingData = data;
+    console.log('Pricing data loaded from ' + sourceLabel + ':', data);
+
+    var initialSizeData = findSizeData(2.25);
+    if (initialSizeData) {
+      var priceAt100 = getPriceForQuantity(initialSizeData, 100);
+      if (priceAt100 > 0) {
+        var initialPriceEl = document.getElementById('ppInitialPrice');
+        var initialPriceRow = document.getElementById('ppInitialPriceRow');
+        if (initialPriceEl) initialPriceEl.textContent = '$' + priceAt100.toFixed(2);
+        if (initialPriceRow) initialPriceRow.style.display = '';
+        if (window.FineystSetProductSchemaPrice) window.FineystSetProductSchemaPrice(priceAt100);
+      }
+      var defaultQty = parseInt((document.getElementById('cfgQty') || {}).value) || 10;
+      renderPricingTableFromAPI(initialSizeData, defaultQty);
+    }
+
+    if (configurator.style.display !== 'none') updatePriceDisplay();
+  }
+
+  // Fetch pricing data from API on page load; use embroidered pricing only if product and JSON fallbacks are missing.
+  loadPricingRowsFromAPI(PRODUCT_NAME)
+    .then(function(data) {
+      if (hasUsablePricingRows(data)) return { rows: data, source: 'product API' };
+      return loadPricingRowsFromAsset().then(function(assetData) {
+        if (hasUsablePricingRows(assetData)) return { rows: assetData, source: 'pricing-updt.json fallback' };
+        return loadPricingRowsFromAPI('Embroidered Patches').then(function(defaultData) {
+          return { rows: defaultData, source: 'Embroidered Patches API fallback' };
+        });
+      });
+    })
+    .then(function(result) {
+      applyLoadedPricingData(result.rows, result.source);
+    });
+
+  function handleFile(file){
+    if(!file) return;
+
+    window.uploadedFiles = [];
+    window.erpUploadedFile = null;
+    window._uploadPending = true;
+    var formData = new FormData();
+    formData.append('file', file);
+    var formData2 = new FormData();
+    formData2.append('file', file);
+    var primaryUpload = fetch('https://shopify-backend-app-omega.vercel.app/api/upload', {
+      method: 'POST',
+      body: formData
+    })
+    .catch(function(err){ console.error('Upload API error:', err); });
+    var erpUpload = fetch('https://shopify-backend-app-omega.vercel.app/api/dashboardimage-upload', {
+      method: 'POST',
+      body: formData2
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data && data.success){
+        window.erpUploadedFile = data;
+        window.uploadedFiles = [{
+          originalName: file.name,
+          fileName:     data.name,
+          fileUrl:      data.fileUrl || data.url,
+          fileSize:     data.size,
+          fileType:     data.type
+        }];
+        savePatchDraft();
+      }
+    })
+    .catch(function(err){ console.error('Dashboard upload error:', err); });
+    Promise.all([primaryUpload, erpUpload]).finally(function(){ window._uploadPending = false; });
+
+    var isImage = file.type.startsWith('image/');
+    if(isImage){
+      var reader = new FileReader();
+      reader.onload = function(e){ showConfigurator(e.target.result); scrollToUploadSection(); savePatchDraft(); };
+      reader.readAsDataURL(file);
+    } else {
+      // Non-image: show configurator with a placeholder icon
+      cfgImg.src = '';
+      cfgImg.alt = file.name;
+      window.uploadedImageUrl = null;
+      syncRemoveButtonVisibility();
+      preUpload.style.display = 'none';
+      configurator.style.display = 'block';
+      document.getElementById('cfgToggles').style.display = 'none'; // No image data, hide image tools
+      updatePriceDisplay();
+      scrollToUploadSection();
+      savePatchDraft();
+    }
+  }
+
+  function triggerFileInput() {
+    fileInput.click();
+    // iOS/Android file picker can cause horizontal scroll shift — reset it
+    var savedX = window.scrollX || window.pageXOffset || 0;
+    var savedY = window.scrollY || window.pageYOffset || 0;
+    setTimeout(function() { window.scrollTo(0, savedY); }, 50);
+    setTimeout(function() { window.scrollTo(0, savedY); }, 200);
+  }
+  function openCreateDesignFlow() {
+    if (preUpload) {
+      preUpload.style.display = 'block';
+      preUpload.setAttribute('aria-hidden', 'false');
+    }
+    if (configurator) {
+      configurator.style.display = 'block';
+      configurator.classList.remove('is-locked');
+      configurator.setAttribute('aria-disabled', 'false');
+    }
+    scrollToUploadSection();
+    triggerFileInput();
+  }
+  if (createDesignBtn) {
+    createDesignBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      openCreateDesignFlow();
+    });
+  }
+  uploadBtn.onclick = triggerFileInput;
+  cfgImgBtn.onclick = triggerFileInput;
+
+  // Clear inline errors on input
+  document.getElementById('cfgWidth').addEventListener('input', function(){
+    this.classList.remove('cfg-input-err');
+    var e = document.getElementById('cfgWidthErr'); e.textContent=''; e.classList.remove('visible');
+  });
+  document.getElementById('cfgHeight').addEventListener('input', function(){
+    this.classList.remove('cfg-input-err');
+    var e = document.getElementById('cfgHeightErr'); e.textContent=''; e.classList.remove('visible');
+  });
+  document.getElementById('cfgBgColor').addEventListener('input', function(){
+    this.classList.remove('cfg-input-err');
+    var e = document.getElementById('cfgBgColorErr'); e.textContent=''; e.classList.remove('visible');
+  });
+  document.getElementById('cfgBorder').addEventListener('input', function(){
+    this.classList.remove('cfg-input-err');
+    var e = document.getElementById('cfgBorderErr'); e.textContent=''; e.classList.remove('visible');
+  });
+
+  function clearQtyValidation() {
+    var qtyErr = document.getElementById('cfgQtyErr');
+    var qtyStepper = document.getElementById('cfgQtyStepper');
+    if (qtyErr) {
+      qtyErr.textContent = '';
+      qtyErr.classList.remove('visible');
+    }
+    if (qtyStepper) qtyStepper.classList.remove('cfg-input-err');
+  }
+
+  function validateQtyMinimum() {
+    var qtyInput = document.getElementById('cfgQty');
+    var qtyErr = document.getElementById('cfgQtyErr');
+    var qtyStepper = document.getElementById('cfgQtyStepper');
+    var qty = parseInt((qtyInput || {}).value, 10);
+
+    if (isNaN(qty) || qty < 10) {
+      if (qtyErr) {
+        qtyErr.textContent = 'Qty min 10';
+        qtyErr.classList.add('visible');
+      }
+      if (qtyStepper) qtyStepper.classList.add('cfg-input-err');
+      if (qtyInput) qtyInput.focus();
+      return false;
+    }
+
+    clearQtyValidation();
+    return true;
+  }
+
+  window._fineyst = window._fineyst || {};
+  window._fineyst.clearQtyValidation = clearQtyValidation;
+  window._fineyst.validateQtyMinimum = validateQtyMinimum;
+
+  cfgRemoveBtn.onclick = function(){
+    fileInput.value = '';
+    cfgImg.src = '';
+    window.uploadedImageUrl = null;
+    if (window._fineyst && typeof window._fineyst.syncRemoveButtonVisibility === 'function') window._fineyst.syncRemoveButtonVisibility();
+    document.getElementById('cfgToggles').style.display = 'none';
+    configurator.style.display = 'block';
+    preUpload.style.display = 'none';
+  };
+
+  fileInput.onchange = function(){
+    if(fileInput.files && fileInput.files[0]) handleFile(fileInput.files[0]);
+  };
+
+  if (laterCb) laterCb.onchange = function(){
+    if(laterCb.checked){
+      var placeholderSvg = 'https://cdn.shopify.com/s/files/1/0670/4703/0883/files/placeholder-patches.webp?v=1784140622';
+      cfgImg.src = placeholderSvg;
+      syncRemoveButtonVisibility();
+      window.uploadedImageUrl = null;
+      syncRemoveButtonVisibility();
+      preUpload.style.display = 'none';
+      configurator.style.display = 'block';
+      document.getElementById('cfgToggles').style.display = 'none'; // No real image, hide image tools
+      updatePriceDisplay();
+    } else {
+      configurator.style.display = 'block';
+      document.getElementById('cfgToggles').style.display = 'none';
+      preUpload.style.display = 'none';
+    }
+  };
+
+  syncConfiguratorLockState();
+  bindPatchDraftStorage();
+  restorePatchDraft();
+
+  // Drag and drop
+  uploadBox.addEventListener('dragover', function(e){
+    e.preventDefault();
+    uploadBox.style.borderColor = '#7C4A1E';
+    uploadBox.style.background = 'linear-gradient(135deg,#fff3ee,#ffd9c4)';
+  });
+  uploadBox.addEventListener('dragleave', function(){
+    uploadBox.style.borderColor = '#7C4A1E';
+    uploadBox.style.background = 'linear-gradient(135deg,#fff8f3,#F0D8C2)';
+  });
+  uploadBox.addEventListener('drop', function(e){
+    e.preventDefault();
+    uploadBox.style.borderColor = '#7C4A1E';
+    uploadBox.style.background = 'linear-gradient(135deg,#fff8f3,#F0D8C2)';
+    var file = e.dataTransfer.files[0];
+    if(file) handleFile(file);
+  });
+
+  // Steppers
+  function makeStep(minusId, plusId, inputId, step, min, max, isInt){
+    document.getElementById(minusId).onclick = function(){
+      var v = parseFloat(document.getElementById(inputId).value) || min;
+      v = Math.max(min, parseFloat((v - step).toFixed(2)));
+      document.getElementById(inputId).value = isInt ? Math.round(v) : v.toFixed(2);
+      if (inputId === 'cfgQty') clearQtyValidation();
+      updatePriceDisplay();
+    };
+    document.getElementById(plusId).onclick = function(){
+      var v = parseFloat(document.getElementById(inputId).value) || min;
+      v = Math.min(max, parseFloat((v + step).toFixed(2)));
+      document.getElementById(inputId).value = isInt ? Math.round(v) : v.toFixed(2);
+      if (inputId === 'cfgQty') clearQtyValidation();
+      updatePriceDisplay();
+    };
+    document.getElementById(inputId).oninput = function(){
+      var el = this;
+      if (isInt) {
+        el.value = el.value.replace(/[^0-9]/g, '').slice(0, 10);
+      } else {
+        el.value = el.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+        var parts = el.value.split('.');
+        if (parts[0].length > 3) { parts[0] = parts[0].slice(0, 3); el.value = parts.join('.'); }
+      }
+      if (inputId === 'cfgQty') clearQtyValidation();
+      updatePriceDisplay();
+    };
+  }
+  makeStep('cfgWMinus','cfgWPlus','cfgWidth', 0.25, 0.5, 20, false);
+  makeStep('cfgHMinus','cfgHPlus','cfgHeight',0.25, 0.5, 20, false);
+  makeStep('cfgQMinus','cfgQPlus','cfgQty',   1,    10,  9999, true);
+  var cfgPriceTableBody = document.getElementById('cfgPriceTableBody');
+  var cfgSizeGuideRow = document.getElementById('cfgSizeGuideRow');
+  var cfgSizeGuideBtn = document.getElementById('cfgSizeGuideBtn');
+  var cfgSizeGuideModal = document.getElementById('cfgSizeGuideModal');
+  var cfgSizeGuideClose = document.getElementById('cfgSizeGuideClose');
+  var cfgSizeGuideBackdrop = document.getElementById('cfgSizeGuideBackdrop');
+  function selectPricingTierRow(row) {
+    if (!row || row.parentElement !== cfgPriceTableBody) return;
+    var label = row.cells && row.cells[0] ? row.cells[0].textContent : '';
+    var qty = row.dataset && row.dataset.cfgTierQty ? parseInt(row.dataset.cfgTierQty, 10) : parseInt(label, 10);
+    var qtyInput = document.getElementById('cfgQty');
+    if (!qtyInput || isNaN(qty)) return;
+    qtyInput.value = qty;
+    clearQtyValidation();
+    updatePriceDisplay();
+  }
+  if (cfgPriceTableBody) {
+    cfgPriceTableBody.addEventListener('click', function(e) {
+      selectPricingTierRow(e.target.closest('tr'));
+    });
+    cfgPriceTableBody.addEventListener('keydown', function(e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var row = e.target.closest('tr');
+      if (!row) return;
+      e.preventDefault();
+      selectPricingTierRow(row);
+    });
+  }
+
+  function openSizeGuideModal() {
+    if (!cfgSizeGuideModal) return;
+    cfgSizeGuideModal.classList.add('open');
+    cfgSizeGuideModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSizeGuideModal() {
+    if (!cfgSizeGuideModal) return;
+    cfgSizeGuideModal.classList.remove('open');
+    cfgSizeGuideModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  if (cfgSizeGuideRow) cfgSizeGuideRow.addEventListener('click', openSizeGuideModal);
+  if (cfgSizeGuideBtn) cfgSizeGuideBtn.addEventListener('click', openSizeGuideModal);
+  if (cfgSizeGuideClose) cfgSizeGuideClose.addEventListener('click', closeSizeGuideModal);
+  if (cfgSizeGuideBackdrop) cfgSizeGuideBackdrop.addEventListener('click', closeSizeGuideModal);
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && cfgSizeGuideModal && cfgSizeGuideModal.classList.contains('open')) closeSizeGuideModal();
+  });
+
+  // Shape selector
+  document.querySelectorAll('[data-shape]').forEach(function(btn){
+    btn.onclick = function(){
+      document.querySelectorAll('[data-shape]').forEach(function(b){ b.classList.remove('cfg-opt-active'); });
+      btn.classList.add('cfg-opt-active');
+      document.getElementById('cfgShapeLabel').textContent = btn.dataset.shape;
+    };
+  });
+
+  // Backing selector
+  document.querySelectorAll('[data-backing]').forEach(function(btn){
+    btn.onclick = function(){
+      document.querySelectorAll('[data-backing]').forEach(function(b){ b.classList.remove('cfg-opt-active'); });
+      btn.classList.add('cfg-opt-active');
+      document.getElementById('cfgBackingLabel').textContent = btn.dataset.backing;
+      updatePriceDisplay();
+    };
+  });
+
+  // Toggle switches
+  var cropSwitch = document.getElementById('cfgCropSwitch');
+  var bgSwitch   = document.getElementById('cfgBgSwitch');
+
+  /* Restore the image to what was originally uploaded, resetting both toggles visually */
+  function restoreOriginalImage() {
+    if (!window.originalImageUrl) return;
+    var cfgImg = document.getElementById('cfgPreviewImg');
+    window.uploadedImageUrl = window.originalImageUrl;
+    if (cfgImg) cfgImg.src = window.originalImageUrl;
+  }
+  
+  cropSwitch.onclick = function(){
+    var checked = cropSwitch.getAttribute('aria-checked') === 'true';
+    if (checked) {
+      // Toggle off — restore original image and uncheck
+      restoreOriginalImage();
+      cropSwitch.setAttribute('aria-checked', 'false');
+      return;
+    }
+    if (!window.uploadedImageUrl) return; // no image yet
+    openCropModal();
+  };
+
+  /* ── Crop Modal ── */
+  (function() {
+    var modal    = document.getElementById('cropModal');
+    var img      = document.getElementById('crpmImg');
+    var box      = document.getElementById('crpmBox');
+    var subtitle = document.getElementById('crpmSubtitle');
+    var wrap     = document.getElementById('crpmCanvasWrap');
+
+    function openCropModal() {
+      var w = parseFloat(document.getElementById('cfgWidth').value)  || 1;
+      var h = parseFloat(document.getElementById('cfgHeight').value) || 1;
+      subtitle.textContent = 'Adjust framing to match ' + w.toFixed(2) + '" × ' + h.toFixed(2) + '" proportions.';
+
+      img.src = window.uploadedImageUrl;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+
+      img.onload = function() { initCropBox(w / h); };
+      if (img.complete && img.naturalWidth) initCropBox(w / h);
+    }
+    window.openCropModal = openCropModal;
+
+    /* ── Initialise crop box to fill ~80% of image, locked to patch aspect ratio ── */
+    function initCropBox(aspect) {
+      var iw = wrap.clientWidth;
+      var ih = img.clientHeight;
+      var boxW = iw * 0.80;
+      var boxH = boxW / aspect;
+      if (boxH > ih * 0.80) { boxH = ih * 0.80; boxW = boxH * aspect; }
+      var x = (iw - boxW) / 2;
+      var y = (ih - boxH) / 2;
+      setBox(x, y, boxW, boxH);
+    }
+
+    function setBox(x, y, w, h) {
+      var iw = wrap.clientWidth;
+      var ih = img.clientHeight;
+      x = Math.max(0, Math.min(x, iw - w));
+      y = Math.max(0, Math.min(y, ih - h));
+      w = Math.max(40, Math.min(w, iw - x));
+      h = Math.max(40, Math.min(h, ih - y));
+      box.style.left   = x + 'px';
+      box.style.top    = y + 'px';
+      box.style.width  = w + 'px';
+      box.style.height = h + 'px';
+    }
+
+    /* ── Drag & resize ── */
+    var drag = null; // { type:'move'|dir, startX, startY, ox, oy, ow, oh }
+
+    function onPointerDown(e) {
+      e.preventDefault();
+      var dir = e.target.dataset.dir;
+      var cx  = e.clientX || (e.touches && e.touches[0].clientX);
+      var cy  = e.clientY || (e.touches && e.touches[0].clientY);
+      drag = {
+        type:  dir || 'move',
+        startX: cx, startY: cy,
+        ox: parseInt(box.style.left),  oy: parseInt(box.style.top),
+        ow: parseInt(box.style.width), oh: parseInt(box.style.height)
+      };
+    }
+
+    function onPointerMove(e) {
+      if (!drag) return;
+      var cx  = e.clientX || (e.touches && e.touches[0].clientX);
+      var cy  = e.clientY || (e.touches && e.touches[0].clientY);
+      var dx  = cx - drag.startX;
+      var dy  = cy - drag.startY;
+      var aspect = (parseFloat(document.getElementById('cfgWidth').value)  || 1) /
+                   (parseFloat(document.getElementById('cfgHeight').value) || 1);
+      var x = drag.ox, y = drag.oy, w = drag.ow, h = drag.oh;
+      var iw = wrap.clientWidth, ih = img.clientHeight;
+
+      if (drag.type === 'move') {
+        x = drag.ox + dx; y = drag.oy + dy;
+      } else {
+        var t = drag.type;
+        // resize keeping aspect ratio
+        if (t === 'se' || t === 's' || t === 'e') {
+          w = drag.ow + dx; h = w / aspect;
+        } else if (t === 'sw' || t === 'w') {
+          w = drag.ow - dx; h = w / aspect; x = drag.ox + drag.ow - w;
+        } else if (t === 'ne' || t === 'n') {
+          w = drag.ow + dx; h = w / aspect; y = drag.oy + drag.oh - h;
+        } else if (t === 'nw') {
+          w = drag.ow - dx; h = w / aspect; x = drag.ox + drag.ow - w; y = drag.oy + drag.oh - h;
+        }
+      }
+      setBox(x, y, w, h);
+    }
+
+    function onPointerUp() { drag = null; }
+
+    box.addEventListener('mousedown',  onPointerDown);
+    box.addEventListener('touchstart', onPointerDown, { passive: false });
+    document.addEventListener('mousemove',  onPointerMove);
+    document.addEventListener('touchmove',  onPointerMove, { passive: false });
+    document.addEventListener('mouseup',  onPointerUp);
+    document.addEventListener('touchend',  onPointerUp);
+
+    /* ── Apply crop ── */
+    document.getElementById('crpmApply').onclick = function() {
+      var scaleX = img.naturalWidth  / img.clientWidth;
+      var scaleY = img.naturalHeight / img.clientHeight;
+      var bx = parseInt(box.style.left)   * scaleX;
+      var by = parseInt(box.style.top)    * scaleY;
+      var bw = parseInt(box.style.width)  * scaleX;
+      var bh = parseInt(box.style.height) * scaleY;
+
+      var canvas = document.createElement('canvas');
+      canvas.width  = bw;
+      canvas.height = bh;
+      var ctx = canvas.getContext('2d');
+      var source = new Image();
+      source.crossOrigin = 'anonymous';
+      source.onload = function() {
+        ctx.drawImage(source, bx, by, bw, bh, 0, 0, bw, bh);
+        var cropped = canvas.toDataURL('image/png');
+        window.uploadedImageUrl = cropped;
+        var cfgImg = document.getElementById('cfgPreviewImg');
+        if (cfgImg) cfgImg.src = cropped;
+        syncRemoveButtonVisibility();
+        cropSwitch.setAttribute('aria-checked', 'true');
+        closeModal();
+      };
+      source.onerror = function() {
+        // fallback: use canvas drawn from img element
+        ctx.drawImage(img, bx, by, bw, bh, 0, 0, bw, bh);
+        var cropped = canvas.toDataURL('image/png');
+        window.uploadedImageUrl = cropped;
+        var cfgImg = document.getElementById('cfgPreviewImg');
+        if (cfgImg) cfgImg.src = cropped;
+        syncRemoveButtonVisibility();
+        cropSwitch.setAttribute('aria-checked', 'true');
+        closeModal();
+      };
+      source.src = window.uploadedImageUrl;
+    };
+
+    /* ── Close helpers ── */
+    function closeModal() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    function cancelCrop() {
+      restoreOriginalImage();
+      cropSwitch.setAttribute('aria-checked', 'false');
+      closeModal();
+    }
+    document.getElementById('crpmClose').onclick    = cancelCrop;
+    document.getElementById('crpmCancel').onclick   = cancelCrop;
+    document.getElementById('crpmBackdrop').onclick = cancelCrop;
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && modal.classList.contains('open')) cancelCrop(); });
+  })();
+  
+  // Remove Background toggle with API call
+  bgSwitch.onclick = function(){
+    var checked = bgSwitch.getAttribute('aria-checked') === 'true';
+    
+    if (!checked && window.uploadedImageUrl) {
+      // ── Serve from cache if already processed ──
+      if (window.removedBgImageUrl) {
+        var cfgImgEl = document.getElementById('cfgPreviewImg');
+        window.uploadedImageUrl = window.removedBgImageUrl;
+        if (cfgImgEl) cfgImgEl.src = window.removedBgImageUrl;
+        syncRemoveButtonVisibility();
+        bgSwitch.setAttribute('aria-checked', 'true');
+        return;
+      }
+
+      // Turning ON - call remove background API
+      bgSwitch.disabled = true;
+      var originalText = bgSwitch.parentElement.querySelector('.cfg-toggle-text').innerHTML;
+      bgSwitch.parentElement.querySelector('.cfg-toggle-text').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Processing...';
+
+      // Convert data URL to blob and upload if needed
+      if (window.uploadedImageUrl.startsWith('data:')) {
+        fetch(window.uploadedImageUrl)
+          .then(function(res) { return res.blob(); })
+          .then(function(blob) {
+            var formData = new FormData();
+            formData.append('file', blob, 'uploaded-image.png');
+            return fetch('https://shopify-backend-app-omega.vercel.app/api/upload', {
+              method: 'POST',
+              body: formData
+            });
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(uploadData) {
+            if (uploadData.url) {
+              return fetch('https://shopify-backend-app-omega.vercel.app/api/ai/edit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'remove_background', imageUrl: uploadData.url })
+              });
+            } else {
+              throw new Error('Failed to upload image');
+            }
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var reqId = data.requestId || data.generation_id || data.id;
+            if (reqId) {
+              pollRemoveBgStatus(reqId, 0, Date.now(), bgSwitch, originalText);
+            } else {
+              bgSwitch.disabled = false;
+              bgSwitch.parentElement.querySelector('.cfg-toggle-text').innerHTML = originalText;
+            }
+          })
+          .catch(function(err) {
+            console.error('Remove background error:', err);
+            bgSwitch.disabled = false;
+            bgSwitch.parentElement.querySelector('.cfg-toggle-text').innerHTML = originalText;
+          });
+      } else {
+        // Use URL directly
+        fetch('https://shopify-backend-app-omega.vercel.app/api/ai/edit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'remove_background', imageUrl: window.uploadedImageUrl })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var reqId = data.requestId || data.generation_id || data.id;
+          if (reqId) {
+            pollRemoveBgStatus(reqId, 0, Date.now(), bgSwitch, originalText);
+          } else {
+            bgSwitch.disabled = false;
+            bgSwitch.parentElement.querySelector('.cfg-toggle-text').innerHTML = originalText;
+          }
+        })
+        .catch(function(err) {
+          console.error('Remove background error:', err);
+          bgSwitch.disabled = false;
+          bgSwitch.parentElement.querySelector('.cfg-toggle-text').innerHTML = originalText;
+        });
+      }
+    } else {
+      // Toggle off — restore original image
+      restoreOriginalImage();
+      bgSwitch.setAttribute('aria-checked', 'false');
+    }
+  };
+  
+  function pollRemoveBgStatus(requestId, attempt, startTime, switchEl, originalText) {
+    var elapsed = Date.now() - startTime;
+    if (elapsed > 90000) {
+      switchEl.disabled = false;
+      switchEl.parentElement.querySelector('.cfg-toggle-text').innerHTML = originalText;
+      return;
+    }
+    
+    fetch('https://shopify-backend-app-omega.vercel.app/api/ai/edit/' + requestId)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.status === 'completed') {
+          var imageUrl = null;
+          if (data.images && data.images.length > 0 && data.images[0].url) imageUrl = data.images[0].url;
+          else if (data.image && data.image.url) imageUrl = data.image.url;
+          else if (data.output && typeof data.output === 'string') imageUrl = data.output;
+          else if (data.output && data.output.images && data.output.images.length > 0 && data.output.images[0].url) imageUrl = data.output.images[0].url;
+          
+          if (imageUrl) {
+            fetch(imageUrl)
+              .then(function(r) { return r.blob(); })
+              .then(function(blob) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                  cfgImg.src = e.target.result;
+                  syncRemoveButtonVisibility();
+                  window.uploadedImageUrl  = e.target.result;
+                  syncRemoveButtonVisibility();
+                  window.removedBgImageUrl = e.target.result; // cache for re-use
+                  switchEl.setAttribute('aria-checked', 'true');
+                  switchEl.disabled = false;
+                  switchEl.parentElement.querySelector('.cfg-toggle-text').innerHTML = originalText;
+                };
+                reader.readAsDataURL(blob);
+              })
+              .catch(function() {
+                switchEl.disabled = false;
+                switchEl.parentElement.querySelector('.cfg-toggle-text').innerHTML = originalText;
+              });
+          } else {
+            switchEl.disabled = false;
+            switchEl.parentElement.querySelector('.cfg-toggle-text').innerHTML = originalText;
+          }
+        } else if (data.status === 'failed') {
+          switchEl.disabled = false;
+          switchEl.parentElement.querySelector('.cfg-toggle-text').innerHTML = originalText;
+        } else {
+          setTimeout(function() { pollRemoveBgStatus(requestId, attempt + 1, startTime, switchEl, originalText); }, 2500);
+        }
+      })
+      .catch(function() {
+        setTimeout(function() { pollRemoveBgStatus(requestId, attempt + 1, startTime, switchEl, originalText); }, 2500);
+      });
+  }
+
+  // Design notes toggle
+  document.getElementById('cfgNotesCheck').onchange = function(){
+    document.getElementById('cfgNotes').style.display = this.checked ? 'block' : 'none';
+  };
+
+  // Proceed to Checkout
+  var QUOTE_API_URL = '{{ section.settings.quote_api_url | escape }}';
+
+  function hasUploadedArtwork() {
+    var aiImage = document.getElementById('aiPropImageUrl');
+    var uploadedFiles = Array.isArray(window.uploadedFiles) ? window.uploadedFiles : [];
+    return !!(window.uploadedImageUrl || uploadedFiles.some(function(file) { return file && (file.fileUrl || file.url); }) || (aiImage && aiImage.value));
+  }
+
+  function clearUploadRequirementError() {
+    var frame = document.getElementById('cfgImgFrame');
+    var err = document.getElementById('cfgUploadErr');
+    if (frame) frame.classList.remove('cfg-input-err');
+    if (err) err.classList.remove('visible');
+  }
+
+  function validateUploadRequirement() {
+    var later = document.getElementById('ppUploadLater');
+    if ((later && later.checked) || hasUploadedArtwork()) {
+      clearUploadRequirementError();
+      return true;
+    }
+
+    var frame = document.getElementById('cfgImgFrame');
+    var err = document.getElementById('cfgUploadErr');
+    if (frame) {
+      frame.classList.add('cfg-input-err');
+      frame.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    if (err) err.classList.add('visible');
+    return false;
+  }
+
+  var uploadLaterInput = document.getElementById('ppUploadLater');
+  if (uploadLaterInput) uploadLaterInput.addEventListener('change', clearUploadRequirementError);
+  if (cfgImgBtn) cfgImgBtn.addEventListener('click', clearUploadRequirementError);
+  if (fileInput) fileInput.addEventListener('change', clearUploadRequirementError);
+  window._fineyst.validateUploadRequirement = validateUploadRequirement;
+  window._fineyst.clearUploadRequirementError = clearUploadRequirementError;
+
+  function validateConfiguratorRequiredFields(w, h, bgColor, border) {
+    // Clear previous errors
+    ['cfgWidth','cfgHeight','cfgBgColor','cfgBorder'].forEach(function(id){
+      document.getElementById(id).classList.remove('cfg-input-err');
+    });
+    ['cfgWidthErr','cfgHeightErr','cfgBgColorErr','cfgBorderErr'].forEach(function(id){
+      var el = document.getElementById(id); el.textContent=''; el.classList.remove('visible');
+    });
+
+    var hasError = false;
+    if (!parseFloat(w) || parseFloat(w) <= 0) {
+      var ew = document.getElementById('cfgWidthErr');
+      ew.textContent = 'Mandatory field!'; ew.classList.add('visible');
+      document.getElementById('cfgWidth').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!parseFloat(h) || parseFloat(h) <= 0) {
+      var eh = document.getElementById('cfgHeightErr');
+      eh.textContent = 'Mandatory field!'; eh.classList.add('visible');
+      document.getElementById('cfgHeight').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!bgColor) {
+      var e = document.getElementById('cfgBgColorErr');
+      e.textContent = 'Mandatory field!'; e.classList.add('visible');
+      document.getElementById('cfgBgColor').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!border) {
+      var e2 = document.getElementById('cfgBorderErr');
+      e2.textContent = 'Mandatory field!'; e2.classList.add('visible');
+      document.getElementById('cfgBorder').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (hasError) {
+      if (!parseFloat(w) || parseFloat(w) <= 0) document.getElementById('cfgWidth').focus();
+      else if (!parseFloat(h) || parseFloat(h) <= 0) document.getElementById('cfgHeight').focus();
+      else if (!bgColor) document.getElementById('cfgBgColor').focus();
+      else document.getElementById('cfgBorder').focus();
+      return false;
+    }
+
+    return true;
+  }
+
+  function toShopifyCartPayload() {
+    var qty = parseInt(document.getElementById('cfgQty').value, 10);
+    var w   = document.getElementById('cfgWidth').value;
+    var h   = document.getElementById('cfgHeight').value;
+    var shape   = document.getElementById('cfgShapeLabel').textContent;
+    var backing = document.getElementById('cfgBackingLabel').textContent;
+    var bgColor = document.getElementById('cfgBgColor').value.trim();
+    var border  = document.getElementById('cfgBorder').value.trim();
+    var notes   = document.getElementById('cfgNotes').value;
+
+    if (!validateUploadRequirement()) return null;
+    if (!validateQtyMinimum()) return null;
+    if (!validateConfiguratorRequiredFields(w, h, bgColor, border)) return null;
+
+    var pricingData = window._fineyst && window._fineyst.pricingData;
+    if (!pricingData || !Array.isArray(pricingData) || pricingData.length === 0) {
+      alert('Pricing information is still loading. Please wait a moment and try again.');
+      return null;
+    }
+
+    var size = Math.max(parseFloat(w), parseFloat(h));
+    var sizeData = currentSizeData || findSizeData(size);
+    var unitPrice = sizeData ? getPriceForQuantity(sizeData, qty) : 0;
+    var backingFee = backing === 'No Backing' ? 0 : 0.50;
+
+    if (!unitPrice || unitPrice <= 0) {
+      alert('Pricing information is still loading. Please wait a moment and try again.');
+      return null;
+    }
+
+    var effectiveUnitPrice = (unitPrice + backingFee).toFixed(2);
+    var totalPrice = ((unitPrice + backingFee) * qty).toFixed(2);
+    var props = {
+      'Width': w + '"',
+      'Height': h + '"',
+      'Patch Quantity': String(qty),
+      'Shape': shape,
+      'Backing': backing,
+      'Background Color': bgColor,
+      'Border': border,
+      'custom_price': effectiveUnitPrice,
+      'customPrice': effectiveUnitPrice,
+      'Calculated Unit Price': effectiveUnitPrice,
+      'Calculated Total': totalPrice
+    };
+
+    if (notes) props['Design Notes'] = notes;
+    if (document.getElementById('ppUploadLater') && document.getElementById('ppUploadLater').checked) props['Upload Image Later'] = 'Yes';
+    if (QUOTE_API_URL) props['Quote API URL'] = QUOTE_API_URL;
+
+    (window.uploadedFiles || []).forEach(function(file, i) {
+      var url = file.fileUrl || file.url || '';
+      if (url) props['Artwork File ' + (i + 1)] = url;
+    });
+
+    if (document.getElementById('aiPropImageUrl').value) {
+      props['_AI Provider']   = document.getElementById('aiPropProvider').value;
+      props['_AI Model']      = document.getElementById('aiPropModel').value;
+      props['_AI Prompt']     = document.getElementById('aiPropPrompt').value;
+      props['_AI Request ID'] = document.getElementById('aiPropRequestId').value;
+      props['_AI Image URL']  = document.getElementById('aiPropImageUrl').value;
+    }
+
+    return {
+      id: CART_VARIANT_ID,
+      quantity: qty,
+      configuredQuantity: qty,
+      configuredTotal: totalPrice,
+      properties: props
+    };
+  }
+
+  document.getElementById('cfgCheckout').onclick = function(){
+    var qty = parseInt(document.getElementById('cfgQty').value, 10);
+    var w   = document.getElementById('cfgWidth').value;
+    var h   = document.getElementById('cfgHeight').value;
+    var shape   = document.getElementById('cfgShapeLabel').textContent;
+    var backing = document.getElementById('cfgBackingLabel').textContent;
+    var bgColor = document.getElementById('cfgBgColor').value.trim();
+    var border  = document.getElementById('cfgBorder').value.trim();
+    var notes   = document.getElementById('cfgNotes').value;
+
+    if (!validateUploadRequirement()) return;
+    if (!validateQtyMinimum()) return;
+
+    // Clear previous errors
+    ['cfgWidth','cfgHeight','cfgBgColor','cfgBorder'].forEach(function(id){
+      document.getElementById(id).classList.remove('cfg-input-err');
+    });
+    ['cfgWidthErr','cfgHeightErr','cfgBgColorErr','cfgBorderErr'].forEach(function(id){
+      var el = document.getElementById(id); el.textContent=''; el.classList.remove('visible');
+    });
+
+    // Required field validation
+    var hasError = false;
+    if (!parseFloat(w) || parseFloat(w) <= 0) {
+      var ew = document.getElementById('cfgWidthErr');
+      ew.textContent = 'Mandatory field!'; ew.classList.add('visible');
+      document.getElementById('cfgWidth').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!parseFloat(h) || parseFloat(h) <= 0) {
+      var eh = document.getElementById('cfgHeightErr');
+      eh.textContent = 'Mandatory field!'; eh.classList.add('visible');
+      document.getElementById('cfgHeight').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!bgColor) {
+      var e = document.getElementById('cfgBgColorErr');
+      e.textContent = 'Mandatory field!'; e.classList.add('visible');
+      document.getElementById('cfgBgColor').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!border) {
+      var e2 = document.getElementById('cfgBorderErr');
+      e2.textContent = 'Mandatory field!'; e2.classList.add('visible');
+      document.getElementById('cfgBorder').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (hasError) {
+      if (!parseFloat(w) || parseFloat(w) <= 0) document.getElementById('cfgWidth').focus();
+      else if (!parseFloat(h) || parseFloat(h) <= 0) document.getElementById('cfgHeight').focus();
+      else if (!bgColor) document.getElementById('cfgBgColor').focus();
+      else document.getElementById('cfgBorder').focus();
+      return;
+    }
+
+    // Calculate custom unit price from the configurator's pricing engine
+    var unitPrice = 0;
+    var size = Math.max(parseFloat(w), parseFloat(h));
+    var sizeData = currentSizeData || findSizeData(size);
+    if (sizeData) {
+      var backingSurcharge = backing === 'No Backing' ? 0 : 0.50;
+      unitPrice = getPriceForQuantity(sizeData, qty);
+    }
+    var backingTotal = (backing === 'No Backing' ? 0 : 0.50) * qty;
+    var unitPriceStr = unitPrice.toFixed(2);
+    var totalPrice   = (unitPrice * qty + backingTotal).toFixed(2);
+
+    var btn = document.getElementById('cfgCheckout');
+    btn.disabled = true;
+    btn.textContent = 'Creating order…';
+
+    fetch('https://shopify-backend-app-omega.vercel.app/api/shopify/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        lineItems: [{
+          productName: PRODUCT_NAME,
+          quantity:    qty,
+          unitPrice:   (unitPrice + (backing === 'No Backing' ? 0 : 0.50)).toFixed(2),
+          width:       w,
+          height:      h,
+          imageUrl:    '{{ product.featured_image | image_url: width: 2048 }}',
+          options: {
+            patchType:    PRODUCT_NAME,
+            shape:        shape,
+            backing:      backing,
+            backingPrice: backing === 'No Backing' ? 0 : 0.50,
+            border:       border,
+            colors:       bgColor,
+            size:         w + '" x ' + h + '"'
+          }
+        }]
+      })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      console.log('Checkout API response:', data);
+      if (!data.ok) {
+        alert(data.message || 'Something went wrong.');
+        btn.disabled = false;
+        btn.textContent = 'Proceed to Checkout';
+        return;
+      }
+      window.location.href = data.invoiceUrl;
+    })
+    .catch(function(err) {
+      console.error(err);
+      btn.disabled = false;
+      btn.textContent = 'Proceed to Checkout';
+      alert('Network error. Please try again.');
+    });
+  };
+
+  document.getElementById('cfgCheckout').onclick = function(){
+    var btn = document.getElementById('cfgCheckout');
+    var payload = toShopifyCartPayload();
+    if (!payload) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Adding to cart...';
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r) {
+      return r.json().then(function(data) {
+        return { ok: r.ok, status: r.status, data: data };
+      });
+    })
+    .then(function(result) {
+      if (!result.ok) {
+        throw new Error((result.data && (result.data.description || result.data.message)) || 'Could not add this product to cart. Please try again.');
+      }
+      window.location.href = '/cart';
+    })
+    .catch(function(err) {
+      console.error('Cart add error:', err);
+      alert(err.message || 'Could not add this product to cart. Please try again.');
+    })
+    .finally(function() {
+      btn.disabled = false;
+      btn.textContent = 'Proceed to Checkout';
+    });
+  };
+
+  // Add to Cart
+  var VARIANT_ID = {{ product.selected_or_first_available_variant.id | default: 'null' }};
+
+  window.fineystDoAddToCart = function doAddToCart(cartBtn, cartSpinner, cartLabel) {
+    var qty = parseInt(document.getElementById('cfgQty').value, 10);
+    var w   = document.getElementById('cfgWidth').value;
+    var h   = document.getElementById('cfgHeight').value;
+    var shape   = document.getElementById('cfgShapeLabel').textContent;
+    var backing = document.getElementById('cfgBackingLabel').textContent;
+    var bgColor = document.getElementById('cfgBgColor').value.trim();
+    var border  = document.getElementById('cfgBorder').value.trim();
+    var notes   = document.getElementById('cfgNotes').value;
+
+    if (!validateUploadRequirement()) return;
+    if (!validateQtyMinimum()) return;
+
+    ['cfgWidth','cfgHeight','cfgBgColor','cfgBorder'].forEach(function(id){
+      document.getElementById(id).classList.remove('cfg-input-err');
+    });
+    ['cfgWidthErr','cfgHeightErr','cfgBgColorErr','cfgBorderErr'].forEach(function(id){
+      var el = document.getElementById(id); el.textContent=''; el.classList.remove('visible');
+    });
+
+    var hasError = false;
+    if (!parseFloat(w) || parseFloat(w) <= 0) {
+      var ew = document.getElementById('cfgWidthErr');
+      ew.textContent = 'Mandatory field!'; ew.classList.add('visible');
+      document.getElementById('cfgWidth').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!parseFloat(h) || parseFloat(h) <= 0) {
+      var eh = document.getElementById('cfgHeightErr');
+      eh.textContent = 'Mandatory field!'; eh.classList.add('visible');
+      document.getElementById('cfgHeight').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!bgColor) {
+      var e = document.getElementById('cfgBgColorErr');
+      e.textContent = 'Mandatory field!'; e.classList.add('visible');
+      document.getElementById('cfgBgColor').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!border) {
+      var e2 = document.getElementById('cfgBorderErr');
+      e2.textContent = 'Mandatory field!'; e2.classList.add('visible');
+      document.getElementById('cfgBorder').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (hasError) return;
+
+    var backingSurcharge = backing === 'No Backing' ? 0 : 0.50;
+
+    // Resolve unit price — prefer live DOM value (already shown to user) then recompute
+    var unitPrice = 0;
+    var priceEl = document.getElementById('cfgPricePerPatch');
+    if (priceEl) {
+      var parsed = parseFloat((priceEl.textContent || '').replace(/[^0-9.]/g, ''));
+      if (isFinite(parsed) && parsed > 0) unitPrice = parsed;
+    }
+    if (!unitPrice) {
+      var size = Math.max(parseFloat(w), parseFloat(h));
+      var sizeData = (window._fineyst && window._fineyst.currentSizeData)
+                     || (window._fineyst && window._fineyst.findSizeData && window._fineyst.findSizeData(size));
+      if (sizeData && window._fineyst && window._fineyst.getPriceForQuantity) {
+        unitPrice = window._fineyst.getPriceForQuantity(sizeData, qty);
+      }
+    }
+
+    if (!unitPrice || unitPrice <= 0) {
+      alert('Price could not be calculated. Please make sure dimensions are filled in and try again.');
+      return;
+    }
+
+    var unitPriceWithBacking = (unitPrice + backingSurcharge).toFixed(2);
+    var totalPrice = ((unitPrice + backingSurcharge) * qty).toFixed(2);
+
+    if (cartBtn) { cartBtn.disabled = true; }
+    if (cartSpinner) { cartSpinner.removeAttribute('hidden'); }
+    if (cartLabel) { cartLabel.textContent = 'Adding…'; }
+
+    var properties = {
+      'Size':           w + '" × ' + h + '"',
+      'Width':          w + '"',
+      'Height':         h + '"',
+      'Quantity':       qty + ' pcs',
+      'Shape':          shape,
+      'Backing':        backing,
+      'Background Color': bgColor,
+      'Border':         border,
+      'custom_price':   unitPriceWithBacking,
+      'Calculated Unit Price': '$' + unitPriceWithBacking,
+      'Calculated Total':      '$' + totalPrice
+    };
+    if (notes) properties['Design Notes'] = notes;
+
+    var aiUrlInput = document.getElementById('aiPropImageUrl');
+    if (aiUrlInput && aiUrlInput.value) properties['Design Image URL'] = aiUrlInput.value;
+
+    var form = document.createElement('form');
+    form.method = 'post';
+    form.action = '/cart/add';
+    form.style.display = 'none';
+
+    function addField(name, value) {
+      var inp = document.createElement('input');
+      inp.type = 'hidden';
+      inp.name = name;
+      inp.value = value;
+      form.appendChild(inp);
+    }
+
+    addField('id', VARIANT_ID);
+    addField('quantity', qty);
+    Object.keys(properties).forEach(function(key) {
+      addField('properties[' + key + ']', properties[key]);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+
+})();
+
+(function() {
+  var sticky = document.getElementById('cfgMobileStickyActions');
+  var stickySummary = document.getElementById('cfgMobileStickySummary');
+  var stickyPrice = document.getElementById('cfgMobileStickyPrice');
+  var stickySub = document.getElementById('cfgMobileStickySub');
+  var stickyQuoteBtn = document.getElementById('cfgMobileStickyQuote');
+  var stickyQuoteSpinner = document.getElementById('cfgMobileStickyQuoteSpinner');
+  var stickyCheckoutBtn = document.getElementById('cfgMobileStickyCheckout');
+  var stickyCheckoutSpinner = document.getElementById('cfgMobileStickyCheckoutSpinner');
+  var stickyCheckoutLabel = document.getElementById('cfgMobileStickyCheckoutLabel');
+  var checkoutBtn = document.getElementById('cfgCheckout');
+  var quoteBtn = document.getElementById('cfgSubmitQuoteBtn');
+  var cta = document.querySelector('.cfg-cta');
+  var configurator = document.getElementById('ppConfigurator');
+  var pricePerPatch = document.getElementById('cfgPricePerPatch');
+  var priceTotal = document.getElementById('cfgPriceTotal');
+  var priceSub = document.getElementById('cfgPriceSub');
+  var rootWrap = document.querySelector('.pp-wrap');
+
+  if (!sticky || !stickyQuoteBtn || !stickyCheckoutBtn || !checkoutBtn || !quoteBtn || !cta || !configurator) return;
+
+  function isMobile() {
+    return window.innerWidth <= 640;
+  }
+
+  function isConfiguratorVisible() {
+    return window.getComputedStyle(configurator).display !== 'none' && !configurator.classList.contains('is-locked');
+  }
+
+  function isCtaOutOfView() {
+    var rect = cta.getBoundingClientRect();
+    return rect.bottom <= 0;
+  }
+
+  function syncSummary() {
+    var unit = pricePerPatch ? pricePerPatch.textContent.trim() : '';
+    var total = priceTotal ? priceTotal.textContent.trim() : '';
+    var sub = priceSub ? priceSub.textContent.trim() : '';
+    var hasSummary = unit.indexOf('$') !== -1 && total.indexOf('Total:') !== -1;
+
+    if (hasSummary) {
+      stickyPrice.innerHTML = '<strong>' + unit + '</strong> • ' + total;
+      stickySub.textContent = sub;
+      stickySummary.hidden = false;
+      sticky.classList.add('has-summary');
+    } else {
+      stickyPrice.textContent = '';
+      stickySub.textContent = '';
+      stickySummary.hidden = true;
+      sticky.classList.remove('has-summary');
+    }
+  }
+
+  function syncButtonState() {
+    var checkoutText = (checkoutBtn.textContent || '').trim();
+    var quoteText = (quoteBtn.textContent || '').trim();
+    var checkoutBusy = checkoutBtn.disabled && /creating order|loading/i.test(checkoutText);
+    var quoteBusy = quoteBtn.disabled && /submitting|loading/i.test(quoteText);
+    var actionsBusy = checkoutBtn.disabled || quoteBtn.disabled;
+
+    stickyQuoteBtn.disabled = actionsBusy;
+    stickyCheckoutBtn.disabled = actionsBusy;
+    stickyQuoteSpinner.hidden = !quoteBusy;
+    stickyCheckoutSpinner.hidden = !checkoutBusy;
+    stickyCheckoutLabel.textContent = checkoutText || 'Proceed to Checkout';
+  }
+
+  function updateStickyVisibility() {
+    syncSummary();
+    syncButtonState();
+
+    var shouldShow = isMobile() && isConfiguratorVisible() && isCtaOutOfView();
+    sticky.classList.toggle('is-visible', shouldShow);
+    sticky.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+
+    if (rootWrap) {
+      rootWrap.classList.toggle('cfg-mobile-sticky-active', shouldShow);
+    }
+  }
+
+  stickyQuoteBtn.addEventListener('click', function() {
+    if (stickyQuoteBtn.disabled) return;
+    quoteBtn.click();
+    setTimeout(updateStickyVisibility, 50);
+  });
+
+  stickyCheckoutBtn.addEventListener('click', function() {
+    if (stickyCheckoutBtn.disabled) return;
+    checkoutBtn.click();
+    setTimeout(updateStickyVisibility, 50);
+  });
+
+
+  var updateTimer = null;
+  function scheduleUpdate() {
+    if (updateTimer) window.cancelAnimationFrame(updateTimer);
+    updateTimer = window.requestAnimationFrame(updateStickyVisibility);
+  }
+
+  window.addEventListener('scroll', scheduleUpdate, { passive: true });
+  window.addEventListener('resize', scheduleUpdate);
+
+  ['cfgWidth', 'cfgHeight', 'cfgQty', 'cfgBgColor', 'cfgBorder', 'cfgNotes'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', scheduleUpdate);
+    el.addEventListener('change', scheduleUpdate);
+  });
+
+  document.addEventListener('click', function(e) {
+    var target = e.target;
+    if (!(target instanceof Element)) return;
+    if (target.closest('.cfg-opt-btn') || target.closest('.cfg-step-btn') || target.closest('#ppUploadBtn') || target.closest('#cfgRemoveBtn')) {
+      setTimeout(scheduleUpdate, 50);
+    }
+  });
+
+  var observer = new MutationObserver(function() {
+    scheduleUpdate();
+  });
+
+  [configurator, pricePerPatch, priceTotal, priceSub, checkoutBtn, quoteBtn].forEach(function(el) {
+    if (!el) return;
+    observer.observe(el, {
+      attributes: true,
+      attributeFilter: ['style', 'class', 'disabled', 'hidden'],
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+  });
+
+  scheduleUpdate();
+})();
+
+(function(){
+  // Reviews: search, filter, sort, media strip
+  var revList = document.getElementById('ppRevList');
+  if (!revList) return;
+
+  var searchInput = document.getElementById('ppRevSearch');
+  var mediaToggle = document.getElementById('ppRevMediaToggle');
+  var sortSelect = document.getElementById('ppRevSort');
+  var mediaStrip = document.getElementById('ppRevMediaStrip');
+  var mediaOnly = false;
+  var activeRating = 'all';
+
+  function applyFilters() {
+    var query = searchInput ? searchInput.value.toLowerCase() : '';
+    var items = revList.querySelectorAll('.pp-rev-item');
+    items.forEach(function(item) {
+      var text = (item.getAttribute('data-text') || '').toLowerCase();
+      var rating = item.getAttribute('data-rating');
+      var hasImage = item.getAttribute('data-has-image') === 'true';
+      var matchSearch = !query || text.includes(query);
+      var matchRating = activeRating === 'all' || rating === activeRating;
+      var matchMedia = !mediaOnly || hasImage;
+      item.classList.toggle('hidden', !(matchSearch && matchRating && matchMedia));
+    });
+  }
+
+  if (searchInput) searchInput.addEventListener('input', applyFilters);
+
+  if (mediaToggle) {
+    mediaToggle.addEventListener('click', function() {
+      mediaOnly = !mediaOnly;
+      mediaToggle.classList.toggle('on', mediaOnly);
+      mediaToggle.setAttribute('aria-checked', mediaOnly ? 'true' : 'false');
+      applyFilters();
+    });
+  }
+
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+      var items = Array.from(revList.querySelectorAll('.pp-rev-item'));
+      items.sort(function(a, b) {
+        if (sortSelect.value === 'highest') return parseInt(b.dataset.rating) - parseInt(a.dataset.rating);
+        if (sortSelect.value === 'lowest') return parseInt(a.dataset.rating) - parseInt(b.dataset.rating);
+        return (b.getAttribute('data-date') || '').localeCompare(a.getAttribute('data-date') || '');
+      });
+      items.forEach(function(item) { revList.appendChild(item); });
+    });
+  }
+
+  // Media strip nav
+  if (mediaStrip) {
+    var prevBtn = document.getElementById('ppRevMediaPrev');
+    var nextBtn = document.getElementById('ppRevMediaNext');
+    if (prevBtn) prevBtn.addEventListener('click', function() { mediaStrip.scrollBy({ left: -300, behavior: 'smooth' }); });
+    if (nextBtn) nextBtn.addEventListener('click', function() { mediaStrip.scrollBy({ left: 300, behavior: 'smooth' }); });
+  }
+})();
+
+(function(){
+  // Before/After slider
+  var wrap = document.getElementById('ppBaWrap');
+  if(!wrap) return;
+  var before = wrap.querySelector('.pp-ba-before');
+  var after = document.getElementById('ppBaAfter');
+  var line  = document.getElementById('ppBaLine');
+  var handle = document.getElementById('ppBaHandle');
+  var pct = 50;
+
+  function setPos(p){
+    pct = Math.min(100, Math.max(0, p));
+    before.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+    after.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
+    line.style.left = pct + '%';
+    handle.style.left = pct + '%';
+  }
+  setPos(50);
+
+  function getX(e){ return e.touches ? e.touches[0].clientX : e.clientX; }
+
+  function onMove(e){
+    var rect = wrap.getBoundingClientRect();
+    setPos((getX(e) - rect.left) / rect.width * 100);
+  }
+
+  wrap.addEventListener('mousedown', function(e){
+    e.preventDefault();
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', function(){ document.removeEventListener('mousemove', onMove); }, { once:true });
+  });
+  wrap.addEventListener('touchstart', function(e){
+    document.addEventListener('touchmove', onMove, { passive:true });
+    document.addEventListener('touchend', function(){ document.removeEventListener('touchmove', onMove); }, { once:true });
+  }, { passive:true });
+})();
+
+(function(){
+  // Gallery
+  var slides = document.querySelectorAll('.pp-img-slide');
+  var thumbs = document.querySelectorAll('.pp-thumb');
+  var cur = 0;
+  if(!slides.length) return;
+  function goTo(n){
+    slides[cur].className = 'pp-img-slide inactive';
+    thumbs[cur].classList.remove('active');
+    cur = (n + slides.length) % slides.length;
+    slides[cur].className = 'pp-img-slide active';
+    thumbs[cur].classList.add('active');
+  }
+  document.getElementById('ppPrev').onclick = function(){ goTo(cur-1); };
+  document.getElementById('ppNext').onclick = function(){ goTo(cur+1); };
+  thumbs.forEach(function(t){ t.onclick = function(){ goTo(parseInt(t.dataset.idx)); }; });
+})();
+
+(function(){
+  var modal = document.getElementById('ppGalleryModal');
+  var modalImg = document.getElementById('ppGalleryModalImg');
+  var closeBtn = document.getElementById('ppGalleryModalClose');
+  var viewBtns = document.querySelectorAll('.pp-gcard-view');
+  if(!modal || !modalImg || !closeBtn || !viewBtns.length) return;
+
+  function closeModal(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    modalImg.src = '';
+    modalImg.alt = '';
+  }
+
+  viewBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      modalImg.src = btn.getAttribute('data-modal-src') || '';
+      modalImg.alt = btn.getAttribute('data-modal-alt') || '';
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+    });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e){
+    if(e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+})();
+
+(function(){
+  // ── Quote Request Modal ──────────────────────────────────────────────────
+
+  var qModal   = document.getElementById('quoteRequestModal');
+  var qForm    = document.getElementById('quoteRequestForm');
+  var qClose   = document.getElementById('qrmClose');
+  var qCancel  = document.getElementById('qrmCancel');
+  var qBackdrop= document.getElementById('qrmBackdrop');
+  var qSubmit  = document.getElementById('qrmSubmit');
+  var qSuccess = document.getElementById('qrmSuccess');
+  var qErrBanner = document.getElementById('qrmErrBanner');
+  var openBtn  = document.getElementById('cfgSubmitQuoteBtn');
+  if (!qModal || !openBtn) return;
+
+  function openModal() {
+    qModal.classList.add('qrm-open');
+    qModal.setAttribute('aria-hidden', 'false');
+    qSuccess.classList.remove('visible');
+    qErrBanner.classList.remove('visible');
+    qForm.reset();
+    clearErrors();
+  }
+
+  function closeModal() {
+    qModal.classList.remove('qrm-open');
+    qModal.setAttribute('aria-hidden', 'true');
+  }
+
+  function clearErrors() {
+    document.getElementById('qrmNameErr').classList.remove('visible');
+    document.getElementById('qrmPhoneErr').classList.remove('visible');
+    document.getElementById('qrmEmailErr').classList.remove('visible');
+    document.getElementById('qrmName').classList.remove('qrm-invalid');
+    document.getElementById('qrmPhone').classList.remove('qrm-invalid');
+    document.getElementById('qrmEmail').classList.remove('qrm-invalid');
+  }
+
+  function validate() {
+    var ok = true;
+    var name = document.getElementById('qrmName').value.trim();
+    var phone = document.getElementById('qrmPhone').value.trim();
+    var email = document.getElementById('qrmEmail').value.trim();
+    clearErrors();
+    if (!name) {
+      document.getElementById('qrmNameErr').classList.add('visible');
+      document.getElementById('qrmName').classList.add('qrm-invalid');
+      ok = false;
+    }
+    if (!phone) {
+      document.getElementById('qrmPhoneErr').classList.add('visible');
+      document.getElementById('qrmPhone').classList.add('qrm-invalid');
+      ok = false;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      document.getElementById('qrmEmailErr').classList.add('visible');
+      document.getElementById('qrmEmail').classList.add('qrm-invalid');
+      ok = false;
+    }
+    return ok;
+  }
+
+  openBtn.addEventListener('click', function(){
+    var wVal    = document.getElementById('cfgWidth').value.trim();
+    var hVal    = document.getElementById('cfgHeight').value.trim();
+    var bgColor = document.getElementById('cfgBgColor').value.trim();
+    var border  = document.getElementById('cfgBorder').value.trim();
+
+    if (window._fineyst && typeof window._fineyst.validateUploadRequirement === 'function' && !window._fineyst.validateUploadRequirement()) {
+      return;
+    }
+
+    if (!(window._fineyst && typeof window._fineyst.validateQtyMinimum === 'function' && window._fineyst.validateQtyMinimum())) {
+      return;
+    }
+
+    // Clear previous errors
+    ['cfgWidth','cfgHeight','cfgBgColor','cfgBorder'].forEach(function(id){
+      document.getElementById(id).classList.remove('cfg-input-err');
+    });
+    ['cfgWidthErr','cfgHeightErr','cfgBgColorErr','cfgBorderErr'].forEach(function(id){
+      var el = document.getElementById(id); el.textContent=''; el.classList.remove('visible');
+    });
+
+    var hasError = false;
+    if (!parseFloat(wVal) || parseFloat(wVal) <= 0) {
+      var ew = document.getElementById('cfgWidthErr');
+      ew.textContent = 'Mandatory field!'; ew.classList.add('visible');
+      document.getElementById('cfgWidth').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!parseFloat(hVal) || parseFloat(hVal) <= 0) {
+      var eh = document.getElementById('cfgHeightErr');
+      eh.textContent = 'Mandatory field!'; eh.classList.add('visible');
+      document.getElementById('cfgHeight').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!bgColor) {
+      var e = document.getElementById('cfgBgColorErr');
+      e.textContent = 'Mandatory field!'; e.classList.add('visible');
+      document.getElementById('cfgBgColor').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (!border) {
+      var e2 = document.getElementById('cfgBorderErr');
+      e2.textContent = 'Mandatory field!'; e2.classList.add('visible');
+      document.getElementById('cfgBorder').classList.add('cfg-input-err');
+      hasError = true;
+    }
+    if (hasError) {
+      if (!parseFloat(wVal) || parseFloat(wVal) <= 0) document.getElementById('cfgWidth').focus();
+      else if (!parseFloat(hVal) || parseFloat(hVal) <= 0) document.getElementById('cfgHeight').focus();
+      else if (!bgColor) document.getElementById('cfgBgColor').focus();
+      else document.getElementById('cfgBorder').focus();
+      return;
+    }
+
+    openModal();
+  });
+  qClose.addEventListener('click', closeModal);
+  qCancel.addEventListener('click', closeModal);
+  qBackdrop.addEventListener('click', closeModal);
+
+  document.getElementById('qrmName').addEventListener('input', function(){
+    this.classList.remove('qrm-invalid');
+    document.getElementById('qrmNameErr').classList.remove('visible');
+  });
+  document.getElementById('qrmPhone').addEventListener('input', function(){
+    this.classList.remove('qrm-invalid');
+    document.getElementById('qrmPhoneErr').classList.remove('visible');
+  });
+  document.getElementById('qrmEmail').addEventListener('input', function(){
+    this.classList.remove('qrm-invalid');
+    document.getElementById('qrmEmailErr').classList.remove('visible');
+  });
+  var cfgQtyInput = document.getElementById('cfgQty');
+  if (cfgQtyInput) {
+    cfgQtyInput.addEventListener('input', function(){
+      qErrBanner.classList.remove('visible');
+    });
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && qModal.classList.contains('qrm-open')) closeModal();
+  });
+
+  qForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    if (window._fineyst && typeof window._fineyst.validateUploadRequirement === 'function' && !window._fineyst.validateUploadRequirement()) {
+      closeModal();
+      return;
+    }
+
+    if(window._uploadPending){
+      qErrBanner.textContent = 'Please wait — your file is still uploading.';
+      qErrBanner.classList.add('visible');
+      return;
+    }
+
+    // CRITICAL: Validate that pricing data has loaded before allowing submission
+    var pricingData = window._fineyst && window._fineyst.pricingData;
+    if (!pricingData || !Array.isArray(pricingData) || pricingData.length === 0) {
+      qErrBanner.textContent = 'Pricing information is still loading. Please wait a moment and try again.';
+      qErrBanner.classList.add('visible');
+      console.warn('Form submitted before pricing data loaded. pricingData:', pricingData);
+      return; // Block submission
+    }
+
+    if (!(window._fineyst && typeof window._fineyst.validateQtyMinimum === 'function' && window._fineyst.validateQtyMinimum())) {
+      qErrBanner.textContent = 'Qty min 10.';
+      qErrBanner.classList.add('visible');
+      return;
+    }
+
+    if (!validate()) return;
+
+    // Gather configurator values
+    var qty      = parseInt((document.getElementById('cfgQty') || {}).value) || 1;
+    var w        = parseFloat((document.getElementById('cfgWidth') || {}).value) || 0;
+    var h        = parseFloat((document.getElementById('cfgHeight') || {}).value) || 0;
+    var shape    = ((document.getElementById('cfgShapeLabel') || {}).textContent || '').trim();
+    var backing  = ((document.getElementById('cfgBackingLabel') || {}).textContent || '').trim();
+    var border   = ((document.getElementById('cfgBorder') || {}).value || '').trim();
+    var bgColor  = ((document.getElementById('cfgBgColor') || {}).value || '').trim();
+    var sizeStr  = w + '" x ' + h + '"';
+
+    // Calculate unit price via shared helpers exposed on window._fineyst
+    var unitPrice = 0;
+    var size = Math.max(w, h);
+    var currentSizeData = window._fineyst && window._fineyst.currentSizeData;
+    var findSizeData = window._fineyst && window._fineyst.findSizeData;
+    var getPriceForQuantity = window._fineyst && window._fineyst.getPriceForQuantity;
+    var sizeData = currentSizeData || (findSizeData && findSizeData(size));
+
+    if (sizeData && typeof getPriceForQuantity === 'function') {
+      unitPrice = getPriceForQuantity(sizeData, qty);
+    }
+
+    // SAFETY CHECK: Validate that pricing calculation succeeded and we have a valid price
+    if (!unitPrice || unitPrice === 0 || isNaN(unitPrice)) {
+      qErrBanner.textContent = 'Cannot calculate pricing. Please verify dimensions and try again.';
+      qErrBanner.classList.add('visible');
+      console.error('Pricing calculation failed', { unitPrice, sizeData, qty, size });
+      return; // Block submission
+    }
+
+    // Format pricing strings to match checkout flow
+    var backingFee = backing === 'No Backing' ? 0 : 0.50 * qty;
+    var unitPriceStr = unitPrice.toFixed(2);
+    var subTotal = parseFloat((unitPrice * qty + backingFee).toFixed(2));
+
+    // Debug logging for monitoring
+    console.log('✓ Pricing calculated successfully:', { unitPrice, unitPriceStr, subTotal, qty, size });
+    console.log('✓ Size data found:', sizeData);
+
+    var attribution = (window.FineystAttribution && window.FineystAttribution.get()) || {};
+
+    var payload = {
+      status:      'pending',
+      customerName: document.getElementById('qrmName').value.trim(),
+      email:       document.getElementById('qrmEmail').value.trim(),
+      phoneNumber: document.getElementById('qrmPhone').value.trim(),
+      queryFrom:   window.location.href,
+      patchType:   {{ product.title | json }},
+      shape:       shape,
+      backing:     backing,
+      border:      border,
+      thread:      '',
+      colors:      bgColor,
+      size:        sizeStr,
+      quantity:    qty,
+      unitPrice:   parseFloat((unitPrice + (backing === 'No Backing' ? 0 : 0.50)).toFixed(2)),
+      subTotal:    subTotal,
+      schedule:    '',
+      notes:       '',
+      uploadImageLater: !!(document.getElementById('ppUploadLater') && document.getElementById('ppUploadLater').checked),
+      uploadedFiles: window.uploadedFiles || [],
+      firstSource:   attribution.firstSource   || null,
+      firstMedium:   attribution.firstMedium   || null,
+      firstCampaign: attribution.firstCampaign || null,
+      lastSource:    attribution.lastSource    || null,
+      lastMedium:    attribution.lastMedium    || null,
+      lastCampaign:  attribution.lastCampaign  || null,
+      isFine:        true
+    };
+
+    // Keep schedule and notes in dedicated fields for dashboard storage
+    var schedule = document.getElementById('qrmSchedule').value;
+    if (schedule) payload.schedule = schedule;
+
+    var notes = (document.getElementById('cfgNotes').value || '').trim();
+    if (notes) {
+      payload.notes = notes;
+    }
+
+    qSubmit.disabled = true;
+    qSubmit.textContent = 'Submitting…';
+    qErrBanner.classList.remove('visible');
+
+    function showSuccess() {
+      if (typeof window.FineystPatchDraftClear === 'function') window.FineystPatchDraftClear();
+      if (typeof window.resetPatchDraftFields === 'function') window.resetPatchDraftFields();
+      qSuccess.classList.add('visible');
+      qForm.querySelector('.qrm-footer').style.display = 'none';
+      setTimeout(function() {
+        closeModal();
+        window.location.reload();
+      }, 1200);
+    }
+
+    function resetBtn() {
+      qSubmit.disabled = false;
+      qSubmit.textContent = 'Submit Quote';
+    }
+
+    // Shopify contact form — offscreen so Turnstile initializes, submits into hidden iframe
+    var sqpForm = document.querySelector('form[action*="/contact"]');
+    console.log('[SQP] form found:', sqpForm ? sqpForm.action : 'NOT FOUND');
+    if (sqpForm) {
+      document.getElementById('sqpCustomerName').value  = payload.customerName;
+      document.getElementById('sqpEmail').value          = payload.email;
+      document.getElementById('sqpPhone').value          = payload.phoneNumber;
+      document.getElementById('sqpPatchType').value      = payload.patchType;
+      document.getElementById('sqpShape').value          = payload.shape;
+      document.getElementById('sqpBacking').value        = payload.backing;
+      document.getElementById('sqpBorder').value         = payload.border;
+      document.getElementById('sqpColors').value         = payload.colors;
+      document.getElementById('sqpSize').value           = payload.size;
+      document.getElementById('sqpQty').value            = payload.quantity;
+      document.getElementById('sqpUnitPrice').value      = '$' + parseFloat(payload.unitPrice).toFixed(2);
+      document.getElementById('sqpSubtotal').value       = '$' + parseFloat(payload.subTotal).toFixed(2);
+      document.getElementById('sqpNotes').value          = payload.notes || payload.schedule || '';
+      document.getElementById('sqpFiles').value          = (payload.uploadedFiles || []).map(function(f) { return f.fileUrl || f.url || ''; }).filter(Boolean).join(', ');
+      document.getElementById('sqpFirstSource').value    = payload.firstSource   || '';
+      document.getElementById('sqpFirstMedium').value    = payload.firstMedium   || '';
+      document.getElementById('sqpFirstCampaign').value  = payload.firstCampaign || '';
+      document.getElementById('sqpLastSource').value     = payload.lastSource    || '';
+      document.getElementById('sqpLastMedium').value     = payload.lastMedium    || '';
+      document.getElementById('sqpLastCampaign').value   = payload.lastCampaign  || '';
+      document.getElementById('sqpIsFine').value         = 'true';
+
+      sqpForm.setAttribute('target', 'sqp_sink');
+
+      // One-time submit listener to see if event fires and whether anything blocks it
+      sqpForm.addEventListener('submit', function handler(e) {
+        sqpForm.removeEventListener('submit', handler);
+        console.log('[SQP] submit event fired — defaultPrevented:', e.defaultPrevented);
+        console.log('[SQP] form fields:', Array.from(new FormData(sqpForm).entries()).map(function(p){ return p[0]; }));
+      });
+
+      // Track iframe response
+      var sqpIframe = document.querySelector('iframe[name="sqp_sink"]');
+      if (sqpIframe) {
+        sqpIframe.onload = function() {
+          console.log('[SQP] iframe loaded — contact form went through');
+        };
+      }
+
+      // Small delay to allow Turnstile to inject its token before submit
+      setTimeout(function() {
+        console.log('[SQP] form fields before submit:', Array.from(new FormData(sqpForm).entries()).map(function(p){ return p[0]; }));
+        console.log('[SQP] attempting submit via requestSubmit...');
+        try {
+          sqpForm.requestSubmit();
+          console.log('[SQP] requestSubmit called on:', sqpForm.action);
+        } catch(e) {
+          console.warn('[SQP] requestSubmit failed, falling back to submit():', e);
+          sqpForm.submit();
+        }
+      }, 500);
+    }
+
+    fetch('https://shopify-backend-app-omega.vercel.app/api/shopify/draft-orders/from-form', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('API returned ' + r.status);
+      if (window.FineystAnalytics && typeof window.FineystAnalytics.trackQuoteRequestSubmitted === 'function') {
+        window.FineystAnalytics.trackQuoteRequestSubmitted({
+          form_name: 'category_quote_form',
+          email: payload.email,
+          phone: payload.phoneNumber,
+          name: payload.customerName || null,
+          product_id: {{ request.path | split: '/' | last | json }},
+          product_name: {{ pp_display_title | json }},
+          patch_type: {{ pp_display_title | json }},
+          quantity: payload.quantity,
+          currency: {{ cart.currency.iso_code | default: shop.currency | default: 'USD' | json }},
+          value: payload.subTotal,
+          page_path: window.location.pathname,
+          size: payload.size,
+          shape: payload.shape,
+          backing: payload.backing,
+          border: payload.border,
+          colors: payload.colors,
+          schedule: payload.schedule || ''
+        });
+      }
+      showSuccess();
+    })
+    .catch(function(err) {
+      console.error('[QuoteModal] Submission error:', err);
+      qErrBanner.textContent = 'Something went wrong. Please try again.';
+      qErrBanner.classList.add('visible');
+    })
+    .finally(resetBtn);
+  });
+})();
+
+(function(){
+  var img    = document.getElementById('cfgPreviewImg');
+  var frame  = document.getElementById('cfgImgFrame');
+  var lens   = document.getElementById('cfgZoomLens');
+  var result = document.getElementById('cfgZoomResult');
+  if (!img || !frame || !lens || !result) return;
+
+  var RESULT_W = 380, RESULT_H = 380;
+  var lensW = 140, lensH = 140;
+
+  function isRealImage() {
+    return !!(window.uploadedImageUrl);
+  }
+
+  function hideZoom() {
+    lens.style.display   = 'none';
+    result.style.display = 'none';
+  }
+
+  frame.addEventListener('mouseenter', function() {
+    if (!isRealImage()) return;
+
+    var frameRect = frame.getBoundingClientRect();
+    var zoom = RESULT_W / lensW;
+
+    // pin result flush to the left of the frame, top-aligned — never moves again
+    var resultLeft = frameRect.left - RESULT_W - 12;
+    var resultTop  = frameRect.top;
+    // fallback: below the frame when there is no space on the left
+    if (resultLeft < 8) {
+      resultLeft = frameRect.left;
+      resultTop  = frameRect.bottom + 10;
+    }
+
+    result.style.left   = resultLeft + 'px';
+    result.style.top    = resultTop  + 'px';
+    result.style.width  = RESULT_W   + 'px';
+    result.style.height = RESULT_H   + 'px';
+    result.style.backgroundImage = 'url("' + img.src + '")';
+    result.style.display = 'block';
+    lens.style.display   = 'block';
+  });
+
+  frame.addEventListener('mouseleave', hideZoom);
+
+  frame.addEventListener('mousemove', function(e) {
+    if (!isRealImage()) { hideZoom(); return; }
+
+    var frameRect = frame.getBoundingClientRect();
+    var imgRect   = img.getBoundingClientRect();
+    var zoom      = RESULT_W / lensW;
+
+    // cursor relative to the rendered image area
+    var cx = e.clientX - imgRect.left;
+    var cy = e.clientY - imgRect.top;
+
+    // clamp lens within image bounds
+    var lx = Math.max(0, Math.min(cx - lensW / 2, imgRect.width  - lensW));
+    var ly = Math.max(0, Math.min(cy - lensH / 2, imgRect.height - lensH));
+
+    // move lens (positioned relative to cfgImgFrame)
+    lens.style.left = ((imgRect.left - frameRect.left) + lx) + 'px';
+    lens.style.top  = ((imgRect.top  - frameRect.top)  + ly) + 'px';
+
+    // update only the zoomed region inside the fixed result box
+    var bgW = imgRect.width  * zoom;
+    var bgH = imgRect.height * zoom;
+    result.style.backgroundSize     = bgW + 'px ' + bgH + 'px';
+    result.style.backgroundPosition = (-lx * zoom) + 'px ' + (-ly * zoom) + 'px';
+  });
+})();
+
+// Price Calculator Modal
+(function(){
+  var modal = document.getElementById('pcModal');
+  var openBtn = document.getElementById('ppPriceCalcBtn');
+  var closeBtn = document.getElementById('pcmClose');
+  var backdrop = document.getElementById('pcmBackdrop');
+  if (!modal || !openBtn) return;
+
+  var tiers = [
+    { min:10,  max:24,   label:'10-24 pcs',  key:'qty10' },
+    { min:25,  max:49,   label:'25-49',       key:'qty25' },
+    { min:50,  max:99,   label:'50-99',       key:'qty50' },
+    { min:100, max:199,  label:'100-199',     key:'qty100' },
+    { min:200, max:499,  label:'200-499',     key:'qty250' },
+    { min:500, max:999,  label:'500-999',     key:'qty500' },
+    { min:1000,max:null, label:'1000+',       key:'qty1000' }
+  ];
+
+  function openModal(e) {
+    e.preventDefault();
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    renderTable();
+  }
+  function closeModal() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  openBtn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', closeModal);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeModal(); });
+
+  function makeStep(minusId, plusId, inputId, step, min, max) {
+    var minus = document.getElementById(minusId);
+    var plus  = document.getElementById(plusId);
+    var input = document.getElementById(inputId);
+    minus.addEventListener('click', function(){
+      var v = parseFloat(input.value) || min;
+      input.value = Math.max(min, parseFloat((v - step).toFixed(2)));
+      renderTable();
+    });
+    plus.addEventListener('click', function(){
+      var v = parseFloat(input.value) || min;
+      input.value = Math.min(max, parseFloat((v + step).toFixed(2)));
+      renderTable();
+    });
+    input.addEventListener('change', renderTable);
+  }
+
+  makeStep('pcmWMinus','pcmWPlus','pcmWidth',0.25,0.5,20);
+  makeStep('pcmHMinus','pcmHPlus','pcmHeight',0.25,0.5,20);
+  makeStep('pcmQtyMinus','pcmQtyPlus','pcmQty',10,10,10000);
+
+  function renderTable() {
+    var findSizeData = window._fineyst && window._fineyst.findSizeData;
+    var getPriceForQuantity = window._fineyst && window._fineyst.getPriceForQuantity;
+    var tbody = document.getElementById('pcmTableBody');
+    if (!findSizeData || !getPriceForQuantity) {
+      tbody.innerHTML = '<tr><td colspan="3" class="pcm-loading">Prices still loading…</td></tr>';
+      return;
+    }
+    var w = parseFloat(document.getElementById('pcmWidth').value) || 0;
+    var h = parseFloat(document.getElementById('pcmHeight').value) || 0;
+    var qty = parseInt(document.getElementById('pcmQty').value) || 100;
+    var size = Math.max(w, h);
+    var sizeData = findSizeData(size);
+    if (!sizeData) {
+      tbody.innerHTML = '<tr><td colspan="3" class="pcm-loading">No pricing found for this size.</td></tr>';
+      return;
+    }
+    var basePrice = getPriceForQuantity(sizeData, 10);
+    if (!basePrice) {
+      tbody.innerHTML = '<tr><td colspan="3" class="pcm-loading">Pricing unavailable.</td></tr>';
+      return;
+    }
+    var html = '';
+    tiers.forEach(function(tier) {
+      var price = getPriceForQuantity(sizeData, tier.min);
+      if (!price) return;
+      var disc = Math.round(((basePrice - price) / basePrice) * 100);
+      var active = qty >= tier.min && (tier.max === null || qty <= tier.max);
+      html += '<tr' + (active ? ' class="pcm-row-active"' : '') + '>' +
+        '<td>' + tier.label + '</td>' +
+        '<td>$' + price.toFixed(2) + ' ea</td>' +
+        '<td class="pcm-discount">' + (disc > 0 ? disc + '% off' : '—') + '</td>' +
+        '</tr>';
+    });
+    tbody.innerHTML = html || '<tr><td colspan="3" class="pcm-loading">No pricing available.</td></tr>';
+  }
+
+  document.getElementById('pcmGetQuote').addEventListener('click', function(){
+    closeModal();
+    var btn = document.getElementById('qrmOpen') || document.querySelector('[data-qrm-open]');
+    if (btn) btn.click();
+  });
+})();
+(function(){
+  var HAS_SELECTED_PATCH_TYPE = {{ has_selected_patch_type | json }};
+  function clearDirectPatchBoot() {
+    document.documentElement.classList.remove('pp-direct-patch-booting');
+  }
+  function isNoQuoteMode() {
+    var root = document.getElementById('ppPriceCalc');
+    return new URLSearchParams(window.location.search).has('no_quote') || !!(root && root.classList.contains('pp-no-quote'));
+  }
+  function withPreservedNoQuote(url) {
+    var nextUrl = new URL(url, window.location.origin);
+    if (isNoQuoteMode()) nextUrl.searchParams.set('no_quote', '');
+    return nextUrl.toString();
+  }
+  function bindPatchTypeLinks(scope, loadingTarget) {
+    scope.querySelectorAll('[data-patch-type-link], [data-patch-type-shop-link]').forEach(function(link){
+      if (link.dataset.patchTypeBound === 'true') return;
+      link.dataset.patchTypeBound = 'true';
+      if (isNoQuoteMode()) link.href = withPreservedNoQuote(link.href);
+      link.addEventListener('click', function(event){
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+        event.preventDefault();
+        if (typeof window.FineystPatchDraftSave === 'function') window.FineystPatchDraftSave();
+        loadPatchProduct(withPreservedNoQuote(link.href), loadingTarget || link);
+      });
+    });
+  }
+  function getPatchTypeHandleFromUrl() {
+    var params = new URLSearchParams(window.location.search);
+    var handle = (params.get('patch_type') || '').trim();
+    return /^[a-z0-9][a-z0-9-]*$/.test(handle) ? handle : '';
+  }
+  function highlightPatchTypeFromUrl(scope) {
+    var handle = getPatchTypeHandleFromUrl();
+    if (!handle) return;
+    var root = scope || document;
+    var carousel = root.querySelector('[data-patch-type-carousel]');
+    if (!carousel) return;
+    carousel.querySelectorAll('.pp-type-card').forEach(function(card){
+      var cardHandle = '';
+      try { cardHandle = new URL(card.getAttribute('href'), window.location.origin).pathname.split('/products/').pop(); } catch (error) {}
+      var isActive = cardHandle === handle;
+      card.classList.toggle('is-active', isActive);
+      if (isActive) card.setAttribute('aria-current', 'page');
+      else card.removeAttribute('aria-current');
+    });
+    var active = carousel.querySelector('.pp-type-card.is-active');
+    carousel.classList.toggle('has-active', !!active);
+    var track = carousel.querySelector('[data-patch-type-track]');
+    if (active && track) active.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }
+  function unlockConfiguratorForUrlSelection(scope) {
+    if (!getPatchTypeHandleFromUrl()) return;
+    var root = scope || document;
+    var configurator = root.querySelector('#ppConfigurator');
+    if (!configurator) return;
+    configurator.classList.remove('is-locked');
+    configurator.setAttribute('aria-disabled', 'false');
+    configurator.querySelectorAll('input, select, textarea, button').forEach(function(control) {
+      control.disabled = false;
+    });
+  }
+  function scrollToConfigurator(scope, smooth) {
+    var root = scope || document;
+    var configurator = root.querySelector('#ppConfigurator');
+    if (!configurator) return;
+    var offset = 110;
+    var top = configurator.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: smooth === false ? 'auto' : 'smooth' });
+  }  function bootPatchTypeCarousel(root) {
+    var scope = root || document;
+    var carousel = scope.querySelector('[data-patch-type-carousel]');
+    if (!carousel || carousel.dataset.ready === 'true') return;
+    carousel.dataset.ready = 'true';
+    var track = carousel.querySelector('[data-patch-type-track]');
+    var prev = carousel.querySelector('[data-patch-type-prev]');
+    var next = carousel.querySelector('[data-patch-type-next]');
+    var step = function() { return Math.max(220, Math.floor((track && track.clientWidth ? track.clientWidth : 700) * 0.75)); };
+    if (prev && track) prev.addEventListener('click', function(){ track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+    if (next && track) next.addEventListener('click', function(){ track.scrollBy({ left: step(), behavior: 'smooth' }); });
+    highlightPatchTypeFromUrl(scope);
+    unlockConfiguratorForUrlSelection(scope);
+    var active = carousel.querySelector('.pp-type-card.is-active');
+    if (active && track) active.scrollIntoView({ block: 'nearest', inline: 'center' });
+    bindPatchTypeLinks(carousel, carousel);
+  }
+  function fetchUrlForTemplate(url) {
+    var nextUrl = new URL(url, window.location.origin);
+    nextUrl.searchParams.set('section_id', 'product-patch-type-carousel');
+    return nextUrl.toString();
+  }
+  function resetProductRuntime() {
+    window._fineyst = window._fineyst || {};
+    ['pricingData', 'currentSizeData'].forEach(function(key){
+      try { delete window._fineyst[key]; } catch (error) {}
+    });
+    window.uploadedFiles = [];
+    window.erpUploadedFile = null;
+    window.uploadedImageUrl = null;
+    if (window._fineyst && typeof window._fineyst.syncRemoveButtonVisibility === 'function') window._fineyst.syncRemoveButtonVisibility();
+    window.originalImageUrl = null;
+    window.removedBgImageUrl = null;
+    window._uploadPending = false;
+  }
+  function hydrateTrustpilot(container) {
+    var scope = container || document;
+    var widgets = Array.prototype.slice.call(scope.querySelectorAll('.trustpilot-widget'));
+    if (!widgets.length) return;
+    var load = function() {
+      if (!window.Trustpilot || typeof window.Trustpilot.loadFromElement !== 'function') return false;
+      widgets.forEach(function(widget) {
+        try {
+          window.Trustpilot.loadFromElement(widget);
+        } catch (error) {}
+      });
+      return true;
+    };
+    if (!load()) {
+      setTimeout(load, 150);
+      setTimeout(load, 700);
+      return;
+    }
+    setTimeout(load, 150);
+    setTimeout(load, 700);
+  }
+  function runInlineScripts(container) {
+    resetProductRuntime();
+    container.querySelectorAll('script').forEach(function(oldScript){
+      var script = document.createElement('script');
+      Array.prototype.slice.call(oldScript.attributes).forEach(function(attr){ script.setAttribute(attr.name, attr.value); });
+      script.text = oldScript.textContent;
+      oldScript.parentNode.replaceChild(script, oldScript);
+    });
+  }
+  function loadPatchProduct(url, carousel, options) {
+    options = options || {};
+    var main = document.querySelector('main');
+    if (!main || !window.DOMParser || !window.fetch) {
+      clearDirectPatchBoot();
+      return;
+    }
+    if (carousel && carousel.classList) carousel.classList.add('pp-type-loading');
+    fetch(fetchUrlForTemplate(url), { credentials: 'same-origin' })
+      .then(function(response){ if (!response.ok) throw new Error('Product page failed'); return response.text(); })
+      .then(function(html){
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var nextMain = doc.querySelector('main');
+        var nextContent = nextMain ? nextMain.innerHTML : html;
+        if (!nextContent) throw new Error('Product markup missing');
+        main.innerHTML = nextContent;
+        var patchTypeHandle = new URL(url, window.location.origin).pathname.split('/products/').pop();
+        var nextStateUrl = new URL(window.location.href);
+        nextStateUrl.searchParams.set('patch_type', patchTypeHandle);
+        if (isNoQuoteMode() || new URL(url, window.location.origin).searchParams.has('no_quote')) nextStateUrl.searchParams.set('no_quote', '');
+        var historyMethod = options.replaceState ? 'replaceState' : 'pushState';
+        window.history[historyMethod]({ patchTypeProduct: true }, '', nextStateUrl.pathname + nextStateUrl.search);
+        runInlineScripts(main);
+        hydrateTrustpilot(main);
+        setTimeout(function() { hydrateTrustpilot(main); }, 250);
+        setTimeout(function() { hydrateTrustpilot(main); }, 1000);
+        bootPatchTypeCarousel(main);
+        unlockConfiguratorForUrlSelection(main);
+        if (options.skipScroll !== true) scrollToConfigurator(main, options.smoothScroll !== false);
+      })
+      .catch(function(err){ console.error(err); })
+      .finally(function(){
+        if (options.directBoot === true) clearDirectPatchBoot();
+        if (carousel && carousel.classList) carousel.classList.remove('pp-type-loading');
+      });
+  }
+  function bootSelectedPatchTypeFromUrl() {
+    if (HAS_SELECTED_PATCH_TYPE) return;
+    var handle = getPatchTypeHandleFromUrl();
+    if (!handle) return;
+    var carousel = document.querySelector('[data-patch-type-carousel]');
+    unlockConfiguratorForUrlSelection(document);
+    loadPatchProduct(withPreservedNoQuote('/products/' + handle), carousel || document.getElementById('ppPriceCalc'), { replaceState: true, skipScroll: true, directBoot: true });
+  }
+  window.addEventListener('popstate', function(){ window.location.reload(); });
+  highlightPatchTypeFromUrl(document);
+  unlockConfiguratorForUrlSelection(document);
+  bootPatchTypeCarousel(document);
+  bindPatchTypeLinks(document, document.querySelector('[data-patch-type-carousel]') || document.getElementById('ppPriceCalc'));
+  bootSelectedPatchTypeFromUrl();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Patch Type Carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "quote_api_url",
+      "label": "Quote API URL",
+      "info": "Your cart transform app's quote endpoint. Used to get a signed Quote Token before adding to cart. Example: https://your-app.com/api/quote"
+    }
+  ],
+  "presets": [{ "name": "Patch Type Carousel" }]
+}
+{% endschema %}
+
+

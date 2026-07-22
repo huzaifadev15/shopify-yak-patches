@@ -1,0 +1,65 @@
+﻿{% comment %} FAQ Section {% endcomment %}
+<section class="faq-section" aria-labelledby="faq-heading">
+  <div class="faq-container">
+
+    <header class="faq-header">
+      <h2 id="faq-heading" class="faq-title">Custom Patches FAQ</h2>
+      <p class="faq-subtitle">Find answers to common questions about our custom patches and services</p>
+    </header>
+
+    <div class="faq-grid">
+
+      <!-- Column 1 -->
+      <div class="faq-col">
+        {%- assign faqs_col1 = "Why are custom patches so expensive?|We keep our prices competitive â€” starting as low as $1.34 per patch. Costs vary based on size, stitch count, quantity, and patch type. Ordering in bulk significantly reduces the per-unit price. We also offer no setup fees and free digital proofs.~~What is the difference between embroidered patches and sublimated patches?|Embroidered patches use thread stitched onto a fabric base, giving a textured 3D look. Sublimated (printed) patches use dye infused directly into the fabric for photo-realistic, full-color designs with a flat finish. Embroidered is classic and durable; sublimated is best for complex artwork or gradients.~~Can you turn a photo into a patch?|Yes! Send us any photo, logo, or artwork and our design team will convert it into a patch-ready file. We provide a free digital proof before production begins so you can approve the design.~~What is the best fabric for custom patches?|Twill fabric is the most common and durable base for embroidered patches. For PVC patches, a flexible rubber compound is used. Woven patches use a tighter weave for fine detail. The best choice depends on your patch type and intended use.~~Are iron-on patches worth it?|Absolutely. Iron-on patches are quick to apply, cost-effective, and hold well on cotton, denim, and polyester. For extra durability, we recommend sewing around the edges after heat application." | split: "~~" -%}
+
+        {%- for faq in faqs_col1 -%}
+          {%- assign parts = faq | split: "|" -%}
+          {%- assign faq_id = 'home-faq-1-' | append: forloop.index -%}
+          <div class="faq-item">
+            <input class="faq-toggle" type="checkbox" id="{{ faq_id }}">
+            <label class="faq-btn" for="{{ faq_id }}">
+              <span class="faq-accent"></span>
+              <h3 class="faq-question">{{ parts[0] }}</h3>
+              <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </label>
+            <div class="faq-answer">
+              <p>{{ parts[1] }}</p>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <!-- Column 2 -->
+      <div class="faq-col">
+        {%- assign faqs_col2 = "How many patches is too many?|There's no limit! We handle orders from 10 pieces to tens of thousands. Whether you need a small batch for a team or a large run for a corporate event, we scale to your needs with consistent quality.~~What payment methods do you accept?|We accept all major credit cards (Visa, Mastercard, Amex), PayPal, and other secure payment methods at checkout. All transactions are encrypted and secure.~~How can I contact customer service?|You can reach us via email, live chat on our website, or by phone at 1-888-499-7708 (Monâ€“Fri, 9AMâ€“5PM EST). Our team typically responds within a few hours.~~Do you ship internationally?|Yes, we ship worldwide. Free shipping is available on qualifying US orders. International shipping rates and delivery times vary by destination. Contact us for a shipping quote.~~How do I track my order?|Once your order ships, you'll receive a tracking number via email. You can use this to monitor your delivery in real time through our shipping carrier's website." | split: "~~" -%}
+
+        {%- for faq in faqs_col2 -%}
+          {%- assign parts = faq | split: "|" -%}
+          {%- assign faq_id = 'home-faq-2-' | append: forloop.index -%}
+          <div class="faq-item">
+            <input class="faq-toggle" type="checkbox" id="{{ faq_id }}">
+            <label class="faq-btn" for="{{ faq_id }}">
+              <span class="faq-accent"></span>
+              <h3 class="faq-question">{{ parts[0] }}</h3>
+              <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </label>
+            <div class="faq-answer">
+              <p>{{ parts[1] }}</p>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "settings": [],
+  "presets": [{ "name": "FAQ" }]
+}
+{% endschema %}
+

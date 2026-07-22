@@ -1,0 +1,158 @@
+﻿{%- liquid
+  assign policy_handle = page.handle | default: blank
+  assign policy_intro = blank
+
+  case policy_handle
+    when 'submit-an-order-issue'
+      assign policy_intro = 'Report an issue with your order and our team will review it as quickly as possible.'
+    when 'satisfaction-guarantee'
+      assign policy_intro = 'Read how our satisfaction guarantee works for production errors and replacement requests.'
+    when 'do-not-sell-or-share-my-personal-information'
+      assign policy_intro = 'Use this page to manage your privacy choice under applicable data protection laws.'
+    when 'customer-data-request'
+      assign policy_intro = 'Request access, correction, portability, or deletion of your personal data.'
+    else
+      assign policy_intro = page.excerpt | default: page.content | strip_html | strip | truncate: 160
+  endcase
+-%}
+
+<style>
+  .policy-shell {
+    background: #ffffff;
+    color: #111827;
+  }
+
+  .policy-shell__hero {
+    padding: 8.5rem 0 3rem;
+    background: linear-gradient(180deg, #f7f7f7 0%, #ffffff 100%);
+  }
+
+  .policy-shell__inner {
+    width: 100%;
+    max-width: 82rem;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  .policy-shell__title {
+    margin: 0;
+    color: #000000;
+    font-size: clamp(2.1rem, 4.5vw, 4rem);
+    line-height: 1.08;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .policy-shell__subtitle {
+    max-width: 54rem;
+    margin: 1rem 0 0;
+    color: #4b5563;
+    font-size: clamp(1rem, 1.8vw, 1.1rem);
+    line-height: 1.8;
+  }
+
+  .policy-shell__body {
+    padding: 0 0 5.5rem;
+  }
+
+  .policy-shell__card {
+    margin-top: 1.5rem;
+    padding: 2rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 1.5rem;
+    background: #ffffff;
+    box-shadow: 0 18px 44px rgba(17, 24, 39, 0.08);
+  }
+
+  .policy-shell__content {
+    max-width: 60rem;
+    margin: 0 auto;
+    color: #374151;
+    font-size: 1.02rem;
+    line-height: 1.85;
+  }
+
+  .policy-shell__content h2 {
+    margin: 2rem 0 0.9rem;
+    color: #111827;
+    font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  .policy-shell__content h3 {
+    margin: 1.5rem 0 0.75rem;
+    color: #111827;
+    font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+    line-height: 1.25;
+    font-weight: 800;
+  }
+
+  .policy-shell__content p {
+    margin: 0 0 1rem;
+  }
+
+  .policy-shell__content ul,
+  .policy-shell__content ol {
+    margin: 0 0 1rem;
+    padding-left: 1.4rem;
+  }
+
+  .policy-shell__content li + li {
+    margin-top: 0.45rem;
+  }
+
+  .policy-shell__content a {
+    color: #2A1008;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .policy-shell__content a:hover {
+    color: #111827;
+  }
+
+  @media (max-width: 767px) {
+    .policy-shell__hero {
+      padding-top: 6.5rem;
+      padding-bottom: 2rem;
+    }
+
+    .policy-shell__body {
+      padding-bottom: 3.5rem;
+    }
+
+    .policy-shell__card {
+      padding: 1.25rem;
+      border-radius: 1.15rem;
+    }
+
+    .policy-shell__cookie-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+</style>
+
+<section class="policy-shell">
+  <div class="policy-shell__hero">
+    <div class="policy-shell__inner">
+      <h1 class="policy-shell__title">{{ page.title }}</h1>
+      {%- if policy_intro != blank -%}
+        <p class="policy-shell__subtitle">{{ policy_intro }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="policy-shell__body">
+    <div class="policy-shell__inner">
+      <div class="policy-shell__card">
+        <div class="policy-shell__content rte">
+          {{ page.content }}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+

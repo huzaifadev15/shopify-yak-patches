@@ -1,0 +1,87 @@
+﻿{% comment %} Affordable Custom Patches Section {% endcomment %}
+<section class="affordable-section">
+  <div class="affordable-container">
+    <div class="affordable-header">
+      <h2 class="affordable-title">Affordable Custom Patches</h2>
+      <p class="affordable-subtitle">Low Minimums, No Setup Fees, Free Shipping</p>
+
+      <div class="collapse-wrap">
+        <details class="collapse-details">
+          <summary class="collapse-btn" aria-label="Toggle additional information">
+            <span class="collapse-bar"></span>
+            <span class="collapse-chevron">
+              <svg width="20" height="20" fill="none" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                <path d="M6 8l4 4 4-4" stroke="#C4956A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </summary>
+
+          <div class="collapse-body">
+            <p class="collapse-text">Looking for the best place to order custom patches that are high quality, affordable, and delivered fast? You have found it. At Yak Patches, we are your go-to source for bringing patch ideas to life with low minimums, expert support, and no setup fees.</p>
+            <p class="collapse-heading">HERE'S WHAT YOU SHOULD KNOW RIGHT AWAY:</p>
+            <ul class="collapse-list">
+              <li><strong>TURNAROUND TIME:</strong> Most orders ship in 7-12 business days, with rush options available.</li>
+              <li><strong>MATERIALS WE USE:</strong> Choose from <a href="/products/embroidered-patches">embroidered</a>, <a href="/products/pvc-patches">PVC</a>, <a href="/products/custom-woven-patches">woven</a>, <a href="/products/custom-leather-name-patches">leather</a>, <a href="/products/custom-chenille-patches">chenille</a>, and <a href="/products/custom-sublimated-patches">sublimated patches</a> - all fully customizable.</li>
+              <li><strong>COMMON USES:</strong> Perfect for uniforms, hats, jackets, events, brand merch, giveaways, tactical gear, and more.</li>
+              <li><strong>DESIGN HELP &amp; TEMPLATES:</strong> Send us a sketch, logo, or photo - we will turn it into a clean patch design with a free digital mockup. Check our <a href="/pages/gallery">gallery</a> for inspiration.</li>
+              <li><strong>CAN YOU TURN A PHOTO INTO A PATCH?</strong> Absolutely. We will convert any image into a stitch-friendly patch layout.</li>
+              <li><strong>ARE CUSTOM PATCHES EXPENSIVE? NOT HERE.</strong> You get wholesale pricing, free design, and no hidden fees.</li>
+            </ul>
+            <p class="collapse-ready">Ready to Get Started?</p>
+            <p>Start your custom patch order today - it is fast, free to quote, and fully supported by real humans who care about quality.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <h2 class="shop-heading">Shop Custom Patch Types - Embroidered, PVC, Chenille, Leather &amp; More</h2>
+
+    <div class="patch-grid">
+      {%- assign patch_products = "PVC PATCHES,pvc-patches,$1.97,Waterproof with 3D raised effect.|EMBROIDERED PATCHES,embroidered-patches,$1.34,Classic look with premium stitching.|PRINTED PATCHES,printed-patches,$0.84,Vibrant colors at cost-effective price.|CHENILLE PATCHES,custom-chenille-patches,$3.07,Removable design for easy swapping.|WOVEN PATCHES,custom-woven-patches,$1.00,Fine detail with a smooth clean woven finish.|MILITARY PATCHES,custom-military-patches,$1.34,Personalized with custom fonts.|LEATHER PATCHES,custom-leather-name-patches,$1.22,Premium vintage look and feel.|3D EMBROIDERED PATCHES,3d-embroidered-patches,$2.78,Raised texture that adds depth and detail." | split: "|" -%}
+
+      {%- for item in patch_products -%}
+        {%- assign parts = item | split: "," -%}
+        {%- assign patch_product = all_products[parts[1]] -%}
+        {%- assign patch_image = patch_product.featured_image | default: patch_product.images.first -%}
+        {%- if patch_product != blank -%}
+          {%- assign patch_url = patch_product.url -%}
+        {%- else -%}
+          {%- assign patch_url = parts[1] | prepend: '/products/' -%}
+        {%- endif -%}
+        <article class="patch-card">
+          <a href="{{ patch_url }}" class="patch-card-link" aria-label="View {{ parts[0] }}">
+            <figure class="patch-card-fig">
+              <span class="patch-badge">10pc min</span>
+              {%- if patch_image != blank -%}
+                <img
+                  src="{{ patch_image | image_url: width: 700, height: 700, crop: 'center' }}"
+                  alt="{{ patch_image.alt | default: parts[0] | escape }}"
+                  width="225"
+                  height="225"
+                  loading="eager"
+                >
+              {%- endif -%}
+            </figure>
+            <div class="patch-card-body">
+              <p class="patch-card-name">{{ parts[0] }}</p>
+              <p class="patch-card-price">As low as {{ parts[2] }} ea.</p>
+              <p class="patch-card-desc averta-bold">{{ parts[3] }}</p>
+              <div class="patch-card-cta">
+                <span class="patch-card-btn">Get a Quote</span>
+              </div>
+            </div>
+          </a>
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Affordable Patches",
+  "settings": [],
+  "presets": [{ "name": "Affordable Patches" }]
+}
+{% endschema %}
+

@@ -1,0 +1,278 @@
+﻿{%- liquid
+  assign schema_site_url = shop.url
+  assign schema_home_url = schema_site_url | append: '/'
+  assign schema_shop_name = shop.name | default: 'Yak Patches'
+  assign schema_page_title = page_title | default: schema_shop_name
+  assign schema_page_description = page_description | default: shop.description | default: 'Shop premium custom patches including embroidered patches, PVC patches, chenille patches, woven patches, printed patches, leather patches, iron-on patches, Velcro patches, and wholesale patches from Yak Patches.'
+  assign schema_logo_url = 'logo.webp' | asset_url | prepend: 'https:'
+  assign schema_primary_image_url = schema_logo_url
+-%}
+{%- capture schema_search_url -%}{{ schema_site_url }}/search?q={% raw %}{search_term_string}{% endraw %}{%- endcapture -%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": {{ schema_site_url | append: "/#organization" | json }},
+      "name": {{ schema_shop_name | json }},
+      "alternateName": "Fineyst",
+      "url": {{ schema_site_url | json }},
+      "logo": {
+        "@type": "ImageObject",
+        "@id": {{ schema_site_url | append: "/#logo" | json }},
+        "url": {{ schema_logo_url | json }},
+        "contentUrl": {{ schema_logo_url | json }},
+        "caption": {{ schema_shop_name | append: ' logo' | json }}
+      },
+      "image": {{ schema_logo_url | json }},
+      "description": {{ shop.description | default: 'Yak Patches creates premium custom patches for brands, uniforms, jackets, hats, backpacks, teams, clubs, events, and wholesale orders.' | json }},
+      "slogan": "Crafting Premium Quality Custom Patches Since 1995",
+      "telephone": "+1-888-499-7708",
+      "email": "info@yakpatches.com",
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "telephone": "+1-888-499-7708",
+          "email": "info@yakpatches.com",
+          "contactType": "Customer Service",
+          "areaServed": ["US", "CA", "GB", "AU"],
+          "availableLanguage": ["English"],
+          "hoursAvailable": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            "opens": "09:00",
+            "closes": "18:00"
+          }
+        }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Custom Patches Collection",
+        "itemListElement": [
+          { "@type": "OfferCatalog", "name": "Custom Embroidered Patches", "url": {{ schema_site_url | append: "/products/embroidered-patches" | json }} },
+          { "@type": "OfferCatalog", "name": "PVC Patches", "url": {{ schema_site_url | append: "/products/pvc-patches" | json }} },
+          { "@type": "OfferCatalog", "name": "Custom Chenille Patches", "url": {{ schema_site_url | append: "/products/custom-chenille-patches" | json }} },
+          { "@type": "OfferCatalog", "name": "Printed Patches", "url": {{ schema_site_url | append: "/products/printed-patches" | json }} },
+          { "@type": "OfferCatalog", "name": "Woven Patches", "url": {{ schema_site_url | append: "/products/custom-woven-patches" | json }} },
+          { "@type": "OfferCatalog", "name": "Leather Patches", "url": {{ schema_site_url | append: "/products/custom-leather-name-patches" | json }} },
+          { "@type": "OfferCatalog", "name": "Iron-On Patches", "url": {{ schema_site_url | append: "/products/custom-iron-on-patches" | json }} },
+          { "@type": "OfferCatalog", "name": "Velcro Patches", "url": {{ schema_site_url | append: "/products/custom-velcro-patches" | json }} },
+          { "@type": "OfferCatalog", "name": "Military Patches", "url": {{ schema_site_url | append: "/products/custom-military-patches" | json }} },
+          { "@type": "OfferCatalog", "name": "Wholesale Patches", "url": {{ schema_site_url | append: "/products/custom-wholesale-patches" | json }} }
+        ]
+      },
+      "sameAs": [
+        "https://www.instagram.com/yakpatches",
+        "https://www.pinterest.com/yakpatches",
+        "https://www.facebook.com/yakpatches",
+        "https://www.twitter.com/yakpatches",
+        "https://www.youtube.com/@yakpatches"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": {{ schema_site_url | append: "/#website" | json }},
+      "url": {{ schema_site_url | json }},
+      "name": {{ schema_shop_name | json }},
+      "description": {{ schema_page_description | strip_html | strip | json }},
+      "publisher": { "@id": {{ schema_site_url | append: "/#organization" | json }} },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": {{ schema_search_url | json }}
+        },
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": {{ schema_site_url | append: "/#webpage" | json }},
+      "url": {{ schema_home_url | json }},
+      "name": {{ schema_page_title | json }},
+      "description": {{ schema_page_description | strip_html | strip | json }},
+      "isPartOf": { "@id": {{ schema_site_url | append: "/#website" | json }} },
+      "about": { "@id": {{ schema_site_url | append: "/#organization" | json }} },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": {{ schema_primary_image_url | json }}
+      },
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": {{ schema_home_url | json }}
+          }
+        ]
+      }
+    },
+    {
+      "@type": "OnlineStore",
+      "@id": {{ schema_site_url | append: "/#store" | json }},
+      "name": {{ schema_shop_name | json }},
+      "url": {{ schema_site_url | json }},
+      "image": {{ schema_logo_url | json }},
+      "description": "Online custom patch shop offering embroidered, PVC, chenille, woven, printed, leather, iron-on, Velcro, and wholesale patches.",
+      "telephone": "+1-888-499-7708",
+      "email": "info@yakpatches.com",
+      "priceRange": "$0.84 - $5.00 per patch",
+      "currenciesAccepted": {{ cart.currency.iso_code | default: shop.currency | default: 'USD' | json }},
+      "paymentAccepted": "Credit Card, PayPal, Apple Pay, Google Pay, Shop Pay",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": {{ schema_shop_name | append: ' Collection' | json }},
+        "url": {{ schema_site_url | append: "/collections" | json }}
+      },
+      "parentOrganization": { "@id": {{ schema_site_url | append: "/#organization" | json }} }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": {{ schema_site_url | append: "/#faq" | json }},
+      "url": {{ schema_home_url | json }},
+      "isPartOf": { "@id": {{ schema_site_url | append: "/#website" | json }} },
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why are custom patches so expensive?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We keep our prices competitive, starting as low as $1.34 per patch. Costs vary based on size, stitch count, quantity, and patch type. Ordering in bulk significantly reduces the per-unit price. We also offer no setup fees and free digital proofs."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between embroidered patches and sublimated patches?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Embroidered patches use thread stitched onto a fabric base, giving a textured 3D look. Sublimated or printed patches use dye infused directly into the fabric for photo-realistic, full-color designs with a flat finish. Embroidered is classic and durable; sublimated is best for complex artwork or gradients."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you turn a photo into a patch?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Send us any photo, logo, or artwork and our design team will convert it into a patch-ready file. We provide a free digital proof before production begins so you can approve the design."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the best fabric for custom patches?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Twill fabric is the most common and durable base for embroidered patches. For PVC patches, a flexible rubber compound is used. Woven patches use a tighter weave for fine detail. The best choice depends on your patch type and intended use."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are iron-on patches worth it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Absolutely. Iron-on patches are quick to apply, cost-effective, and hold well on cotton, denim, and polyester. For extra durability, we recommend sewing around the edges after heat application."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many patches is too many?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "There's no limit. We handle orders from 10 pieces to tens of thousands. Whether you need a small batch for a team or a large run for a corporate event, we scale to your needs with consistent quality."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What payment methods do you accept?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We accept all major credit cards, including Visa, Mastercard, and Amex, plus PayPal and other secure payment methods at checkout. All transactions are encrypted and secure."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can I contact customer service?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can reach us via email, live chat on our website, or by phone at 1-888-499-7708, Monday through Friday, 9AM to 5PM EST. Our team typically responds within a few hours."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you ship internationally?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, we ship worldwide. Free shipping is available on qualifying US orders. International shipping rates and delivery times vary by destination. Contact us for a shipping quote."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I track my order?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Once your order ships, you'll receive a tracking number via email. You can use this to monitor your delivery in real time through our shipping carrier's website."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "ItemList",
+      "@id": {{ schema_site_url | append: "/#collections" | json }},
+      "name": "Shop by Patch Type",
+      "description": "Browse Yak Patches products by patch type and use case.",
+      "url": {{ schema_site_url | append: "/collections" | json }},
+      "numberOfItems": 12,
+      "itemListOrder": "https://schema.org/ItemListOrderAscending",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Custom Embroidered Patches", "url": {{ schema_site_url | append: "/products/embroidered-patches" | json }} },
+        { "@type": "ListItem", "position": 2, "name": "PVC Patches", "url": {{ schema_site_url | append: "/products/pvc-patches" | json }} },
+        { "@type": "ListItem", "position": 3, "name": "Custom Chenille Patches", "url": {{ schema_site_url | append: "/products/custom-chenille-patches" | json }} },
+        { "@type": "ListItem", "position": 4, "name": "Printed Patches", "url": {{ schema_site_url | append: "/products/printed-patches" | json }} },
+        { "@type": "ListItem", "position": 5, "name": "Woven Patches", "url": {{ schema_site_url | append: "/products/custom-woven-patches" | json }} },
+        { "@type": "ListItem", "position": 6, "name": "Leather Patches", "url": {{ schema_site_url | append: "/products/custom-leather-name-patches" | json }} },
+        { "@type": "ListItem", "position": 7, "name": "Iron-On Patches", "url": {{ schema_site_url | append: "/products/custom-iron-on-patches" | json }} },
+        { "@type": "ListItem", "position": 8, "name": "Velcro Patches", "url": {{ schema_site_url | append: "/products/custom-velcro-patches" | json }} },
+        { "@type": "ListItem", "position": 9, "name": "Military Patches", "url": {{ schema_site_url | append: "/products/custom-military-patches" | json }} },
+        { "@type": "ListItem", "position": 10, "name": "Sports Patches", "url": {{ schema_site_url | append: "/products/custom-sports-patches" | json }} },
+        { "@type": "ListItem", "position": 11, "name": "Patch Hats", "url": {{ schema_site_url | append: "/products/custom-patch-hats" | json }} },
+        { "@type": "ListItem", "position": 12, "name": "Wholesale Patches", "url": {{ schema_site_url | append: "/products/custom-wholesale-patches" | json }} }
+      ]
+    },
+    {
+      "@type": "MerchantReturnPolicy",
+      "@id": {{ schema_site_url | append: "/#returnpolicy" | json }},
+      "applicableCountry": ["US", "CA", "GB", "AU"],
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 30,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "returnFees": "https://schema.org/ReturnShippingFees",
+      "refundType": "https://schema.org/FullRefund",
+      "url": {{ schema_site_url | append: "/pages/refund-returns-policy" | json }}
+    },
+    {
+      "@type": "ShippingDeliveryTime",
+      "@id": {{ schema_site_url | append: "/#shipping" | json }},
+      "businessDays": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+      },
+      "handlingTime": {
+        "@type": "QuantitativeValue",
+        "minValue": 1,
+        "maxValue": 2,
+        "unitCode": "DAY"
+      },
+      "transitTime": {
+        "@type": "QuantitativeValue",
+        "minValue": 4,
+        "maxValue": 7,
+        "unitCode": "DAY"
+      }
+    }
+  ]
+}
+</script>
+

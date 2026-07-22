@@ -1,0 +1,128 @@
+﻿{%- if patch_collection != blank -%}
+  {%- assign primary_image = blank -%}
+  {%- if patch_collection.image != blank -%}
+    {%- assign primary_image = patch_collection.image -%}
+  {%- elsif patch_collection.products.first.featured_image != blank -%}
+    {%- assign primary_image = patch_collection.products.first.featured_image -%}
+  {%- endif -%}
+
+  {%- capture pricing_titles -%}
+    {%- for product in patch_collection.products limit: 50 -%}
+      {{ product.title }}{%- unless forloop.last -%}|||{%- endunless -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- assign description_text = patch_collection.description | strip_html | strip -%}
+  {%- if description_text == blank -%}
+    {%- assign description_text = "Premium custom patch options made for uniforms, brands, events, and standout merchandise." -%}
+  {%- endif -%}
+
+  {%- assign slide_count = 0 -%}
+  {%- if primary_image != blank -%}
+    {%- assign slide_count = slide_count | plus: 1 -%}
+  {%- endif -%}
+  {%- for product in patch_collection.products limit: 5 -%}
+    {%- if product.featured_image != blank -%}
+      {%- assign slide_count = slide_count | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  <article class="patch-collection-card">
+    <div class="patch-collection-surface">
+      <figure class="patch-collection-media">
+        <span class="patch-collection-badge">{{ section.settings.badge_text }}</span>
+        <div
+          class="patch-collection-carousel"
+          data-carousel
+          data-slides="{{ slide_count }}"
+        >
+          <a href="{{ patch_collection.url }}" class="patch-collection-media-link" aria-label="View {{ patch_collection.title }}">
+            <div class="patch-collection-track" data-carousel-track>
+              {%- if primary_image != blank -%}
+                <div class="patch-collection-slide">
+                  <img
+                    src="{{ primary_image | image_url: width: 520 }}"
+                    alt="{{ patch_collection.title | escape }}"
+                    width="250"
+                    height="250"
+                    loading="{% if eager_load %}eager{% else %}lazy{% endif %}"
+                    {% if eager_load %}fetchpriority="high"{% endif %}
+                  >
+                </div>
+              {%- endif -%}
+
+              {%- for product in patch_collection.products limit: 5 -%}
+                {%- if product.featured_image != blank -%}
+                  <div class="patch-collection-slide">
+                    <img
+                      src="{{ product.featured_image | image_url: width: 520 }}"
+                      alt="{{ product.title | escape }}"
+                      width="250"
+                      height="250"
+                      loading="lazy"
+                    >
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- if slide_count == 0 -%}
+                <div class="patch-collection-slide">
+                  <img
+                    src="{{ 'Custom.png' | asset_url }}"
+                    alt="{{ patch_collection.title | escape }}"
+                    width="250"
+                    height="250"
+                    loading="{% if eager_load %}eager{% else %}lazy{% endif %}"
+                  >
+                </div>
+              {%- endif -%}
+            </div>
+          </a>
+
+          <button
+            type="button"
+            class="patch-collection-arrow prev{% if slide_count > 1 %} has-multiple{% endif %}"
+            data-carousel-prev
+            aria-label="Previous image"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 18l-6-6 6-6"></path>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="patch-collection-arrow next{% if slide_count > 1 %} has-multiple{% endif %}"
+            data-carousel-next
+            aria-label="Next image"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 18l6-6-6-6"></path>
+            </svg>
+          </button>
+
+          <div class="patch-collection-swipe{% if slide_count > 1 %} has-multiple{% endif %}">
+            <span class="patch-collection-swipe-line"></span>
+            <span>Swipe</span>
+            <span class="patch-collection-swipe-line"></span>
+          </div>
+        </div>
+      </figure>
+
+      <div class="patch-collection-body">
+        <a href="{{ patch_collection.url }}" class="patch-collection-body-link">
+          <h2 class="patch-collection-name">{{ patch_collection.title }}</h2>
+          <p
+            class="patch-collection-price"
+            data-card-price-titles="{{ pricing_titles | strip | escape }}"
+            data-card-price-fallback="Custom quote available"
+          >
+            Loading price...
+          </p>
+          <p class="patch-collection-desc">{{ description_text }}</p>
+          <span class="patch-collection-cta">{{ section.settings.cta_label }}</span>
+        </a>
+      </div>
+    </div>
+  </article>
+{%- endif -%}
+

@@ -1,0 +1,285 @@
+﻿{% comment %} Customer Patches Gallery Slider {% endcomment %}
+
+{%- assign review_cdn_urls = "https://cdn.shopify.com/s/files/1/0670/4703/0883/files/Customer-review-5-1781542092456-mc1jdq.webp?v=1781542094|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-2.webp?v=1784140218|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/Customer-review-5-1781549454540-3xgt8r.webp?v=1781549456|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-4.webp?v=1784140403|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/Customer-review-5-1781542092456-mc1jdq.webp?v=1781542094|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-6.webp?v=1784140531|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-7.webp?v=1784140540|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/Customer-review-5-1781549112503-8909l6.webp?v=1781549114|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-9.webp?v=1784140553|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-10.webp?v=1784140136|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-11.webp?v=1784140144|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-12.webp?v=1784140151|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-13.webp?v=1784140159|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-14.webp?v=1784140168|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-15.webp?v=1784140177|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-16.webp?v=1784140186|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/Customer-review-5-1781542092456-mc1jdq.webp?v=1781542094|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-18.webp?v=1784140199|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-19.webp?v=1784140209|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-20.webp?v=1784140227|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-21.webp?v=1784140236|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-22.webp?v=1784140244|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-23.webp?v=1784140253|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-24.webp?v=1784140262|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-25.webp?v=1784140271|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-26.webp?v=1784140280|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-27.webp?v=1784140288|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-28.webp?v=1784140297|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-29.webp?v=1784140306|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-30.webp?v=1784140319|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-31.webp?v=1784140326|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-32.webp?v=1784140334|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-33.webp?v=1784140343|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-34.webp?v=1784140352|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-35.webp?v=1784140361|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-36.webp?v=1784140370|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-37.webp?v=1784140379|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-38.webp?v=1784140385|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-39.webp?v=1784140394|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-40.webp?v=1784140412|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-41.webp?v=1784140419|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-42.webp?v=1784140428|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-43.webp?v=1784140435||https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-45.webp?v=1784140443|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-46.webp?v=1784140452|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-47.webp?v=1784140459|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-48.webp?v=1784140467|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-49.webp?v=1784140474|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-50.webp?v=1784140487|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-51.webp?v=1784140496|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-52.webp?v=1784140503|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-53.webp?v=1784140513|https://cdn.shopify.com/s/files/1/0670/4703/0883/files/customer-review-54.webp?v=1784140522" | split: "|" -%}
+
+<section class="gallery-slider-section">
+  <div class="gallery-title-wrap">
+    <h2 class="section-title section-title-soft">Check Out Our Customers Patches Below</h2>
+  </div>
+  <div class="gallery-track-wrap">
+    <div class="gallery-track" id="galleryTrack">
+
+      {%- assign total = 54 -%}
+
+      {%- comment -%} Primary slides â€” clickable {%- endcomment -%}
+      {%- for i in (1..total) -%}
+        {%- unless i == 44 -%}
+          {%- assign _cdn_idx = i | minus: 1 -%}
+          {%- assign _slide_url = review_cdn_urls[_cdn_idx] -%}
+          <div class="gallery-slide">
+            <img
+              src="{{ _slide_url }}"
+              alt="Customer patch {{ i }}"
+              loading="lazy"
+              width="160"
+              height="160"
+              class="gallery-thumb"
+              data-lightbox="{{ _slide_url }}"
+              style="cursor:pointer;"
+            >
+          </div>
+        {%- endunless -%}
+      {%- endfor -%}
+
+      {%- comment -%} Duplicate set for seamless infinite scroll â€” not clickable {%- endcomment -%}
+      {%- for i in (1..total) -%}
+        {%- unless i == 44 -%}
+          {%- assign _cdn_idx = i | minus: 1 -%}
+          {%- assign _slide_url = review_cdn_urls[_cdn_idx] -%}
+          <div class="gallery-slide" aria-hidden="true">
+            <img src="{{ _slide_url }}" alt="" loading="lazy" width="160" height="160">
+          </div>
+        {%- endunless -%}
+      {%- endfor -%}
+
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox modal -->
+<div id="galleryLightbox" class="glb-overlay" role="dialog" aria-modal="true" aria-label="Image preview" hidden>
+  <div class="glb-backdrop" id="glbBackdrop"></div>
+  <div class="glb-shell">
+    <button class="glb-close" id="glbClose" aria-label="Close preview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+    <button class="glb-nav glb-prev" id="glbPrev" aria-label="Previous image">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <div class="glb-img-wrap">
+      <img id="glbImg" src="" alt="Customer patch preview">
+    </div>
+    <button class="glb-nav glb-next" id="glbNext" aria-label="Next image">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+    <div class="glb-counter" id="glbCounter"></div>
+  </div>
+</div>
+
+<style>
+  /* â”€â”€ Gallery slides â€” uniform size + pointer cursor â”€â”€ */
+  .gallery-slide {
+    flex-shrink: 0;
+    width: 160px !important;
+    height: 160px !important;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .gallery-slide img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block;
+  }
+  .gallery-thumb { transition: transform 0.18s ease, box-shadow 0.18s ease; cursor: pointer; }
+  .gallery-thumb:hover { transform: scale(1.06); box-shadow: 0 6px 24px rgba(0,0,0,0.18); }
+
+  /* â”€â”€ Lightbox overlay â”€â”€ */
+  .glb-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: glbFadeIn 0.2s ease;
+  }
+  .glb-overlay[hidden] { display: none; }
+  .glb-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+  }
+
+  @keyframes glbFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* â”€â”€ Shell container â”€â”€ */
+  .glb-shell {
+    position: relative;
+    z-index: 1;
+    width: min(860px, 100%);
+    max-height: calc(100vh - 40px);
+    background: #2A1008;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.55);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    animation: glbZoomIn 0.22s ease;
+  }
+
+  @keyframes glbZoomIn {
+    from { transform: scale(0.94); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+
+  /* â”€â”€ Image container â”€â”€ */
+  .glb-img-wrap {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 72px;
+    min-height: 0;
+    background: #2A1008;
+  }
+  #glbImg {
+    max-width: 100%;
+    max-height: calc(100vh - 160px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+    display: block;
+  }
+
+  /* â”€â”€ Close button â”€â”€ */
+  .glb-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(255,255,255,0.10);
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    z-index: 2;
+  }
+  .glb-close:hover { background: rgba(255,255,255,0.24); }
+
+  /* â”€â”€ Prev / Next â”€â”€ */
+  .glb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.10);
+    border: none;
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.15s;
+    z-index: 2;
+    user-select: none;
+  }
+  .glb-nav:hover { background: rgba(255,255,255,0.24); transform: translateY(calc(-50% - 2px)); }
+  .glb-prev { left: 14px; }
+  .glb-next { right: 14px; }
+
+  /* â”€â”€ Counter â”€â”€ */
+  .glb-counter {
+    padding: 12px 0 16px;
+    color: rgba(255,255,255,0.55);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 600px) {
+    .glb-overlay { padding: 12px; }
+    .glb-img-wrap { padding: 20px 56px; }
+    .glb-shell { border-radius: 14px; }
+    .glb-prev { left: 8px; }
+    .glb-next { right: 8px; }
+    .gallery-slide { width: 100px !important; height: 100px !important; }
+  }
+</style>
+
+<script>
+(function () {
+  const overlay   = document.getElementById('galleryLightbox');
+  const backdrop  = document.getElementById('glbBackdrop');
+  const glbImg    = document.getElementById('glbImg');
+  const glbClose  = document.getElementById('glbClose');
+  const glbPrev   = document.getElementById('glbPrev');
+  const glbNext   = document.getElementById('glbNext');
+  const glbCounter = document.getElementById('glbCounter');
+
+  // Collect URLs from primary (non-aria-hidden) slides only
+  const thumbs = Array.from(document.querySelectorAll('[data-lightbox]'));
+  const urls   = thumbs.map(el => el.dataset.lightbox);
+  let current  = 0;
+
+  function open(index) {
+    current = (index + urls.length) % urls.length;
+    glbImg.src = urls[current];
+    glbImg.alt = 'Customer patch ' + (current + 1);
+    glbCounter.textContent = (current + 1) + ' / ' + urls.length;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    glbClose.focus();
+  }
+
+  function close() {
+    overlay.hidden = true;
+    glbImg.src = '';
+    document.body.style.overflow = '';
+  }
+
+  // Open on thumbnail click
+  thumbs.forEach((el, idx) => {
+    el.addEventListener('click', () => open(idx));
+  });
+
+  // Navigation
+  glbPrev.addEventListener('click', (e) => { e.stopPropagation(); open(current - 1); });
+  glbNext.addEventListener('click', (e) => { e.stopPropagation(); open(current + 1); });
+
+  // Close on backdrop click
+  backdrop.addEventListener('click', close);
+  glbClose.addEventListener('click', close);
+
+  // Keyboard: Escape = close, arrows = navigate
+  document.addEventListener('keydown', (e) => {
+    if (overlay.hidden) return;
+    if (e.key === 'Escape')     close();
+    if (e.key === 'ArrowLeft')  open(current - 1);
+    if (e.key === 'ArrowRight') open(current + 1);
+  });
+
+  // Swipe support for mobile
+  let touchStartX = 0;
+  overlay.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  overlay.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) diff > 0 ? open(current + 1) : open(current - 1);
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Gallery Slider",
+  "settings": [],
+  "presets": [{ "name": "Gallery Slider" }]
+}
+{% endschema %}
+

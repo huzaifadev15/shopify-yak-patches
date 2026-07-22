@@ -1,0 +1,333 @@
+﻿{% comment %} Home Things to Know Section (replaces reviews) {% endcomment %}
+
+{%- if section.settings.image_top != blank -%}
+  {%- assign things_image_top = section.settings.image_top | image_url: width: 900 -%}
+{%- else -%}
+  {%- assign things_image_top = '1.webp' | asset_url -%}
+{%- endif -%}
+
+{%- if section.settings.image_middle != blank -%}
+  {%- assign things_image_middle = section.settings.image_middle | image_url: width: 900 -%}
+{%- else -%}
+  {%- assign things_image_middle = '2.webp' | asset_url -%}
+{%- endif -%}
+
+{%- if section.settings.image_bottom != blank -%}
+  {%- assign things_image_bottom = section.settings.image_bottom | image_url: width: 900 -%}
+{%- else -%}
+  {%- assign things_image_bottom = '3.webp' | asset_url -%}
+{%- endif -%}
+
+<section class="things-know" id="shopify-section-{{ section.id }}-things-know">
+  <div class="things-know__shell">
+    <div class="things-know__media" aria-hidden="true">
+      <div class="things-know__media-card things-know__media-card--top">
+        <img src="{{ things_image_top }}" alt="Custom patch detail" loading="lazy" width="520" height="520">
+      </div>
+      <div class="things-know__media-card things-know__media-card--middle">
+        <img src="{{ things_image_middle }}" alt="Patch design process sample" loading="lazy" width="520" height="520">
+      </div>
+      <div class="things-know__media-card things-know__media-card--bottom">
+        <img src="{{ things_image_bottom }}" alt="Finished custom patch sample" loading="lazy" width="520" height="520">
+      </div>
+    </div>
+
+    <div class="things-know__content">
+      <div class="things-know__header">
+        <p class="things-know__eyebrow">Things to Know</p>
+      </div>
+
+      <div class="things-know__list" data-things-know-list>
+        <article class="things-know__item">
+          <div class="things-know__question">
+            <span class="things-know__question-meta">Design Process</span>
+            <span class="things-know__question-text">How to design custom patches?</span>
+          </div>
+          <div class="things-know__answer is-open">
+            <div class="things-know__answer-inner">Send us your logo, artwork, or even a rough sketch and our team creates a free digital mockup within 24-48 hours. You choose the patch type, size, backing, and colors, then approve the final design before it goes into production. Most orders move from approved mockup to finished patches in 7-10 business days.</div>
+          </div>
+        </article>
+
+        <article class="things-know__item">
+          <div class="things-know__question">
+            <span class="things-know__question-meta">Types</span>
+            <span class="things-know__question-text">What are the different types of custom patches?</span>
+          </div>
+          <div class="things-know__answer is-open">
+            <div class="things-know__answer-inner">Custom patches come in several styles, each suited to different looks and budgets: embroidered patches for a classic textured finish, woven patches for fine detail and flat designs, PVC patches for bold 3D colors and outdoor durability, chenille patches for a vintage varsity look, leather patches for a rugged premium feel, applique patches that combine embroidery with fabric layers for a raised effect, sublimated (printed) patches for photo-quality color gradients and fine detail, and bullion crest patches for a luxury, handmade look made with metallic thread.</div>
+          </div>
+        </article>
+
+        <article class="things-know__item">
+          <div class="things-know__question">
+            <span class="things-know__question-meta">Uses</span>
+            <span class="things-know__question-text">What are custom patches used for?</span>
+          </div>
+          <div class="things-know__answer is-open">
+            <div class="things-know__answer-inner">Patches are used across uniforms and workwear, military and law enforcement insignia, motorcycle clubs and biker vests, scouting and youth organizations, sports teams, corporate branding, and outdoor or tactical gear. They're also popular as standalone merchandise for brands, bands, and events, since they can be ironed, sewn, or pinned onto almost anything.</div>
+          </div>
+        </article>
+
+        <article class="things-know__item">
+          <div class="things-know__question">
+            <span class="things-know__question-meta">Materials</span>
+            <span class="things-know__question-text">What materials are made for custom patches?</span>
+          </div>
+          <div class="things-know__answer is-open">
+            <div class="things-know__answer-inner">Most patches start with a poly twill base, the industry standard for durability and a clean stitching surface, often reinforced with a buckram backing for extra stiffness so the patch lays flat. Embroidered and applique patches use polyester or rayon thread, woven patches use finer thread for a smooth flat finish, chenille patches use thick yarn for a fuzzy texture, and leather patches use genuine or faux leather, usually laser-engraved or debossed. PVC patches are molded from soft, waterproof vinyl, while felt and canvas are sometimes used as the base fabric for a softer or more rugged look.</div>
+          </div>
+        </article>
+
+        <article class="things-know__item">
+          <div class="things-know__question">
+            <span class="things-know__question-meta">Common Sizes</span>
+            <span class="things-know__question-text">What are the common sizes for custom patches?</span>
+          </div>
+          <div class="things-know__answer is-open">
+            <div class="things-know__answer-inner">Patch size usually follows where it's worn: hat and cap patches run 2-2.5 inches, uniform and sleeve patches run 3-4 inches, chest or logo patches run 2-3.5 inches, backpack and bag patches run 4-6 inches, and full jacket-back patches run 10-12 inches. Name tapes are typically 1x3 to 1.5x4 inches.</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #shopify-section-{{ section.id }} {
+    background:
+      radial-gradient(circle at top left, rgba(124, 74, 30, 0.18), transparent 28%),
+      linear-gradient(180deg, #fffdf9 0%, #FDF5ED 100%);
+  }
+
+  #shopify-section-{{ section.id }} + .shopify-section .why-section {
+    margin-top: 0 !important;
+  }
+
+  .things-know {
+    padding: 72px 24px;
+  }
+
+  .things-know__shell {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(280px, 390px) minmax(0, 1fr);
+    gap: 56px;
+    align-items: start;
+  }
+
+  .things-know__media {
+    position: relative;
+    min-height: 860px;
+  }
+
+  .things-know__media-card {
+    width: min(100%, 320px);
+    border-radius: 26px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 22px 60px rgba(18, 30, 54, 0.12);
+    border: 1px solid rgba(124, 74, 30, 0.12);
+    transform: rotate(-3deg);
+  }
+
+  .things-know__media-card img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+  }
+
+  .things-know__media-card--top {
+    margin-left: 24px;
+  }
+
+  .things-know__media-card--middle {
+    position: absolute;
+    top: 270px;
+    left: 0;
+    transform: rotate(2deg);
+  }
+
+  .things-know__media-card--bottom {
+    position: absolute;
+    top: 565px;
+    left: 34px;
+    transform: rotate(-2deg);
+  }
+
+  .things-know__content {
+    padding-top: 8px;
+  }
+
+  .things-know__header {
+    margin-bottom: 28px;
+  }
+
+  .things-know__eyebrow {
+    margin: 0 0 10px;
+    color: #13766d;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .things-know__title {
+    margin: 0 0 12px;
+    color: #153042;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.05;
+    font-weight: 800;
+  }
+
+  .things-know__intro {
+    margin: 0;
+    max-width: 56ch;
+    color: #59707a;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+
+  .things-know__list {
+    border-top: 1px solid rgba(21, 48, 66, 0.12);
+  }
+
+  .things-know__item {
+    border-bottom: 1px solid rgba(21, 48, 66, 0.12);
+  }
+
+  .things-know__question {
+    width: 100%;
+    padding: 22px 0;
+    display: grid;
+    grid-template-columns: 140px minmax(0, 1fr);
+    gap: 18px;
+    align-items: center;
+  }
+
+  .things-know__question-meta {
+    color: #13766d;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  .things-know__question-text {
+    color: #153042;
+    font-size: 22px;
+    line-height: 1.25;
+    font-weight: 700;
+  }
+
+  .things-know__answer {
+    display: block;
+  }
+
+  .things-know__answer-inner {
+    padding: 0 46px 24px 158px;
+    color: #35515d;
+    font-size: 15px;
+    line-height: 1.85;
+  }
+
+  @media (max-width: 1023px) {
+    .things-know {
+      padding: 56px 18px;
+    }
+
+    .things-know__shell {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .things-know__media {
+      min-height: auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .things-know__media-card,
+    .things-know__media-card--top,
+    .things-know__media-card--middle,
+    .things-know__media-card--bottom {
+      position: static;
+      width: 100%;
+      margin-left: 0;
+      transform: none;
+    }
+
+    .things-know__question {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      align-items: start;
+    }
+
+    .things-know__question-text {
+      font-size: 19px;
+    }
+
+    .things-know__answer-inner {
+      padding: 0 34px 22px 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .things-know__media {
+      grid-template-columns: 1fr;
+    }
+
+    .things-know__title {
+      font-size: 32px;
+    }
+
+    .things-know__intro {
+      font-size: 15px;
+    }
+
+    .things-know__question {
+      padding: 18px 0;
+    }
+
+    .things-know__question-text {
+      font-size: 17px;
+    }
+
+    .things-know__answer-inner {
+      padding: 0 0 18px;
+      font-size: 14px;
+      line-height: 1.75;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Things to Know",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_top",
+      "label": "Top image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_middle",
+      "label": "Middle image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_bottom",
+      "label": "Bottom image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Things to Know"
+    }
+  ]
+}
+{% endschema %}
+

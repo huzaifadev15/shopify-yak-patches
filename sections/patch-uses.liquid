@@ -1,0 +1,52 @@
+﻿{% comment %} Patch Uses Section {% endcomment %}
+<section class="uses-section">
+  <div class="uses-container">
+    <div class="uses-grid">
+
+      <!-- Left: Text -->
+      <div class="uses-text">
+        <h2 class="uses-title">Custom Patches for Vests, Jackets, Hats, Uniforms &amp; Events</h2>
+
+        <div class="uses-block">
+          <p class="uses-body"><a href="/">Ready to create your patches?</a> We make the process easy. Simply choose your favorite patch style, upload your design, and select the best shape and size for your needs. You can make your patches truly unique by specifying the exact border and background colors, as well as the type of backing you want.</p>
+        </div>
+
+        <div class="uses-block">
+          <p class="uses-subheading">Endless Ways to Use Custom Patches</p>
+          <p class="uses-body">Our custom patches are perfect for almost anything. Use them to brand your company uniforms, add a personal touch to jackets and bags, or bring a creative idea to life. They provide a durable and striking way to promote your business, support a cause, or simply show off your style.</p>
+        </div>
+
+        <div class="uses-block">
+          <p class="uses-subheading">Simple Application, No Sewing Needed</p>
+          <p class="uses-body">You won't need to sew our <a href="/products/embroidered-patches">embroidered patches</a>. They come with a special backing that is activated by heat, making application simple. Set your heat press to a temperature of 340 to 350 degrees Fahrenheit and apply firm pressure for 20 seconds.</p>
+        </div>
+
+        <div class="uses-block">
+          <p class="uses-subheading">Finding the Perfect Patch for You</p>
+          <p class="uses-body">What kind of patch do you need? We can help. We have many custom patches for sale, from traditional <a href="/products/embroidered-patches">embroidered styles</a> to soft <a href="/products/custom-chenille-patches">chenille options</a>. Our online shop provides clear pricing and all the customization details. For ideas and inspiration, take a look at our gallery and frequently asked questions.</p>
+        </div>
+      </div>
+
+      <!-- Right: Image -->
+      <div class="uses-image">
+        {%- if section.settings.image != blank -%}
+          <img src="{{ section.settings.image | img_url: 'master' }}" alt="Custom patches applied to backpack, varsity jacket, vest, and hats" width="800" height="800" loading="lazy">
+        {%- else -%}
+          <img src="{{ 'uses-of-custom-patches.webp' | asset_url }}" alt="Custom patches applied to backpack, varsity jacket, vest, and hats" width="800" height="800" loading="lazy">
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Patch Uses",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Uses Image" }
+  ],
+  "presets": [{ "name": "Patch Uses" }]
+}
+{% endschema %}
+

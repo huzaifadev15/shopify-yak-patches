@@ -1,0 +1,167 @@
+﻿{%- liquid
+  assign schema_site_url = shop.url
+  assign schema_site_domain = schema_site_url | remove: 'https://' | remove: 'http://'
+  assign schema_collection_url = collection.url | prepend: schema_site_url
+  assign schema_collection_title = collection.title
+  assign schema_collection_description = collection.description | strip_html | strip | default: page_description | default: schema_collection_title
+  assign schema_page_description = page_description | default: schema_collection_description | strip_html | strip | truncate: 320
+  assign schema_collection_image = collection.image
+  if schema_collection_image == blank and collection.products.first != blank
+    assign schema_collection_image = collection.products.first.featured_image
+  endif
+  assign schema_show_collection_breadcrumb = true
+  if collection.handle == 'patches-for-backpack' or collection.url contains '/collections/patches-for-backpack'
+    assign schema_show_collection_breadcrumb = false
+  endif
+  assign schema_faqs = collection.metafields.custom.faq.value
+-%}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": {{ schema_collection_url | append: "#collection-page" | json }},
+      "url": {{ schema_collection_url | json }},
+      "name": {{ schema_collection_title | json }},
+      "description": {{ schema_page_description | json }},
+      "isPartOf": { "@id": {{ schema_site_url | append: "/#website" | json }} },
+      "about": { "@id": {{ schema_site_url | append: "/#organization" | json }} },
+      {%- if schema_collection_image != blank %}
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": {{ schema_collection_image | image_url: width: 1200 | prepend: 'https:' | replace: shop.permanent_domain, schema_site_domain | json }},
+        "contentUrl": {{ schema_collection_image | image_url: width: 1200 | prepend: 'https:' | replace: shop.permanent_domain, schema_site_domain | json }},
+        "width": {{ schema_collection_image.width | default: 1200 | json }},
+        "height": {{ schema_collection_image.height | default: 1200 | json }},
+        "caption": {{ schema_collection_title | append: ' collection at ' | append: shop.name | json }}
+      },
+      {%- endif %}
+      "datePublished": "2024-01-01T00:00:00Z",
+      "dateModified": {{ 'now' | date: '%Y-%m-%dT00:00:00Z' | json }},
+      "breadcrumb": { "@id": {{ schema_collection_url | append: "#breadcrumb" | json }} },
+      "mainEntity": { "@id": {{ schema_collection_url | append: "#product-list" | json }} },
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": ["h1", ".collection-top-description", ".collection-description"]
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": {{ schema_collection_url | append: "#breadcrumb" | json }},
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": {{ schema_site_url | append: "/" | json }}
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Custom Patches",
+          "item": {{ routes.collections_url | prepend: schema_site_url | json }}
+        }{% if schema_show_collection_breadcrumb %},
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ schema_collection_title | json }},
+          "item": {{ schema_collection_url | json }}
+        }
+        {% endif %}
+      ]
+    },
+    {
+      "@type": "ItemList",
+      "@id": {{ schema_collection_url | append: "#product-list" | json }},
+      "name": {{ schema_collection_title | json }},
+      "description": {{ schema_collection_description | json }},
+      "url": {{ schema_collection_url | json }},
+      "numberOfItems": {{ collection.all_products_count | default: collection.products_count | default: collection.products.size | json }},
+      "itemListOrder": "https://schema.org/ItemListOrderDescending",
+      "itemListElement": [
+        {%- for product_item in collection.products limit: 12 -%}
+          {%- liquid
+            assign product_url = product_item.url | prepend: schema_site_url
+            assign product_description = product_item.description | strip_html | strip | truncate: 220 | default: product_item.title
+            assign product_material_metafield = product_item.metafields.custom.material.value | default: product_item.metafields.custom.material
+            assign product_material = product_material_metafield | default: product_item.type | default: 'Custom patch'
+            assign product_color_metafield = product_item.metafields.custom.color.value | default: product_item.metafields.custom.color
+            assign product_color = product_color_metafield | default: 'Custom'
+            assign product_variant = product_item.selected_or_first_available_variant
+            assign product_image = product_item.featured_image
+          -%}
+          {
+            "@type": "ListItem",
+            "position": {{ forloop.index | json }},
+            "item": {
+              "@type": "Product",
+              "@id": {{ product_url | append: "#product" | json }},
+              "name": {{ product_item.title | json }},
+              "url": {{ product_url | json }},
+              {%- if product_image != blank %}
+              "image": {
+                "@type": "ImageObject",
+                "url": {{ product_image | image_url: width: 600 | prepend: 'https:' | replace: shop.permanent_domain, schema_site_domain | json }},
+                "width": {{ product_image.width | default: 600 | json }},
+                "height": {{ product_image.height | default: 600 | json }}
+              },
+              {%- endif %}
+              "description": {{ product_description | json }},
+              "brand": { "@id": {{ schema_site_url | append: "/#organization" | json }} },
+              "color": {{ product_color | json }},
+              "material": {{ product_material | json }},
+              "category": {{ schema_collection_title | json }},
+              "countryOfOrigin": {
+                "@type": "Country",
+                "name": "USA"
+              },
+              "offers": {
+                "@type": "Offer",
+                "price": {{ product_item.price | money_without_currency | remove: ',' | json }},
+                "priceCurrency": {{ cart.currency.iso_code | default: shop.currency | json }},
+                "priceValidUntil": "2026-12-31",
+                "availability": "{% if product_item.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+                "url": {{ product_url | json }},
+                {%- if product_variant.sku != blank %}
+                "sku": {{ product_variant.sku | json }},
+                {%- endif %}
+                "seller": { "@id": {{ schema_site_url | append: "/#organization" | json }} },
+                "shippingDetails": { "@id": {{ schema_site_url | append: "/#shipping" | json }} },
+                "hasMerchantReturnPolicy": { "@id": {{ schema_site_url | append: "/#returnpolicy" | json }} }
+              }
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+    {%- if schema_faqs != blank -%}
+    ,
+    {
+      "@type": "FAQPage",
+      "@id": {{ schema_collection_url | append: "#faq" | json }},
+      "url": {{ schema_collection_url | json }},
+      "isPartOf": { "@id": {{ schema_site_url | append: "/#website" | json }} },
+      "mainEntity": [
+        {%- for faq in schema_faqs -%}
+          {%- liquid
+            assign question_content = faq.question.value | default: faq.question
+            assign answer_content = faq.answer.value | default: faq.answer | strip_html | strip
+          -%}
+          {
+            "@type": "Question",
+            "name": {{ question_content | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ answer_content | json }}
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+    {%- endif -%}
+  ]
+}
+</script>
+

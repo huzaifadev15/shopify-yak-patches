@@ -1,0 +1,69 @@
+{% comment %} Hero Section {% endcomment %}
+<section aria-labelledby="hero-heading" role="banner" class="hero-section">
+  <div class="hero-bg-wrap">
+
+    <!-- Desktop: background image with brown overlay blend -->
+    <div class="hero-bg-overlay" aria-hidden="true" style="background-image: linear-gradient(to right, rgba(196, 149, 106, 0.6), rgba(196, 149, 106, 0.6)), url('{{ 'home-page-hero.webp' | asset_url }}'); background-size: cover; background-position: center center; background-repeat: no-repeat; background-blend-mode: overlay;"></div>
+
+    <div class="hero-inner-wrap">
+
+      <!-- Left: text content -->
+      <div class="hero-left">
+        <div class="hero-inner">
+
+          <header>
+            <h1 id="hero-heading" class="hero-heading">
+              <span class="hero-title-main">CUSTOM PATCHES&nbsp;</span>
+              <span class="hero-subtitle">Made in USA, Low 10-Piece Minimum, Fast Turnaround</span>
+            </h1>
+          </header>
+
+          <p class="hero-desc averta-bold">Crafted with High-Quality Materials. Delivered in as Fast as 5 days. No Setup Fees.</p>
+
+          <nav class="hero-btns" aria-label="Primary actions">
+            <a href="/collections/all" class="btn btn-dark">Shop Patch Types</a>
+            <a href="/pages/gallery" class="btn btn-orange" aria-label="View gallery">
+              <span class="btn-inner">View Gallery
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-arrow" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </a>
+          </nav>
+
+          <div class="hero-badges">
+            <span class="badge" aria-label="Free proofing available">
+              <span class="badge-icon">
+                <svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Free Proofing
+            </span>
+            <span class="badge" aria-label="Low minimum order quantities">
+              <span class="badge-icon">
+                <svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              Low Minimums
+            </span>
+            <span class="badge" aria-label="No setup or art fees">
+              <span class="badge-icon">
+                <svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              No Setup Fees
+            </span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right: empty — image fills background -->
+      <div class="hero-right"></div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}
