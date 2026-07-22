@@ -4,7 +4,7 @@
   assign schema_shop_name = shop.name | default: 'Yak Patches'
   assign schema_page_title = page_title | default: schema_shop_name
   assign schema_page_description = page_description | default: shop.description | default: 'Shop premium custom patches including embroidered patches, PVC patches, chenille patches, woven patches, printed patches, leather patches, iron-on patches, Velcro patches, and wholesale patches from Yak Patches.'
-  assign schema_logo_url = 'logo.webp' | asset_url | prepend: 'https:'
+  assign schema_logo_url = 'yak-logo.png' | asset_url | prepend: 'https:'
   assign schema_primary_image_url = schema_logo_url
 -%}
 {%- capture schema_search_url -%}{{ schema_site_url }}/search?q={% raw %}{search_term_string}{% endraw %}{%- endcapture -%}
