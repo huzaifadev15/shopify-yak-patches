@@ -79,7 +79,7 @@ button, input, select, textarea {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 16px;
-  height: 64px;
+  height: 120px;
   display: flex;
   align-items: center;
   gap: 0;
@@ -218,7 +218,7 @@ button, input, select, textarea {
   flex-shrink: 0;
 }
 .navbar-logo {
-  height: 36px;
+  height: 110px;
   width: auto;
   object-fit: contain;
 }
