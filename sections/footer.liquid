@@ -1,6 +1,6 @@
 ﻿<style>
   /* ===== FOOTER ===== */
-  .ft { background: #3D1F0A; padding: 48px 16px 0; font-family: "Averta", "Segoe UI", Arial, sans-serif; }
+  .ft { background: #1C0800; padding: 48px 16px 0; font-family: "Averta", "Segoe UI", Arial, sans-serif; }
   .ft *, .ft *::before, .ft *::after { box-sizing: border-box; }
   .ft a { text-decoration: none; }
   .ft-inner { max-width: 1440px; margin: 0 auto; padding: 0 16px; }
@@ -25,7 +25,7 @@
   .ft-contact { display: flex; flex-direction: column; gap: 14px; width: 100%; align-items: center; }
   @media (min-width: 900px) { .ft-contact { align-items: flex-start; } }
   .ft-contact-row { display: flex; align-items: flex-start; gap: 10px; }
-  .ft-contact-icon { color: #7C4A1E; flex-shrink: 0; margin-top: 2px; }
+  .ft-contact-icon { color: #C4520A; flex-shrink: 0; margin-top: 2px; }
   .ft-contact-row a, .ft-contact-row span { color: #d1d5db; font-size: 14px; font-weight: 600; line-height: 1.5; transition: color 0.2s; }
   .ft-contact-row a:hover { color: #fff; }
 
@@ -36,9 +36,9 @@
 
   /* Link columns */
   .ft-col { }
-  .ft-col-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; background: none; border: none; border-bottom: 1px solid #374151; padding-bottom: 10px; margin-bottom: 0; cursor: pointer; color: #7C4A1E; font-family: "Averta", "Segoe UI", Arial, sans-serif; font-weight: 700; font-size: 16px; text-align: left; }
+  .ft-col-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; background: none; border: none; border-bottom: 1px solid #374151; padding-bottom: 10px; margin-bottom: 0; cursor: pointer; color: #C4520A; font-family: "Averta", "Segoe UI", Arial, sans-serif; font-weight: 700; font-size: 16px; text-align: left; }
   @media (min-width: 900px) { .ft-col-btn { border-bottom: none; padding-bottom: 0; margin-bottom: 16px; cursor: default; pointer-events: none; } }
-  .ft-col-chevron { flex-shrink: 0; transition: transform 0.25s; color: #7C4A1E; }
+  .ft-col-chevron { flex-shrink: 0; transition: transform 0.25s; color: #C4520A; }
   .ft-col-chevron.open { transform: rotate(180deg); }
   @media (min-width: 900px) { .ft-col-chevron { display: none; } }
 
@@ -48,10 +48,10 @@
   .ft-col-links a { color: #d1d5db; font-size: 14px; font-weight: 600; transition: color 0.2s; }
   .ft-col-links a:hover { color: #fff; }
   .ft-col-links .ft-view-all { color: #fff; font-weight: 500; }
-  .ft-col-links .ft-view-all:hover { color: #7C4A1E; }
+  .ft-col-links .ft-view-all:hover { color: #C4520A; }
 
   /* Middle row: social + newsletter */
-  .ft-mid { display: flex; flex-direction: column; align-items: center; gap: 32px; border-top: 1px solid #2A1008; padding: 32px 0; }
+  .ft-mid { display: flex; flex-direction: column; align-items: center; gap: 32px; border-top: 1px solid #120400; padding: 32px 0; }
   @media (min-width: 900px) { .ft-mid { flex-direction: row; justify-content: space-between; align-items: center; } }
 
   /* Social */
@@ -59,8 +59,8 @@
   @media (min-width: 900px) { .ft-social { flex-direction: row; align-items: center; margin-top:40px; } }
   .ft-follow-label { color: #d1d5db; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; }
   .ft-social-links { display: flex; gap: 12px; }
-  .ft-social-link { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(124,74,30,0.5); background: transparent; color: #7C4A1E; transition: border-color 0.3s, background 0.3s; }
-  .ft-social-link:hover { border-color: #7C4A1E; background: rgba(124,74,30,0.1); }
+  .ft-social-link { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(196,82,10,0.5); background: transparent; color: #C4520A; transition: border-color 0.3s, background 0.3s; }
+  .ft-social-link:hover { border-color: #C4520A; background: rgba(196,82,10,0.1); }
   .ft-social-link svg { width: 20px; height: 20px; display: block; flex-shrink: 0; }
   .ft-social-link .ft-social-icon--stroke { fill: none; stroke: currentColor; }
   .ft-social-link .ft-social-icon--fill { fill: currentColor; stroke: none; }
@@ -70,11 +70,11 @@
   .ft-nl-title { color: #fff; font-weight: 600; font-size: 15px; margin-bottom: 6px; }
   .ft-nl-sub { color: #d1d5db; font-size: 13px; margin-bottom: 14px; }
   .ft-nl-form { display: flex; }
-  .ft-nl-input { flex: 1; background: #2A1008; border: 1px solid #374151; border-right: none; border-radius: 6px 0 0 6px; padding: 10px 16px; color: #fff; font-size: 14px; font-family: "Averta", "Segoe UI", Arial, sans-serif; outline: none; transition: border-color 0.2s; }
-  .ft-nl-input:focus { border-color: #7C4A1E; }
+  .ft-nl-input { flex: 1; background: #120400; border: 1px solid #374151; border-right: none; border-radius: 6px 0 0 6px; padding: 10px 16px; color: #fff; font-size: 14px; font-family: "Averta", "Segoe UI", Arial, sans-serif; outline: none; transition: border-color 0.2s; }
+  .ft-nl-input:focus { border-color: #C4520A; }
   .ft-nl-input::placeholder { color: #6b7280; }
-  .ft-nl-btn { background: #7C4A1E; color: #fff; border: none; border-radius: 0 6px 6px 0; padding: 10px 18px; font-size: 14px; font-weight: 600; font-family: "Averta", "Segoe UI", Arial, sans-serif; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
-  .ft-nl-btn:hover { background: #6B3A18; }
+  .ft-nl-btn { background: #C4520A; color: #fff; border: none; border-radius: 0 6px 6px 0; padding: 10px 18px; font-size: 14px; font-weight: 600; font-family: "Averta", "Segoe UI", Arial, sans-serif; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+  .ft-nl-btn:hover { background: #A33A06; }
   .ft-nl-btn:disabled { cursor: wait; opacity: 0.72; }
   .ft-nl-status { min-height: 18px; margin: 8px 0 0; color: #d1d5db; font-size: 12px; line-height: 1.4; }
   .ft-nl-status.success { color: #86efac; }
@@ -83,7 +83,7 @@
   @media (max-width: 899px) { .trustpilot-widget { margin-top: 0 !important; } }
 
   /* Bottom bar */
-  .ft-bottom { border-top: 1px solid #2A1008; padding: 24px 0 32px; }
+  .ft-bottom { border-top: 1px solid #120400; padding: 24px 0 32px; }
   .ft-bottom-inner { display: flex; flex-direction: column; align-items: center; gap: 20px; }
   @media (min-width: 900px) { .ft-bottom-inner { flex-direction: row; justify-content: space-between; align-items: center; } }
 
